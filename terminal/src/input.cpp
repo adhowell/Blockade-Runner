@@ -14,10 +14,20 @@ void Input::keyPressEvent(QKeyEvent *e)
         case Qt::Key::Key_Enter:
         case Qt::Key::Key_Return:
             Q_EMIT sendRawInput(toPlainText());
+            mCommandHistory << toPlainText();
+            mCommandIndex = mCommandHistory.size();
             clear();
             return;
         case Qt::Key::Key_Backspace:
+        case Qt::Key::Key_Left:
+        case Qt::Key::Key_Right:
             QPlainTextEdit::keyPressEvent(e);
+            break;
+        case Qt::Key::Key_Up:
+            displayAdjacentCommand(true);
+            break;
+        case Qt::Key::Key_Down:
+            displayAdjacentCommand(false);
             break;
         default:
             if (toPlainText().length() >= mLimit)
@@ -25,4 +35,13 @@ void Input::keyPressEvent(QKeyEvent *e)
             insertPlainText(e->text().toUpper());
             break;
     }
+}
+
+void Input::displayAdjacentCommand(bool isPrevious)
+{
+    if (mCommandIndex == 0 && isPrevious) return;
+    if (mCommandIndex == mCommandHistory.size()-1 && !isPrevious) return;
+    clear();
+    mCommandIndex += isPrevious ? -1 : 1;
+    insertPlainText(mCommandHistory[mCommandIndex]);
 }

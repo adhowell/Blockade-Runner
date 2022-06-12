@@ -10,52 +10,78 @@ Terminal::Terminal(QWidget* parent) : QFrame(parent)
     mLookupDirection["BACKWARD"] = TwoDeg::Down;
     mLookupDirection["LEFT"] = TwoDeg::Left;
     mLookupDirection["RIGHT"] = TwoDeg::Right;
-
-
+    mLookupCommands["START"] = Command::Thrust;
+    mLookupCommands["STOP"] = Command::Thrust;
+    mLookupCommands["ALIAS"] = Command::Alias;
 
     connect(mInput, &Input::sendRawInput, this, &Terminal::parseInput);
     connect(this, &Terminal::sendParsedInput, mHistory, &History::addCommand);
 
-    QVBoxLayout* layout = new QVBoxLayout;
+    auto layout = new QVBoxLayout;
     layout->addWidget(mHistory, 8);
     layout->addWidget(mInput, 1);
     setLayout(layout);
 }
 
-void Terminal::parseInput(QString rawText)
+void Terminal::parseInput(const QString& rawText)
 {
-    QRegularExpression re("(\\w+) (\\w+)");
+    QRegularExpression re("(\\w+) (.+)");
     QRegularExpressionMatch match = re.match(rawText);
-    Q_EMIT sendParsedInput(QString("%1 <LOG> - %2").arg(getLineIndex()).arg(rawText));
+    Q_EMIT sendParsedInput(QString("<LOG> - %1").arg(rawText));
 
     if (match.hasMatch())
-        parseCommands(rawText);
+    {
+        QString aliasedCommand = match.captured(1);
+        if (mAliases.contains(aliasedCommand)) aliasedCommand = mAliases[aliasedCommand];
+        parseCommand(aliasedCommand, match.captured(2));
+    }
     else
-        Q_EMIT sendParsedInput(QString("%1 <ERROR> - INVALID ENTRY").arg(getLineIndex()));
+        Q_EMIT sendParsedInput(QString("<ERROR> - INVALID ENTRY"));
 }
 
-void Terminal::parseCommands(QString rawText)
+void Terminal::parseCommand(const QString& command, const QString& input)
 {
-    QRegularExpression re("(\\w+) (\\w+)");
-    QRegularExpressionMatch match = re.match(rawText);
-    QRegularExpression thrustRe("(START|STOP) (\\w+)");
-    QRegularExpressionMatch thrustMatch = thrustRe.match(rawText);
-
-    if (thrustMatch.hasMatch())
+    if (!mLookupCommands.contains(command))
     {
-        if (!mLookupDirection.contains(thrustMatch.captured(2)))
-        {
-            Q_EMIT sendParsedInput(QString("%1 <ERROR> - INVALID DIRECTION: %2").arg(getLineIndex()).arg(thrustMatch.captured(2)));
-            return;
-        }
-        Q_EMIT setThrustDirection(mLookupDirection[thrustMatch.captured(2)],
-                                  thrustMatch.captured(1) == "START");
+        Q_EMIT sendParsedInput(QString("<ERROR> - INVALID COMMAND: %1").arg(command));
         return;
     }
-    Q_EMIT sendParsedInput(QString("%1 <ERROR> - INVALID COMMAND: %2").arg(getLineIndex()).arg(match.captured(1)));
+    switch (mLookupCommands[command])
+    {
+        case Command::Thrust:
+            parseThrustCommand(input, command == "START");
+            break;
+        case Command::Alias:
+            parseAliasCommand(input);
+            break;
+    }
 }
 
-int Terminal::getLineIndex()
+void Terminal::parseThrustCommand(const QString& input, bool isActive)
 {
-    return mIndex++;
+    QStringList args = input.split(" ");
+    if (args.size() > 1)
+    {
+        Q_EMIT sendParsedInput(QString("<ERROR> - COMMAND: %1 ACCEPTS ONE ARGUMENT").arg(isActive ? "START" : "STOP"));
+        return;
+    }
+    QString direction = args[0];
+    if (mAliases.contains(direction)) direction = mAliases[direction];
+
+    if (mLookupDirection.contains(direction))
+        setThrustDirection(mLookupDirection[direction], isActive);
+    else
+        Q_EMIT sendParsedInput(QString("<ERROR> - INVALID DIRECTION: %1").arg(direction));
+}
+
+void Terminal::parseAliasCommand(const QString& input)
+{
+    QStringList inputs = input.split(" ");
+    if (inputs.size() != 2)
+    {
+        Q_EMIT sendParsedInput(QString("<ERROR> - COMMAND: ALIAS ACCEPTS TWO ARGUMENTS"));
+        return;
+    }
+    mAliases[inputs[1]] = inputs[0];
+    Q_EMIT sendParsedInput(QString("<INFO> - ALIAS %1 -> %2").arg(inputs[1]).arg(inputs[0]));
 }

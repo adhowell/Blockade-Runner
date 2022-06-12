@@ -11,11 +11,14 @@ public:
 
     void keyPressEvent(QKeyEvent *e) override;
 
-private:
-    int mLimit = 20;
-
 Q_SIGNALS:
     void sendRawInput(QString text);
 
+private:
+    void displayAdjacentCommand(bool isPrevious);
 
+    int mLimit = 20;
+
+    int mCommandIndex = 0;
+    QVector<QString> mCommandHistory;
 };

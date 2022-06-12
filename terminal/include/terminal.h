@@ -12,22 +12,29 @@ public:
     explicit Terminal(QWidget* parent = nullptr);
 
 Q_SIGNALS:
-    void sendParsedInput(QString text);
+    void sendParsedInput(const QString& text);
     void setThrustDirection(TwoDeg direction, bool isActive);
 
 public Q_SLOTS:
-    void parseInput(QString rawText);
+    void parseInput(const QString& rawText);
 
 private:
-    void parseCommands(QString rawText);
-    void parseThrustCommand(QString rawText);
-    int getLineIndex();
+    enum Command
+    {
+        Thrust,
+        Alias
+    };
+
+    void parseCommand(const QString& command, const QString& input);
+    void parseThrustCommand(const QString& direction, bool isActive);
+    void parseAliasCommand(const QString& input);
 
     History* mHistory;
     Input* mInput;
 
-    int mIndex = 0;
+    QMap<QString, QString> mAliases;
 
     // Command lookups
     QMap<QString, TwoDeg> mLookupDirection;
+    QMap<QString, Command> mLookupCommands;
 };
