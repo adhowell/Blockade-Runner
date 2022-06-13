@@ -6,7 +6,7 @@
 
 GraphicsView::GraphicsView(View *v) : QGraphicsView(), mView(v)
 {
-    setMouseTracking(true);
+    //connect(mPlayer, &PlayerShip::displayText, this, &GraphicsView::receiveTextFromPlayerShip);
 }
 
 void GraphicsView::initBackground()
@@ -23,13 +23,15 @@ void GraphicsView::initBackground()
 void GraphicsView::initPlayer()
 {
     mPlayer = new PlayerShip();
+    connect(mPlayer, &PlayerShip::displayText, this, &GraphicsView::receiveTextFromPlayerShip);
+
     mPlayer->addThruster(0, 0);
     mPlayer->addThruster(0, 4);
     mPlayer->addThruster(4, 0);
     mPlayer->addThruster(4, 4);
     mPlayer->addCruiseEngine(2, 3, TwoDeg::Up);
     mPlayer->computeStaticForceVectors();
-    scene()->addItem(mPlayer);
+    scene()->addItem(mPlayer->getGraphicsItem());
 }
 
 void GraphicsView::initAsteroidField()
@@ -123,12 +125,17 @@ void GraphicsView::setThrust(TwoDeg direction, bool isActive)
     }
 }
 
+void GraphicsView::receiveTextFromPlayerShip(const QString& text)
+{
+    Q_EMIT relayText(text);
+}
+
 View::View(QWidget* parent) : QFrame(parent)
 {
     mGraphicsView = new GraphicsView(this);
     mGraphicsView->ensureVisible(QRectF(0, 0, 0, 0));
 
-    QGridLayout* layout = new QGridLayout;
+    auto layout = new QGridLayout;
     layout->addWidget(mGraphicsView, 0, 0);
     setLayout(layout);
 }

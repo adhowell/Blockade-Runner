@@ -99,7 +99,11 @@ void Engine::decrementAccProfile()
         mThrustRatioStep = qMax(mThrustRatioStep - mIncr, 0.0);
         updateThrustRatio();
     }
-    if (mThrustRatioStep == 0) mEnabled = false;
+    if (mThrustRatioStep == 0 && mEnabled)
+    {
+        mEnabled = false;
+        Q_EMIT transmitStatus("<INFO> - THRUSTER SHUTDOWN SUCCESS");
+    }
 }
 
 void Engine::updateThrustRatio()

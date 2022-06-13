@@ -2,17 +2,16 @@
 #include "include/directions.h"
 #include "blur.h"
 #include "include/engine.h"
+#include "player_ship_item.h"
 #include <QGraphicsItem>
 #include <QtMath>
 
-/**
- * Physics-enabled PlayerShip graphics item
- */
-class PlayerShip : public QGraphicsItem {
+#pragma once
+
+class PlayerShip : public QObject {
+    Q_OBJECT
 public:
     PlayerShip();
-    enum { Type = 1 };
-    int type() const override { return Type; }
 
     enum Component {
         Bridge,
@@ -92,13 +91,12 @@ public:
 
     void update(qreal deltaT);
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-
     qreal getEnergy() const { return 0.5*mM*qPow(mV.getSize(), 2.0); }
     qreal getVelocity() { return mV.getSize(); }
     Vector getVelocityVector() { return mV; }
     qreal getAtan2() { return mAtan2; }
+
+    QGraphicsItem* getGraphicsItem() { return mGraphicsItem; }
 
     void resetMovement();
     void enableForward() { mForwardThrust = true; }
@@ -108,6 +106,12 @@ public:
     void enableRotateLeft() { mRotateLeftThrust = true; }
     void enableRotateRight() { mRotateRightThrust = true; }
 
+public Q_SLOTS:
+    void receiveTextFromComponent(const QString& text);
+
+Q_SIGNALS:
+    void displayText(QString text);
+
 private:
     bool mForwardThrust = false;
     bool mBackwardThrust = false;
@@ -115,7 +119,6 @@ private:
     bool mRightThrust = false;
     bool mRotateLeftThrust = false;
     bool mRotateRightThrust = false;
-    bool mStrafeMode = false;
 
     qreal mAtan2 = 0; // Bearing (rads)
     qreal mRotA = 0; // Rotational acceleration
@@ -126,10 +129,8 @@ private:
     qreal mI = 0; // Inertia
     Vector mCentreOfMass = Vector(0, 0);
 
+    PlayerShipItem* mGraphicsItem;
     QVector<Engine*> mEngines;
-    QVector<QPolygonF> mPolys;
-    QVector<QPointF> mEngineMarkers;
-    QVector<bool> mEngineEnabled;
 
     QMap<QPair<int, int>, Component> mComponentMap;
     QMap<QPair<int, int>, TwoDeg> mComponentDirection;

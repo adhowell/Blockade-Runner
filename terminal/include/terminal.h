@@ -9,7 +9,7 @@ class Terminal : public QFrame
 {
     Q_OBJECT
 public:
-    explicit Terminal(QWidget* parent = nullptr);
+    Terminal(QWidget* parent = nullptr);
 
 Q_SIGNALS:
     void sendParsedInput(const QString& text);
@@ -17,17 +17,20 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void parseInput(const QString& rawText);
+    void displayText(const QString& text);
 
 private:
     enum Command
     {
         Thrust,
+        Rotate,
         Alias
     };
 
     void parseCommand(const QString& command, const QString& input);
     void parseThrustCommand(const QString& direction, bool isActive);
     void parseAliasCommand(const QString& input);
+    void parseRotateCommand(const QString& input);
 
     History* mHistory;
     Input* mInput;

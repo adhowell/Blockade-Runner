@@ -85,3 +85,8 @@ void Terminal::parseAliasCommand(const QString& input)
     mAliases[inputs[1]] = inputs[0];
     Q_EMIT sendParsedInput(QString("<INFO> - ALIAS %1 -> %2").arg(inputs[1]).arg(inputs[0]));
 }
+
+void Terminal::displayText(const QString &text)
+{
+    mHistory->addCommand(text);
+}

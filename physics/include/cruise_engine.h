@@ -2,6 +2,8 @@
 #define CRUISE_ENGINE_H
 #include "engine.h"
 
+#pragma once
+
 class CruiseEngine : public Engine {
 public:
     CruiseEngine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia);

@@ -25,6 +25,15 @@ public:
     void timerEvent(QTimerEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
+private Q_SLOTS:
+    void receiveTextFromPlayerShip(const QString& text);
+
+Q_SIGNALS:
+    /**
+     * For display in the terminal history window.
+     */
+    void relayText(QString text);
+
 private:
     View *mView;
     PlayerShip* mPlayer;
@@ -36,7 +45,6 @@ private:
     bool mBackwardThrust = false;
     bool mLeftThrust = false;
     bool mRightThrust = false;
-    bool mStrafeMode = false;
 
     qreal mDeltaT = 1.0;
     int mScaleFactor = 3;
@@ -56,3 +64,5 @@ public Q_SLOTS:
 private:
     GraphicsView* mGraphicsView;
 };
+
+

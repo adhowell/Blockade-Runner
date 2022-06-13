@@ -1,13 +1,15 @@
 target_sources(projLib
         PUBLIC
-        src/asteroid.cpp
         include/asteroid.h
-        src/phosphor_ghost.cpp
         include/phosphor_ghost.h
-        src/player_ship.cpp
         include/player_ship.h
-        src/starfield.cpp
+        include/player_ship_item.h
         include/starfield.h
+        src/asteroid.cpp
+        src/phosphor_ghost.cpp
+        src/player_ship.cpp
+        src/player_ship_item.cpp
+        src/starfield.cpp
         )
 
 target_include_directories(projLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})

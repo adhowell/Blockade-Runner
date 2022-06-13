@@ -2,6 +2,8 @@
 #define MINI_ENGINE_H
 #include "engine.h"
 
+#pragma once
+
 class MiniEngine : public Engine {
 public:
     MiniEngine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia);

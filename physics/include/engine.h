@@ -2,8 +2,12 @@
 #define ENGINE_H
 #include "include/vector.h"
 #include "include/directions.h"
+#include <QtWidgets>
 
-class Engine {
+#pragma once
+
+class Engine : public QObject {
+    Q_OBJECT
 public:
     enum Profile {
         EXP,
@@ -34,6 +38,9 @@ public:
     void incrementAccProfile();
     void decrementAccProfile();
     void updateThrustRatio();
+
+Q_SIGNALS:
+    void transmitStatus(const QString&);
 
 protected:
     Engine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia, qreal thrust, qreal incr, Profile profile, Size size);
