@@ -1,5 +1,6 @@
 #include "views/player_view.h"
 #include "include/terminal.h"
+#include "simulation_loop.h"
 #include <QGraphicsScene>
 
 class MainWindow : public QWidget
@@ -9,7 +10,7 @@ public:
     MainWindow(QWidget* parent = nullptr);
 
 private:
-    QGraphicsScene* mScene;
+    SimulationLoop* mScene;
     Terminal* mTerminal;
     View* mShipView;
 };

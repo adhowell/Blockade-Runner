@@ -21,7 +21,7 @@ add_subdirectory(terminal)
 
 target_link_libraries(projLib Qt5::Widgets)
 
-add_executable(blockade_runner main.cpp main_window.cpp main_window.h global_config.h)
+add_executable(blockade_runner main.cpp main_window.cpp simulation_loop.cpp main_window.h global_config.h simulation_loop.h)
 
 target_link_libraries(blockade_runner projLib)
 target_link_libraries(blockade_runner Qt5::Core)
