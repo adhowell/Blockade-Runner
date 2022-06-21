@@ -96,7 +96,7 @@ public:
     Vector getVelocityVector() { return mV; }
     qreal getAtan2() { return mAtan2; }
 
-    QGraphicsItem* getGraphicsItem() { return mGraphicsItem; }
+    QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
 
     void resetMovement();
     void enableForward() { mForwardThrust = true; }
@@ -129,7 +129,7 @@ private:
     qreal mI = 0; // Inertia
     Vector mCentreOfMass = Vector(0, 0);
 
-    PlayerShipItem* mGraphicsItem;
+    PlayerShipItem* mTacticalGraphicsItem;
     QVector<Engine*> mEngines;
 
     QMap<QPair<int, int>, Component> mComponentMap;

@@ -4,15 +4,15 @@
 MainWindow::MainWindow(QWidget *parent)
 {
     mTerminal = new Terminal(this);
+    mTacticalScene = new TacticalScene(this);
 
-    mScene = new SimulationLoop(this);
-    mShipView = new View(mScene);
+    mScene = new SimulationLoop(mTacticalScene);
 
     connect(mTerminal, &Terminal::setThrustDirection, mScene, &SimulationLoop::setThrust);
     connect(mScene, &SimulationLoop::relayText, mTerminal, &Terminal::displayText);
 
     auto layout = new QHBoxLayout;
-    layout->addWidget(mShipView);
+    layout->addWidget(mTacticalScene->getView());
     layout->addWidget(mTerminal);
     setLayout(layout);
 

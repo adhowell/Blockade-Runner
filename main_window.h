@@ -1,4 +1,4 @@
-#include "views/player_view.h"
+#include "include/tactical_view.h"
 #include "include/terminal.h"
 #include "simulation_loop.h"
 #include <QGraphicsScene>
@@ -12,5 +12,5 @@ public:
 private:
     SimulationLoop* mScene;
     Terminal* mTerminal;
-    View* mShipView;
+    TacticalScene* mTacticalScene;
 };

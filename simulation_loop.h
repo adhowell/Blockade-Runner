@@ -1,7 +1,5 @@
 #include "include/player_ship.h"
-#include "include/asteroid.h"
-#include "include/starfield.h"
-#include "include/phosphor_ghost.h"
+#include "include/tactical_view.h"
 #include "../global_config.h"
 #include <QFrame>
 #include <QGraphicsView>
@@ -9,15 +7,13 @@
 
 #pragma once
 
-class SimulationLoop : public QGraphicsScene
+class SimulationLoop : public QObject
 {
     Q_OBJECT
 public:
-    explicit SimulationLoop(QWidget* parent = nullptr);
+    explicit SimulationLoop(TacticalScene* tacticalScene);
 
-    void initBackground();
     void initPlayer();
-    void initAsteroidField();
 
     void timerEvent(QTimerEvent* event) override;
 
@@ -33,6 +29,8 @@ Q_SIGNALS:
 
 private:
     PlayerShip* mPlayer;
+
+    TacticalScene* mTacticalScene;
 
     void applyPlayerInput();
     void updatePlayer();

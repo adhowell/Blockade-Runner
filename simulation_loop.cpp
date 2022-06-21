@@ -4,23 +4,11 @@
 #include <QFrame>
 #include <QDebug>
 
-SimulationLoop::SimulationLoop(QWidget* parent) : QGraphicsScene(parent)
+SimulationLoop::SimulationLoop(TacticalScene* tacticalScene) : QObject()
 {
-    initBackground();
+    mTacticalScene = tacticalScene;
     initPlayer();
     startTimer(1000/gTargetFramerate);
-    setSceneRect(QRectF(-100, -100, 200, 200));
-}
-
-void SimulationLoop::initBackground()
-{
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(QColor(0, 0, 15));
-    addRect(-1000, -700, 2000, 1400, QPen(), brush);
-
-    auto starField = new Starfield(QPointF(0, 0));
-    addItem(starField);
 }
 
 void SimulationLoop::initPlayer()
@@ -34,13 +22,8 @@ void SimulationLoop::initPlayer()
     mPlayer->addThruster(4, 4);
     mPlayer->addCruiseEngine(2, 3, TwoDeg::Up);
     mPlayer->computeStaticForceVectors();
-    addItem(mPlayer->getGraphicsItem());
-}
 
-void SimulationLoop::initAsteroidField()
-{
-    auto asteroid = new Asteroid(QColor(0, 255, 0), 0, -200, Vector(0, 0), 10, 25);
-    addItem(asteroid);
+    mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());
 }
 
 void SimulationLoop::timerEvent(QTimerEvent *event)
@@ -49,28 +32,7 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     Vector playerVelocity = mPlayer->getVelocityVector();
     playerVelocity.flip();
     QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
-
-    QList<QGraphicsItem*> forDeletion;
-    for (QGraphicsItem *item: items()) {
-        if (Asteroid *a = dynamic_cast<Asteroid*>(item)) {
-            a->posUpdate(playerOffset);
-            a->update();
-        }
-        if (PhosphorGhost *g = dynamic_cast<PhosphorGhost*>(item)) {
-            if (g->isDone()) forDeletion << g;
-            g->posUpdate(playerOffset);
-            g->update();
-        }
-        if (Starfield *s = dynamic_cast<Starfield*>(item)) {
-            s->updateOffset(playerOffset);
-            s->update();
-        }
-    }
-
-    for (auto i : forDeletion) removeItem(i);
-
-    //auto ghost = new PhosphorGhost(mPlayer->getPoly(), 20);
-    //scene()->addItem(ghost);
+    mTacticalScene->updateItems(playerOffset);
 }
 
 void SimulationLoop::applyPlayerInput()
