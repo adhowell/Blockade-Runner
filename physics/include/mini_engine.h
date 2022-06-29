@@ -10,6 +10,6 @@ public:
 };
 
 MiniEngine::MiniEngine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia)
-        : Engine(direction, centreOfMassOffset, mass, inertia, 1, 0.05, Profile::LIN, Size::SMALL) {}
+        : Engine(direction, centreOfMassOffset, mass, inertia, 1, 1.0, Profile::LIN, Size::SMALL) {}
 
 #endif //MINI_ENGINE_H

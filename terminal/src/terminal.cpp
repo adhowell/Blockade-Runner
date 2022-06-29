@@ -8,11 +8,13 @@ Terminal::Terminal(QWidget* parent) : QFrame(parent)
 
     mLookupDirection["FORWARD"] = TwoDeg::Up;
     mLookupDirection["BACKWARD"] = TwoDeg::Down;
-    mLookupDirection["LEFT"] = TwoDeg::Left;
-    mLookupDirection["RIGHT"] = TwoDeg::Right;
+    //mLookupDirection["LEFT"] = TwoDeg::Left;
+    //mLookupDirection["RIGHT"] = TwoDeg::Right;
+
     mLookupCommands["START"] = Command::Thrust;
     mLookupCommands["STOP"] = Command::Thrust;
     mLookupCommands["ALIAS"] = Command::Alias;
+    mLookupCommands["ROTATE"] = Command::Rotate;
 
     connect(mInput, &Input::sendRawInput, this, &Terminal::parseInput);
     connect(this, &Terminal::sendParsedInput, mHistory, &History::addCommand);
@@ -41,11 +43,6 @@ void Terminal::parseInput(const QString& rawText)
 
 void Terminal::parseCommand(const QString& command, const QString& input)
 {
-    if (!mLookupCommands.contains(command))
-    {
-        Q_EMIT sendParsedInput(QString("<ERROR> - INVALID COMMAND: %1").arg(command));
-        return;
-    }
     switch (mLookupCommands[command])
     {
         case Command::Thrust:
@@ -54,6 +51,12 @@ void Terminal::parseCommand(const QString& command, const QString& input)
         case Command::Alias:
             parseAliasCommand(input);
             break;
+        case Command::Rotate:
+            parseRotateCommand(input);
+            break;
+        case Command::None:
+            Q_EMIT sendParsedInput(QString("<ERROR> - INVALID COMMAND: %1").arg(command));
+            return;
     }
 }
 
@@ -83,7 +86,18 @@ void Terminal::parseAliasCommand(const QString& input)
         return;
     }
     mAliases[inputs[1]] = inputs[0];
-    Q_EMIT sendParsedInput(QString("<INFO> - ALIAS %1 -> %2").arg(inputs[1]).arg(inputs[0]));
+    Q_EMIT sendParsedInput(QString("<INFO> - ALIAS %1 == %2").arg(inputs[1]).arg(inputs[0]));
+}
+
+void Terminal::parseRotateCommand(const QString &input)
+{
+    int degrees = input.toInt();
+    if (degrees == 0)
+    {
+        Q_EMIT sendParsedInput(QString("<ERROR> - COMMAND: ROTATE ACCEPTS ONE NON-ZERO INTEGER"));
+        return;
+    }
+    rotate(degrees);
 }
 
 void Terminal::displayText(const QString &text)

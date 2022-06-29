@@ -19,6 +19,15 @@ public:
         CruiseThruster,
     };
 
+    enum RotateState {
+        Idle,
+        BeforeTargetCW,
+        AfterTargetCW,
+        BeforeTargetCCW,
+        AfterTargetCCW,
+        Shutdown,
+    };
+
     static QMap<Component, qreal> sComponentMass;
 
     /**
@@ -106,6 +115,8 @@ public:
     void enableRotateLeft() { mRotateLeftThrust = true; }
     void enableRotateRight() { mRotateRightThrust = true; }
 
+    void rotate(int degrees);
+
 public Q_SLOTS:
     void receiveTextFromComponent(const QString& text);
 
@@ -119,6 +130,10 @@ private:
     bool mRightThrust = false;
     bool mRotateLeftThrust = false;
     bool mRotateRightThrust = false;
+
+    RotateState mRotateState = Idle;
+    qreal mRotateTargetRad;
+    bool mDampenRotation = false;
 
     qreal mAtan2 = 0; // Bearing (rads)
     qreal mRotA = 0; // Rotational acceleration

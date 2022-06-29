@@ -6,10 +6,11 @@ MainWindow::MainWindow(QWidget *parent)
     mTerminal = new Terminal(this);
     mTacticalScene = new TacticalScene(this);
 
-    mScene = new SimulationLoop(mTacticalScene);
+    mSimulation = new SimulationLoop(mTacticalScene);
 
-    connect(mTerminal, &Terminal::setThrustDirection, mScene, &SimulationLoop::setThrust);
-    connect(mScene, &SimulationLoop::relayText, mTerminal, &Terminal::displayText);
+    connect(mTerminal, &Terminal::setThrustDirection, mSimulation, &SimulationLoop::setThrust);
+    connect(mTerminal, &Terminal::rotate, mSimulation, &SimulationLoop::rotate);
+    connect(mSimulation, &SimulationLoop::relayText, mTerminal, &Terminal::displayText);
 
     auto layout = new QHBoxLayout;
     layout->addWidget(mTacticalScene->getView());

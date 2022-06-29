@@ -14,6 +14,49 @@ PlayerShip::PlayerShip()
 
 void PlayerShip::update(qreal deltaT)
 {
+    switch (mRotateState)
+    {
+        case RotateState::BeforeTargetCW:
+            resetMovement();
+            mRotateRightThrust = true;
+            if (mAtan2 >= mRotateTargetRad)
+            {
+                mRotateLeftThrust = true;
+                mRotateRightThrust = false;
+                mRotateState = RotateState::AfterTargetCW;
+                Q_EMIT displayText("<INFO> - HALF-ROTATION COMPLETE");
+            }
+            break;
+        case RotateState::BeforeTargetCCW:
+            resetMovement();
+            mRotateLeftThrust = true;
+            if (mAtan2 <= mRotateTargetRad)
+            {
+                mRotateLeftThrust = false;
+                mRotateRightThrust = true;
+                mRotateState = RotateState::AfterTargetCCW;
+                Q_EMIT displayText("<INFO> - HALF-ROTATION COMPLETE");
+            }
+            break;
+        case RotateState::AfterTargetCW:
+        case RotateState::AfterTargetCCW:
+            resetMovement();
+            if (qAbs(mRotV) < 0.001) {
+                mRotateLeftThrust = false;
+                mRotateRightThrust = false;
+                mRotateState = RotateState::Shutdown;
+            }
+            break;
+        case RotateState::Shutdown:
+            mRotV *= 0.8;
+            if (qAbs(mRotV) < 0.0000001)
+            {
+                mRotV = 0;
+                mRotateState = RotateState::Idle;
+                Q_EMIT displayText("<INFO> - ROTATE COMMAND COMPLETE");
+            }
+    }
+
     for (auto e : mEngines)
     {
         // Determine if the engine should be fired
@@ -46,26 +89,6 @@ void PlayerShip::update(qreal deltaT)
     }
     mAtan2 += mRotV * deltaT;
     mTacticalGraphicsItem->update();
-}
-
-void PlayerShip::velocityMultiply(qreal scalar)
-{
-    mV *= scalar;
-}
-
-void PlayerShip::velocityAddition(qreal scalar)
-{
-    mV += scalar;
-}
-
-void PlayerShip::addAccelerationVector(Vector a)
-{
-    mA += a;
-}
-
-void PlayerShip::setAccelerationVector(Vector a)
-{
-    mA = a;
 }
 
 void PlayerShip::addBridge(int x, int y)
@@ -222,8 +245,6 @@ bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction)
 {
     int deltaX;
     int deltaY;
-    int initX = x;
-    int initY = y;
     switch (direction) {
         case TwoDeg::Up:
             deltaX = 0;
@@ -250,7 +271,6 @@ bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction)
         x += deltaX;
         y += deltaY;
     }
-    //qDebug() << "Thruster created at X" << initX << "Y" << initY << "Direction" << direction;
     return true;
 }
 
@@ -260,8 +280,23 @@ void PlayerShip::resetMovement()
     mBackwardThrust = false;
     mLeftThrust = false;
     mRightThrust = false;
-    mRotateLeftThrust = false;
-    mRotateRightThrust = false;
+    //mRotateLeftThrust = false;
+    //mRotateRightThrust = false;
+}
+
+void PlayerShip::rotate(int degrees)
+{
+    if (mRotateState != RotateState::Idle)
+    {
+        Q_EMIT displayText("<ERROR> - ROTATE COMMAND IN PROGRESS");
+        return;
+    }
+    resetMovement();
+    if (degrees > 0)
+        mRotateState = RotateState::BeforeTargetCW;
+    else
+        mRotateState = RotateState::BeforeTargetCCW;
+    mRotateTargetRad = mAtan2 + (degrees*M_PI/360.0);
 }
 
 void PlayerShip::receiveTextFromComponent(const QString &text)

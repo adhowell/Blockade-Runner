@@ -38,10 +38,10 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
 void SimulationLoop::applyPlayerInput()
 {
     mPlayer->resetMovement();
-    if (mLeftThrust)
-        mPlayer->enableRotateLeft();
-    if (mRightThrust)
-        mPlayer->enableRotateRight();
+    //if (mLeftThrust)
+    //    mPlayer->enableRotateLeft();
+    //if (mRightThrust)
+    //    mPlayer->enableRotateRight();
     if (mForwardThrust)
         mPlayer->enableForward();
     if (mBackwardThrust)
@@ -72,6 +72,11 @@ void SimulationLoop::setThrust(TwoDeg direction, bool isActive)
             mRightThrust = isActive;
             break;
     }
+}
+
+void SimulationLoop::rotate(int degrees)
+{
+    mPlayer->rotate(degrees);
 }
 
 void SimulationLoop::receiveTextFromPlayerShip(const QString& text)

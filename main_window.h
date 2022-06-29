@@ -10,7 +10,7 @@ public:
     MainWindow(QWidget* parent = nullptr);
 
 private:
-    SimulationLoop* mScene;
+    SimulationLoop* mSimulation;
     Terminal* mTerminal;
     TacticalScene* mTacticalScene;
 };

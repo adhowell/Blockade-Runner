@@ -14,6 +14,7 @@ public:
 Q_SIGNALS:
     void sendParsedInput(const QString& text);
     void setThrustDirection(TwoDeg direction, bool isActive);
+    void rotate(int degrees);
 
 public Q_SLOTS:
     void parseInput(const QString& rawText);
@@ -22,6 +23,7 @@ public Q_SLOTS:
 private:
     enum Command
     {
+        None,
         Thrust,
         Rotate,
         Alias

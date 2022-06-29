@@ -20,6 +20,7 @@ public:
 public Q_SLOTS:
     void receiveTextFromPlayerShip(const QString& text);
     void setThrust(TwoDeg direction, bool isActive);
+    void rotate(int degrees);
 
 Q_SIGNALS:
     /**
