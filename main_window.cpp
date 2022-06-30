@@ -19,4 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle("Blockade Runner");
     setFixedSize(gWidth, gHeight);
+
+    mTerminal->setInputFocus();
 }

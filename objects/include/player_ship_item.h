@@ -1,5 +1,7 @@
 #include "blur.h"
 #include "include/engine.h"
+#include "include/component.h"
+
 #include <QGraphicsItem>
 #include <QtMath>
 
@@ -16,10 +18,10 @@ public:
     void update() { prepareGeometryChange(); }
 
     void addEngine(Engine* engine) { mEngines.push_back(engine); }
-    void addPoly(QPolygonF poly) { mPolys.push_back(poly); }
+    void addComponent(Component* component) { mComponents.push_back(component); }
 
 private:
     qreal* mAtan2;
     QVector<Engine*> mEngines;
-    QVector<QPolygonF> mPolys;
+    QVector<Component*> mComponents;
 };

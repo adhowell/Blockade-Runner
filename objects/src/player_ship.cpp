@@ -2,10 +2,6 @@
 #include "include/mini_engine.h"
 #include "include/cruise_engine.h"
 
-QMap<PlayerShip::Component, qreal> PlayerShip::sComponentMass = { {PlayerShip::Component::Thruster, 100},
-                                                                  {PlayerShip::Component::Bridge, 200},
-                                                                  {PlayerShip::Component::CruiseThruster, 200}};
-
 PlayerShip::PlayerShip()
 {
     mTacticalGraphicsItem = new PlayerShipItem(&mAtan2);
@@ -14,6 +10,7 @@ PlayerShip::PlayerShip()
 
 void PlayerShip::update(qreal deltaT)
 {
+    // State machine for rotation commands
     switch (mRotateState)
     {
         case RotateState::BeforeTargetCW:
@@ -55,6 +52,26 @@ void PlayerShip::update(qreal deltaT)
                 mRotateState = RotateState::Idle;
                 Q_EMIT displayText("<INFO> - ROTATE COMMAND COMPLETE");
             }
+            break;
+        case Idle:;
+    }
+
+    // Temperature flow between components
+    QMapIterator compIter(mComponentMap);
+    while (compIter.hasNext())
+    {
+        compIter.next();
+        auto c = compIter.value();
+        int x = compIter.key().first;
+        int y = compIter.key().second;
+        if (mComponentMap.contains({x-1, y}))
+            c->applyTemperatureDelta(0.01 * (mComponentMap[{x-1, y}]->getTemperature() - c->getTemperature()));
+        if (mComponentMap.contains({x+1, y}))
+            c->applyTemperatureDelta(0.01 * (mComponentMap[{x+1, y}]->getTemperature() - c->getTemperature()));
+        if (mComponentMap.contains({x, y-1}))
+            c->applyTemperatureDelta(0.01 * (mComponentMap[{x, y-1}]->getTemperature() - c->getTemperature()));
+        if (mComponentMap.contains({x, y+1}))
+            c->applyTemperatureDelta(0.01 * (mComponentMap[{x, y+1}]->getTemperature() - c->getTemperature()));
     }
 
     for (auto e : mEngines)
@@ -93,45 +110,74 @@ void PlayerShip::update(qreal deltaT)
 
 void PlayerShip::addBridge(int x, int y)
 {
-    mComponentMap[QPair{x, y}] = Component::Bridge;
+    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
+            << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
+            << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
+            << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
+
+    auto component = new Component(Component::ComponentType::Reactor, poly);
+    mComponentMap[QPair{x, y}] = component;
     mCentreOfMass += Vector(qreal((x+0.5)-(sGridSize*0.5))*sBlockSize,
-                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * sComponentMass[Component::Bridge];
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    mTacticalGraphicsItem->addPoly(QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-                                               << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-                                               << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-                                               << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize));
-    mM += sComponentMass[Component::Bridge];
+                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
+
+    mTacticalGraphicsItem->addComponent(component);
+    mM += component->getMass();
 }
 
-void PlayerShip::addThruster(int x, int y)
+void PlayerShip::addCargo(int x, int y)
 {
-    mComponentMap[QPair{x, y}] = Component::Thruster;
+    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
+                             << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
+                             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
+                             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
+
+    auto component = new Component(Component::ComponentType::Cargo, poly);
+    mComponentMap[QPair{x, y}] = component;
     mCentreOfMass += Vector(qreal((x+0.5)-(sGridSize*0.5))*sBlockSize,
-                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * sComponentMass[Component::Thruster];
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    mTacticalGraphicsItem->addPoly(QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-                                               << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-                                               << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-                                               << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize));
-    mM += sComponentMass[Component::Thruster];
+                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
+
+    mTacticalGraphicsItem->addComponent(component);
+    mM += component->getMass();
 }
 
-void PlayerShip::addCruiseEngine(int x, int y, TwoDeg direction)
+void PlayerShip::addRotateThruster(int x, int y)
 {
-    mComponentMap[QPair{x, y}] = Component::CruiseThruster;
-    mComponentDirection[QPair{x, y}] = direction;
+    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
+            << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
+            << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
+            << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
+
+    auto component = new Component(Component::ComponentType::RotateThruster, poly);
+    mComponentMap[QPair{x, y}] = component;
     mCentreOfMass += Vector(qreal((x+0.5)-(sGridSize*0.5))*sBlockSize,
-                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * sComponentMass[Component::CruiseThruster];
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    mTacticalGraphicsItem->addPoly(QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-                                               << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-                                               << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-                                               << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize));
-    mM += sComponentMass[Component::CruiseThruster];
+                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
+
+    mTacticalGraphicsItem->addComponent(component);
+    mM += component->getMass();
+}
+
+void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
+{
+    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
+            << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
+            << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
+            << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
+
+    auto component = new Component(Component::ComponentType::CruiseThruster, poly, direction);
+    mComponentMap[QPair{x, y}] = component;
+    mCentreOfMass += Vector(qreal((x+0.5)-(sGridSize*0.5))*sBlockSize,
+                            qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
+
+    mTacticalGraphicsItem->addComponent(component);
+    mM += component->getMass();
 }
 
 void PlayerShip::computeThrusterDirectionForce(int x, int y, TwoDeg direction)
@@ -140,24 +186,24 @@ void PlayerShip::computeThrusterDirectionForce(int x, int y, TwoDeg direction)
     Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
                             qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
                     - mCentreOfMass;
-    auto engine = new MiniEngine(direction, offset, mM, mI);
+    auto engine = new MiniEngine(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
     connect(engine, &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
 
     // For visualising active thrusters
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
+    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
     switch (direction) {
         case TwoDeg::Up:
-            scenePosY += sGridSceneSize;
+            scenePosY += sGridSize;
             break;
         case TwoDeg::Down:
-            scenePosY -= sGridSceneSize;
+            scenePosY -= sGridSize;
             break;
         case TwoDeg::Left:
-            scenePosX += sGridSceneSize;
+            scenePosX += sGridSize;
             break;
         case TwoDeg::Right:
-            scenePosX -= sGridSceneSize;
+            scenePosX -= sGridSize;
             break;
     }
     engine->createPoly(QPointF(scenePosX, scenePosY));
@@ -171,24 +217,24 @@ void PlayerShip::computeCruiseEngineDirectionForce(int x, int y, TwoDeg directio
     Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
                            qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
                     - mCentreOfMass;
-    auto engine = new CruiseEngine(direction, offset, mM, mI);
+    auto engine = new CruiseEngine(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
     connect(engine, &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
 
     // For visualising active thrusters
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSceneSize * 2.0;
+    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
     switch (direction) {
         case TwoDeg::Up:
-            scenePosY += sGridSceneSize;
+            scenePosY += sGridSize;
             break;
         case TwoDeg::Down:
-            scenePosY -= sGridSceneSize;
+            scenePosY -= sGridSize;
             break;
         case TwoDeg::Left:
-            scenePosX += sGridSceneSize;
+            scenePosX += sGridSize;
             break;
         case TwoDeg::Right:
-            scenePosX -= sGridSceneSize;
+            scenePosX -= sGridSize;
             break;
     }
     engine->createPoly(QPointF(scenePosX, scenePosY));
@@ -206,7 +252,7 @@ void PlayerShip::computeRotationalInertia()
         compIter.next();
         int x = compIter.key().first;
         int y = compIter.key().second;
-        mI += sComponentMass[compIter.value()]
+        mI += compIter.value()->getMass()
               * (qPow(qreal((x+0.5)-sGridSize*0.5)*sBlockSize - mCentreOfMass.x(), 2.0)
                  + qPow(qreal((y+0.5)-sGridSize*0.5)*sBlockSize - mCentreOfMass.y(), 2.0));
     }
@@ -223,7 +269,7 @@ void PlayerShip::computeStaticForceVectors()
         compIter.next();
         int x = compIter.key().first;
         int y = compIter.key().second;
-        if (compIter.value() == Component::Thruster)
+        if (compIter.value()->getType() == Component::ComponentType::RotateThruster)
         {
             // For each unique direction
             for (int i = 0; i < 4; i++) {
@@ -232,9 +278,9 @@ void PlayerShip::computeStaticForceVectors()
                     computeThrusterDirectionForce(x, y, direction);
             }
         }
-        if (compIter.value() == Component::CruiseThruster)
+        if (compIter.value()->getType() == Component::ComponentType::CruiseThruster)
         {
-            TwoDeg direction = mComponentDirection[QPair(x, y)];
+            TwoDeg direction = compIter.value()->getDirection();
             assert (isGridLineFree(x, y, direction));
             computeCruiseEngineDirectionForce(x, y, direction);
         }

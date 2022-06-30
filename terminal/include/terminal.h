@@ -11,6 +11,8 @@ class Terminal : public QFrame
 public:
     Terminal(QWidget* parent = nullptr);
 
+    void setInputFocus() { mInput->setFocus(); }
+
 Q_SIGNALS:
     void sendParsedInput(const QString& text);
     void setThrustDirection(TwoDeg direction, bool isActive);

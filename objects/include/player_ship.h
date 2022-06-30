@@ -1,8 +1,9 @@
 #include "include/vector.h"
-#include "include/directions.h"
 #include "blur.h"
 #include "include/engine.h"
+#include "include/component.h"
 #include "player_ship_item.h"
+
 #include <QGraphicsItem>
 #include <QtMath>
 
@@ -12,12 +13,6 @@ class PlayerShip : public QObject {
     Q_OBJECT
 public:
     PlayerShip();
-
-    enum Component {
-        Bridge,
-        Thruster,
-        CruiseThruster,
-    };
 
     enum RotateState {
         Idle,
@@ -30,65 +25,10 @@ public:
 
     static QMap<Component, qreal> sComponentMass;
 
-    /**
-     * Adds the given velocity vector to the velocity
-     * vector of this PlayerShip.
-     * @param v vector to add
-     */
-    void addVelocityVector(Vector v);
-
-    /**
-     * Adds a velocity vector to the current velocity
-     * based on the current direction of the ship.
-     * @param s magnitude of added velocity vector
-     */
-    void addLongitudinalVelocity(qreal s);
-
-    /**
-     * Adds a velocity vector to the current velocity
-     * based on the current direction of the ship.
-     * @param s magnitude of added velocity vector
-     */
-    void addLateralVelocity(qreal s);
-
-    /**
-     * Adds the given scalar to the rotational velocity
-     * vector of this PlayerShip.
-     * @param s scalar to add
-     */
-    void addRotationalVelocity(qreal s);
-
-    /**
-     * Adds the given acceleration vector to the
-     * acceleration vector of this PlayerShip.
-     * @param v vector to add
-     */
-    void addAccelerationVector(Vector a);
-
-    /**
-     * Sets the given acceleration vector as the
-     * acceleration vector of this PlayerShip.
-     * @param v vector to add
-     */
-    void setAccelerationVector(Vector a);
-
-    /**
-     * Multiplies the velocity of this PlayerShip by
-     * the given scalar.
-     * @param scalar
-     */
-    void velocityMultiply(qreal scalar);
-
-    /**
-     * Adds the given scalar to the velocity
-     * of this PlayerShip.
-     * @param scalar
-     */
-    void velocityAddition(qreal scalar);
-
     void addBridge(int x, int y);
-    void addThruster(int x, int y);
-    void addCruiseEngine(int x, int y, TwoDeg direction);
+    void addCargo(int x, int y);
+    void addRotateThruster(int x, int y);
+    void addCruiseThruster(int x, int y, TwoDeg direction);
 
     void computeRotationalInertia();
     void computeStaticForceVectors();
@@ -132,8 +72,7 @@ private:
     bool mRotateRightThrust = false;
 
     RotateState mRotateState = Idle;
-    qreal mRotateTargetRad;
-    bool mDampenRotation = false;
+    qreal mRotateTargetRad = 0;
 
     qreal mAtan2 = 0; // Bearing (rads)
     qreal mRotA = 0; // Rotational acceleration
@@ -147,11 +86,9 @@ private:
     PlayerShipItem* mTacticalGraphicsItem;
     QVector<Engine*> mEngines;
 
-    QMap<QPair<int, int>, Component> mComponentMap;
-    QMap<QPair<int, int>, TwoDeg> mComponentDirection;
+    QMap<QPair<int, int>, Component*> mComponentMap;
 
     static int const sBlockSize = 10;
     static int const sGridSize = 5;
-    static int const sGridSceneSize = 5;
-    constexpr static qreal const sThrusterForce = 1.0;
+    static int const sGridSceneSize = 4;
 };

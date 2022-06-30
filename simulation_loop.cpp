@@ -16,11 +16,22 @@ void SimulationLoop::initPlayer()
     mPlayer = new PlayerShip();
     connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveTextFromPlayerShip);
 
-    mPlayer->addThruster(0, 0);
-    mPlayer->addThruster(0, 4);
-    mPlayer->addThruster(4, 0);
-    mPlayer->addThruster(4, 4);
-    mPlayer->addCruiseEngine(2, 3, TwoDeg::Up);
+    mPlayer->addRotateThruster(0, 0);
+    mPlayer->addRotateThruster(0, 4);
+    mPlayer->addRotateThruster(4, 0);
+    mPlayer->addRotateThruster(4, 4);
+    mPlayer->addCruiseThruster(2, 0, TwoDeg::Down);
+    mPlayer->addCruiseThruster(2, 4, TwoDeg::Up);
+    mPlayer->addCargo(1, 0);
+    mPlayer->addCargo(1, 1);
+    mPlayer->addCargo(1, 2);
+    mPlayer->addCargo(1, 3);
+    mPlayer->addCargo(1, 4);
+    mPlayer->addCargo(3, 0);
+    mPlayer->addCargo(3, 1);
+    mPlayer->addCargo(3, 2);
+    mPlayer->addCargo(3, 3);
+    mPlayer->addCargo(3, 4);
     mPlayer->computeStaticForceVectors();
 
     mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());

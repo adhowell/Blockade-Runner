@@ -6,10 +6,10 @@
 
 class CruiseEngine : public Engine {
 public:
-    CruiseEngine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia);
+    CruiseEngine(Component* component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia);
 };
 
-CruiseEngine::CruiseEngine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia)
-        : Engine(direction, centreOfMassOffset, mass, inertia, 15, 0.01, Profile::EXP, Size::BIG) {}
+CruiseEngine::CruiseEngine(Component* component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia)
+        : Engine(component, direction, centreOfMassOffset, mass, inertia, 15, 0.01, Profile::EXP, Size::BIG) {}
 
 #endif //CRUISE_ENGINE_H

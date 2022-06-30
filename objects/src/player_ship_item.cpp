@@ -8,7 +8,6 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     QBrush fillBrush;
     QBrush emptyBrush;
 
-    pen.setColor(QColor(0, 255, 0));
     fillBrush.setStyle(Qt::BrushStyle::SolidPattern);
     fillBrush.setColor(QColor(0, 255, 0));
 
@@ -16,15 +15,21 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->setPen(pen);
     painter->rotate(*mAtan2*360.0/(M_PI*2.0));
 
-    for (auto const &p : mPolys)
+    for (auto const &c : mComponents)
     {
-        painter->drawPolygon(p);
+        pen.setColor(QColor(0, int(255.0*c->getNormTemperature()), 0));
+        painter->setPen(pen);
+        painter->drawPolygon(c->getPoly());
     }
     for (auto const &e : mEngines)
     {
-        painter->setBrush(emptyBrush);
-        fillBrush.setColor(QColor(0, 255, 0, e->getOpacity()*255));
-        if (e->enabled()) painter->setBrush(fillBrush);
+        int gVal = int(255.0*e->getNormTemperature());
+        pen.setColor(QColor(0, gVal, 0));
+        painter->setPen(pen);
+
+        fillBrush.setColor(QColor(0, gVal, 0));
+        painter->setBrush(fillBrush);
+
         painter->drawPolygon(e->getPoly());
     }
     //painter->rotate(-mAtan2*360.0/(M_PI*2.0));

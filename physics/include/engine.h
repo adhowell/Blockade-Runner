@@ -2,6 +2,7 @@
 #define ENGINE_H
 #include "include/vector.h"
 #include "include/directions.h"
+#include "include/component.h"
 #include <QtWidgets>
 
 #pragma once
@@ -29,10 +30,13 @@ public:
     qreal getLateralAcc() const;
     qreal getRotationalAcc() const;
 
+    Component* getComponent() { return mComponent; }
+
     bool enabled() const { return mEnabled; }
 
     QPolygonF getPoly() const { return mPoly; }
     qreal getOpacity() const { return mThrustRatio; }
+    qreal getNormTemperature() const { return qMin((mTemperature/1000.0)+0.1, 1.0); }
     void createPoly(QPointF marker);
 
     void incrementAccProfile();
@@ -43,7 +47,7 @@ Q_SIGNALS:
     void transmitStatus(const QString&);
 
 protected:
-    Engine(TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia, qreal thrust, qreal incr, Profile profile, Size size);
+    Engine(Component* component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia, qreal thrust, qreal incr, Profile profile, Size size);
 
     qreal mForwardAcc = 0.0;
     qreal mLateralAcc = 0.0;
@@ -55,6 +59,8 @@ protected:
     Profile mThrustRatioFunction;
     qreal mIncr;
     TwoDeg mDirection;
+    Component* mComponent;
+    qreal mTemperature;
 
     bool mEnabled = false;
     Size mSize;

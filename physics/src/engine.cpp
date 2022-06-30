@@ -1,9 +1,11 @@
 #include "include/engine.h"
 
-Engine::Engine(TwoDeg direction, Vector centreOfMassOffset,
+Engine::Engine(Component* component, TwoDeg direction, Vector centreOfMassOffset,
                qreal mass, qreal inertia, qreal thrust, qreal incr,
                Profile profile, Size size)
 {
+    mComponent = component;
+    mTemperature = component->getTemperature();
     mDirection = direction;
     mThrust = thrust;
     mIncr = incr;
@@ -86,6 +88,9 @@ qreal Engine::getRotationalAcc() const
 
 void Engine::incrementAccProfile()
 {
+    mTemperature += mThrust*0.1;
+    mComponent->applyTemperatureDelta(mThrust*0.05);
+
     if (mThrustRatioStep < 1) {
         mThrustRatioStep = qMin(mThrustRatioStep + mIncr, 1.0);
         updateThrustRatio();
@@ -95,6 +100,10 @@ void Engine::incrementAccProfile()
 
 void Engine::decrementAccProfile()
 {
+    mTemperature -= mThrust*0.1;
+    mComponent->applyTemperatureDelta(-mThrust*0.05);
+    if (mTemperature < 0) mTemperature = 0;
+
     if (mThrustRatioStep > 0) {
         mThrustRatioStep = qMax(mThrustRatioStep - mIncr, 0.0);
         updateThrustRatio();
