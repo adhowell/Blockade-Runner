@@ -1,6 +1,7 @@
 target_sources(projLib
         PUBLIC
         include/asteroid.h
+        include/menu_grid_box.h
         include/phosphor_ghost.h
         include/player_ship.h
         include/player_ship_item.h

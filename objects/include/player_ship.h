@@ -25,13 +25,14 @@ public:
 
     static QMap<Component, qreal> sComponentMass;
 
-    void addBridge(int x, int y);
-    void addCargo(int x, int y);
+    void addReactor(int x, int y);
+    void addHeatSink(int x, int y);
     void addRotateThruster(int x, int y);
     void addCruiseThruster(int x, int y, TwoDeg direction);
 
     void computeRotationalInertia();
     void computeStaticForceVectors();
+    void reconfigure();
 
     bool isGridLineFree(int x, int y, TwoDeg direction);
 
@@ -57,11 +58,19 @@ public:
 
     void rotate(int degrees);
 
+    constexpr static qreal const sBlockSize = 10;
+    constexpr static qreal const sGridSize = 5;
+    constexpr static qreal const sGridSceneSize = 4.5;
+
 public Q_SLOTS:
     void receiveTextFromComponent(const QString& text);
+    void handleAddPart(Component::ComponentType, QPoint);
 
 Q_SIGNALS:
     void displayText(QString text);
+    void handleAddConfigComponent(Component*);
+    void handleAddConfigEngine(Engine*);
+    void handleRemoveAllConfigItems();
 
 private:
     bool mForwardThrust = false;
@@ -87,8 +96,4 @@ private:
     QVector<Engine*> mEngines;
 
     QMap<QPair<int, int>, Component*> mComponentMap;
-
-    static int const sBlockSize = 10;
-    static int const sGridSize = 5;
-    static int const sGridSceneSize = 4;
 };

@@ -4,7 +4,7 @@
 
 #pragma once
 
-class View;
+//class View;
 
 class TacticalView : public QGraphicsView
 {

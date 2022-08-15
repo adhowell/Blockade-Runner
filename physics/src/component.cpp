@@ -5,7 +5,7 @@ Component::Component(ComponentType type, QPolygonF poly, TwoDeg direction)
 {
     switch (type)
     {
-        case ComponentType::Cargo:
+        case ComponentType::HeatSink:
         case ComponentType::RotateThruster:
         case ComponentType::CruiseThruster:
         case ComponentType::EmergencyThruster:

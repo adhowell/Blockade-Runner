@@ -11,7 +11,7 @@ public:
     enum ComponentType
     {
         Reactor,
-        Cargo,
+        HeatSink,
         RotateThruster,
         CruiseThruster,
         EmergencyThruster,

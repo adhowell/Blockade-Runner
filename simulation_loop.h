@@ -1,5 +1,6 @@
 #include "include/player_ship.h"
 #include "include/tactical_view.h"
+#include "include/config_view.h"
 #include "../global_config.h"
 #include <QFrame>
 #include <QGraphicsView>
@@ -11,7 +12,7 @@ class SimulationLoop : public QObject
 {
     Q_OBJECT
 public:
-    explicit SimulationLoop(TacticalScene* tacticalScene);
+    explicit SimulationLoop(TacticalScene* tacticalScene, ConfigScene* configScene);
 
     void initPlayer();
 
@@ -32,6 +33,7 @@ private:
     PlayerShip* mPlayer;
 
     TacticalScene* mTacticalScene;
+    ConfigScene* mConfigScene;
 
     void applyPlayerInput();
     void updatePlayer();

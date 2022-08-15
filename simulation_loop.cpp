@@ -1,12 +1,12 @@
 #include "simulation_loop.h"
 #include <QtWidgets>
-#include <QGraphicsView>
 #include <QFrame>
 #include <QDebug>
 
-SimulationLoop::SimulationLoop(TacticalScene* tacticalScene) : QObject()
+SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, ConfigScene* configScene) : QObject()
 {
     mTacticalScene = tacticalScene;
+    mConfigScene = configScene;
     initPlayer();
     startTimer(1000/gTargetFramerate);
 }
@@ -15,7 +15,12 @@ void SimulationLoop::initPlayer()
 {
     mPlayer = new PlayerShip();
     connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveTextFromPlayerShip);
+    connect(mPlayer, &PlayerShip::handleAddConfigComponent, mConfigScene, &ConfigScene::drawConfigComponent);
+    connect(mPlayer, &PlayerShip::handleAddConfigEngine, mConfigScene, &ConfigScene::drawConfigEngine);
+    connect(mPlayer, &PlayerShip::handleRemoveAllConfigItems, mConfigScene, &ConfigScene::deleteAllComponents);
+    connect(mConfigScene->getView(), &ConfigView::addShipPart, mPlayer, &PlayerShip::handleAddPart);
 
+    /*
     mPlayer->addRotateThruster(0, 0);
     mPlayer->addRotateThruster(0, 4);
     mPlayer->addRotateThruster(4, 0);
@@ -31,8 +36,9 @@ void SimulationLoop::initPlayer()
     mPlayer->addCargo(3, 1);
     mPlayer->addCargo(3, 2);
     mPlayer->addCargo(3, 3);
-    mPlayer->addCargo(3, 4);
+    mPlayer->addHeatSink(3, 4);
     mPlayer->computeStaticForceVectors();
+    */
 
     mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());
 }

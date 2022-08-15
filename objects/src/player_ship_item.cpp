@@ -6,7 +6,6 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     QPen pen;
     QBrush fillBrush;
-    QBrush emptyBrush;
 
     fillBrush.setStyle(Qt::BrushStyle::SolidPattern);
     fillBrush.setColor(QColor(0, 255, 0));

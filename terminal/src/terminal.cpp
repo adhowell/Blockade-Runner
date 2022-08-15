@@ -23,6 +23,7 @@ Terminal::Terminal(QWidget* parent) : QFrame(parent)
     layout->addWidget(mHistory, 8);
     layout->addWidget(mInput, 1);
     setLayout(layout);
+    hide();
 }
 
 void Terminal::parseInput(const QString& rawText)

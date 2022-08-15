@@ -5,7 +5,7 @@
 PlayerShip::PlayerShip()
 {
     mTacticalGraphicsItem = new PlayerShipItem(&mAtan2);
-    addBridge(2, 2);
+    addReactor(2, 2);
 }
 
 void PlayerShip::update(qreal deltaT)
@@ -108,7 +108,7 @@ void PlayerShip::update(qreal deltaT)
     mTacticalGraphicsItem->update();
 }
 
-void PlayerShip::addBridge(int x, int y)
+void PlayerShip::addReactor(int x, int y)
 {
     qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
     qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
@@ -124,9 +124,11 @@ void PlayerShip::addBridge(int x, int y)
 
     mTacticalGraphicsItem->addComponent(component);
     mM += component->getMass();
+
+    Q_EMIT handleAddConfigComponent(component);
 }
 
-void PlayerShip::addCargo(int x, int y)
+void PlayerShip::addHeatSink(int x, int y)
 {
     qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
     qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
@@ -135,13 +137,15 @@ void PlayerShip::addCargo(int x, int y)
                              << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
                              << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = new Component(Component::ComponentType::Cargo, poly);
+    auto component = new Component(Component::ComponentType::HeatSink, poly);
     mComponentMap[QPair{x, y}] = component;
     mCentreOfMass += Vector(qreal((x+0.5)-(sGridSize*0.5))*sBlockSize,
                             qreal((y+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
 
     mTacticalGraphicsItem->addComponent(component);
     mM += component->getMass();
+
+    Q_EMIT handleAddConfigComponent(component);
 }
 
 void PlayerShip::addRotateThruster(int x, int y)
@@ -160,6 +164,8 @@ void PlayerShip::addRotateThruster(int x, int y)
 
     mTacticalGraphicsItem->addComponent(component);
     mM += component->getMass();
+
+    Q_EMIT handleAddConfigComponent(component);
 }
 
 void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
@@ -178,6 +184,8 @@ void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
 
     mTacticalGraphicsItem->addComponent(component);
     mM += component->getMass();
+
+    Q_EMIT handleAddConfigComponent(component);
 }
 
 void PlayerShip::computeThrusterDirectionForce(int x, int y, TwoDeg direction)
@@ -209,6 +217,8 @@ void PlayerShip::computeThrusterDirectionForce(int x, int y, TwoDeg direction)
     engine->createPoly(QPointF(scenePosX, scenePosY));
     mEngines.push_back(engine);
     mTacticalGraphicsItem->addEngine(engine);
+
+    Q_EMIT handleAddConfigEngine(engine);
 }
 
 void PlayerShip::computeCruiseEngineDirectionForce(int x, int y, TwoDeg direction)
@@ -348,4 +358,33 @@ void PlayerShip::rotate(int degrees)
 void PlayerShip::receiveTextFromComponent(const QString &text)
 {
     Q_EMIT displayText(text);
+}
+
+void PlayerShip::handleAddPart(Component::ComponentType compType, QPoint pos)
+{
+    switch (compType)
+    {
+        case Component::ComponentType::HeatSink:
+            addHeatSink(pos.x(), pos.y());
+            break;
+        case Component::ComponentType::Reactor:
+            addReactor(pos.x(), pos.y());
+            break;
+        case Component::ComponentType::RotateThruster:
+            addRotateThruster(pos.x(), pos.y());
+            break;
+        default:
+            break;
+    }
+    reconfigure();
+}
+
+void PlayerShip::reconfigure()
+{
+    Q_EMIT handleRemoveAllConfigItems();
+    computeStaticForceVectors();
+    for (auto c : mComponentMap.values())
+            Q_EMIT handleAddConfigComponent(c);
+    for (auto e : mEngines)
+            Q_EMIT handleAddConfigEngine(e);
 }
