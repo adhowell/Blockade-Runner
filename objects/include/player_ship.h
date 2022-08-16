@@ -66,7 +66,7 @@ public:
 
 public Q_SLOTS:
     void receiveTextFromComponent(const QString& text);
-    void handleAddPart(Component::ComponentType, QPoint);
+    void handleAddPart(Component::ComponentType, QPoint, TwoDeg);
     void handleRemovePart(QPoint);
 
 Q_SIGNALS:

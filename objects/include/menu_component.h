@@ -18,6 +18,9 @@ public:
             case Component::ComponentType::RotateThruster:
                 mLabel = "THRUSTER";
                 break;
+            case Component::ComponentType::CruiseThruster:
+                mLabel = "ENGINE";
+                break;
             default:
                 break;
         }

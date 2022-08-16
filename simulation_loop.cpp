@@ -21,7 +21,7 @@ void SimulationLoop::initPlayer()
     connect(mConfigScene->getView(), &ConfigView::addShipPart, mPlayer, &PlayerShip::handleAddPart);
     connect(mConfigScene->getView(), &ConfigView::removeShipPart, mPlayer, &PlayerShip::handleRemovePart);
 
-    mPlayer->handleAddPart(Component::ComponentType::Reactor, {2, 2});
+    mPlayer->handleAddPart(Component::ComponentType::Reactor, {2, 2}, TwoDeg::Up);
 
     mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());
 }

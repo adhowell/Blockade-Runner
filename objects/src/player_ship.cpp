@@ -343,7 +343,7 @@ void PlayerShip::receiveTextFromComponent(const QString &text)
     Q_EMIT displayText(text);
 }
 
-void PlayerShip::handleAddPart(Component::ComponentType compType, QPoint pos)
+void PlayerShip::handleAddPart(Component::ComponentType compType, QPoint pos, TwoDeg direction)
 {
     switch (compType)
     {
@@ -355,6 +355,9 @@ void PlayerShip::handleAddPart(Component::ComponentType compType, QPoint pos)
             break;
         case Component::ComponentType::RotateThruster:
             addRotateThruster(pos.x(), pos.y());
+            break;
+        case Component::ComponentType::CruiseThruster:
+            addCruiseThruster(pos.x(), pos.y(), direction);
             break;
         default:
             break;

@@ -20,7 +20,7 @@ public:
     void mousePressEvent(QMouseEvent* event) override;
 
 Q_SIGNALS:
-    void addShipPart(Component::ComponentType, QPoint);
+    void addShipPart(Component::ComponentType, QPoint, TwoDeg);
     void removeShipPart(QPoint);
     void handleClose();
 
@@ -29,7 +29,11 @@ private:
     void attemptAddPart(QPoint pos);
     void attemptRemovePart(QPoint pos);
 
+    void updateGridBoxes();
+
     Component::ComponentType mFocusComponent = Component::ComponentType::Reactor;
+    TwoDeg mDirection = TwoDeg::Up;
+    bool mItemRequiresDirection = false;
 
 };
 

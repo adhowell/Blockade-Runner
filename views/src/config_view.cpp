@@ -11,7 +11,29 @@ ConfigView::ConfigView(QGraphicsScene* scene) : QGraphicsView()
 
 void ConfigView::wheelEvent(QWheelEvent* event)
 {
-    Q_EMIT handleClose();
+    if (event->angleDelta().y() > 0)
+    {
+        // CCW
+        switch (mDirection)
+        {
+            case TwoDeg::Up: mDirection = TwoDeg::Left; break;
+            case TwoDeg::Left: mDirection = TwoDeg::Down; break;
+            case TwoDeg::Down: mDirection = TwoDeg::Right; break;
+            case TwoDeg::Right: mDirection = TwoDeg::Up; break;
+        }
+    }
+    else
+    {
+        // CW
+        switch (mDirection)
+        {
+            case TwoDeg::Up: mDirection = TwoDeg::Right; break;
+            case TwoDeg::Left: mDirection = TwoDeg::Up; break;
+            case TwoDeg::Down: mDirection = TwoDeg::Left; break;
+            case TwoDeg::Right: mDirection = TwoDeg::Down; break;
+        }
+    }
+    updateGridBoxes();
 }
 
 void ConfigView::mousePressEvent(QMouseEvent* event)
@@ -24,8 +46,22 @@ void ConfigView::mousePressEvent(QMouseEvent* event)
             break;
         case Qt::MouseButton::RightButton:
             attemptRemovePart(event->pos());
+            Q_EMIT handleClose();
             break;
         default:;
+    }
+}
+
+void ConfigView::updateGridBoxes()
+{
+    for (auto item: items())
+    {
+        auto box = dynamic_cast<GridBox*>(item);
+        if (!box)
+            continue;
+        box->setDirection(mDirection);
+        box->setDrawDirection(mItemRequiresDirection);
+        box->update();
     }
 }
 
@@ -36,7 +72,7 @@ void ConfigView::attemptFocusTile(QPoint pos)
     {
         for (auto item: items())
         {
-            auto tile = dynamic_cast<ComponentTile *>(item);
+            auto tile = dynamic_cast<ComponentTile*>(item);
             if (!tile)
                 continue;
             if (tile == focusTile)
@@ -45,6 +81,10 @@ void ConfigView::attemptFocusTile(QPoint pos)
                 tile->setFocus(false);
         }
         mFocusComponent = focusTile->getType();
+        mItemRequiresDirection = false;
+        if (mFocusComponent == Component::ComponentType::CruiseThruster)
+            mItemRequiresDirection = true;
+        updateGridBoxes();
         return;
     }
 }
@@ -56,7 +96,7 @@ void ConfigView::attemptAddPart(QPoint pos)
         auto box = dynamic_cast<GridBox*>(item);
         if (box)
         {
-            Q_EMIT addShipPart(mFocusComponent, box->getCoords());
+            Q_EMIT addShipPart(mFocusComponent, box->getCoords(), mDirection);
             return;
         }
     }
@@ -92,6 +132,7 @@ ConfigScene::ConfigScene(QWidget* parent) : QGraphicsScene(parent)
     addItem(new ComponentTile(-30, -80, Component::ComponentType::Reactor));
     addItem(new ComponentTile(-30, -55, Component::ComponentType::HeatSink));
     addItem(new ComponentTile(-95, -55, Component::ComponentType::RotateThruster));
+    addItem(new ComponentTile(-95, -80, Component::ComponentType::CruiseThruster));
 }
 
 ConfigView* ConfigScene::getView() const
