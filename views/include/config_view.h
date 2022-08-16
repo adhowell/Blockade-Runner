@@ -21,9 +21,14 @@ public:
 
 Q_SIGNALS:
     void addShipPart(Component::ComponentType, QPoint);
+    void removeShipPart(QPoint);
     void handleClose();
 
 private:
+    void attemptFocusTile(QPoint pos);
+    void attemptAddPart(QPoint pos);
+    void attemptRemovePart(QPoint pos);
+
     Component::ComponentType mFocusComponent = Component::ComponentType::Reactor;
 
 };

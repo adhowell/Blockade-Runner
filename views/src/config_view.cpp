@@ -16,7 +16,22 @@ void ConfigView::wheelEvent(QWheelEvent* event)
 
 void ConfigView::mousePressEvent(QMouseEvent* event)
 {
-    auto focusTile = dynamic_cast<ComponentTile*>(itemAt(event->pos()));
+    switch (event->button())
+    {
+        case Qt::MouseButton::LeftButton:
+            attemptFocusTile(event->pos());
+            attemptAddPart(event->pos());
+            break;
+        case Qt::MouseButton::RightButton:
+            attemptRemovePart(event->pos());
+            break;
+        default:;
+    }
+}
+
+void ConfigView::attemptFocusTile(QPoint pos)
+{
+    auto focusTile = dynamic_cast<ComponentTile*>(itemAt(pos));
     if (focusTile)
     {
         for (auto item: items())
@@ -32,12 +47,29 @@ void ConfigView::mousePressEvent(QMouseEvent* event)
         mFocusComponent = focusTile->getType();
         return;
     }
-    for (auto item : items(event->pos()))
+}
+
+void ConfigView::attemptAddPart(QPoint pos)
+{
+    for (auto item : items(pos))
     {
         auto box = dynamic_cast<GridBox*>(item);
         if (box)
         {
             Q_EMIT addShipPart(mFocusComponent, box->getCoords());
+            return;
+        }
+    }
+}
+
+void ConfigView::attemptRemovePart(QPoint pos)
+{
+    for (auto item : items(pos))
+    {
+        auto box = dynamic_cast<GridBox*>(item);
+        if (box)
+        {
+            Q_EMIT removeShipPart(box->getCoords());
             return;
         }
     }
@@ -59,7 +91,7 @@ ConfigScene::ConfigScene(QWidget* parent) : QGraphicsScene(parent)
     // Draw component tiles
     addItem(new ComponentTile(-30, -80, Component::ComponentType::Reactor));
     addItem(new ComponentTile(-30, -55, Component::ComponentType::HeatSink));
-    addItem(new ComponentTile(-100, -55, Component::ComponentType::RotateThruster));
+    addItem(new ComponentTile(-95, -55, Component::ComponentType::RotateThruster));
 }
 
 ConfigView* ConfigScene::getView() const

@@ -362,6 +362,17 @@ void PlayerShip::handleAddPart(Component::ComponentType compType, QPoint pos)
     reconfigure();
 }
 
+void PlayerShip::handleRemovePart(QPoint pos)
+{
+    QPair<int, int> pair {pos.x(), pos.y()};
+    if (mComponentMap.contains({pos.x(), pos.y()}))
+    {
+        delete mComponentMap[pair];
+        mComponentMap.remove(pair);
+        reconfigure();
+    }
+}
+
 void PlayerShip::updateVisuals()
 {
     Q_EMIT handleRemoveAllConfigItems();
