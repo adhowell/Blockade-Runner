@@ -19,6 +19,7 @@ public:
 
     void addEngine(Engine* engine) { mEngines.push_back(engine); }
     void addComponent(Component* component) { mComponents.push_back(component); }
+    void reset();
 
 private:
     qreal* mAtan2;

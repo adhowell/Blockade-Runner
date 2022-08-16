@@ -48,3 +48,10 @@ QRectF PlayerShipItem::boundingRect() const
     // Making the bounding rect too big helps with rendering fast moving PlayerShips
     return QRectF(-50, -50, 100, 100);
 }
+
+void PlayerShipItem::reset()
+{
+    // Assume ptrs deleted by PlayerShip
+    mEngines.clear();
+    mComponents.clear();
+}

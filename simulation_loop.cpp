@@ -20,25 +20,7 @@ void SimulationLoop::initPlayer()
     connect(mPlayer, &PlayerShip::handleRemoveAllConfigItems, mConfigScene, &ConfigScene::deleteAllComponents);
     connect(mConfigScene->getView(), &ConfigView::addShipPart, mPlayer, &PlayerShip::handleAddPart);
 
-    /*
-    mPlayer->addRotateThruster(0, 0);
-    mPlayer->addRotateThruster(0, 4);
-    mPlayer->addRotateThruster(4, 0);
-    mPlayer->addRotateThruster(4, 4);
-    mPlayer->addCruiseThruster(2, 0, TwoDeg::Down);
-    mPlayer->addCruiseThruster(2, 4, TwoDeg::Up);
-    mPlayer->addCargo(1, 0);
-    mPlayer->addCargo(1, 1);
-    mPlayer->addCargo(1, 2);
-    mPlayer->addCargo(1, 3);
-    mPlayer->addCargo(1, 4);
-    mPlayer->addCargo(3, 0);
-    mPlayer->addCargo(3, 1);
-    mPlayer->addCargo(3, 2);
-    mPlayer->addCargo(3, 3);
-    mPlayer->addHeatSink(3, 4);
-    mPlayer->computeStaticForceVectors();
-    */
+    mPlayer->handleAddPart(Component::ComponentType::Reactor, {2, 2});
 
     mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());
 }

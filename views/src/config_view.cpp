@@ -16,13 +16,6 @@ void ConfigView::wheelEvent(QWheelEvent* event)
 
 void ConfigView::mousePressEvent(QMouseEvent* event)
 {
-    auto box = dynamic_cast<GridBox*>(itemAt(event->pos()));
-    if (box)
-    {
-        Q_EMIT addShipPart(mFocusComponent, box->getCoords());
-        return;
-    }
-
     auto focusTile = dynamic_cast<ComponentTile*>(itemAt(event->pos()));
     if (focusTile)
     {
@@ -37,6 +30,16 @@ void ConfigView::mousePressEvent(QMouseEvent* event)
                 tile->setFocus(false);
         }
         mFocusComponent = focusTile->getType();
+        return;
+    }
+    for (auto item : items(event->pos()))
+    {
+        auto box = dynamic_cast<GridBox*>(item);
+        if (box)
+        {
+            Q_EMIT addShipPart(mFocusComponent, box->getCoords());
+            return;
+        }
     }
 }
 

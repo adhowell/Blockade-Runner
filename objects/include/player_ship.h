@@ -32,7 +32,9 @@ public:
 
     void computeRotationalInertia();
     void computeStaticForceVectors();
+    void computeProperties();
     void reconfigure();
+    void updateVisuals();
 
     bool isGridLineFree(int x, int y, TwoDeg direction);
 
