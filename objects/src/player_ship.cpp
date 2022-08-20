@@ -57,20 +57,60 @@ void PlayerShip::update(qreal deltaT)
 
     // Temperature flow between components
     QMapIterator compIter(mComponentMap);
+    std::vector<std::shared_ptr<Component>> heatOutputs;
+    qreal sumHeatOutput = 0;
+    qreal sumTransfer = 0;
     while (compIter.hasNext())
     {
         compIter.next();
         auto c = compIter.value();
         int x = compIter.key().first;
         int y = compIter.key().second;
-        if (mComponentMap.contains({x-1, y}))
-            c->applyTemperatureDelta(0.01 * (mComponentMap[{x-1, y}]->getTemperature() - c->getTemperature()));
-        if (mComponentMap.contains({x+1, y}))
-            c->applyTemperatureDelta(0.01 * (mComponentMap[{x+1, y}]->getTemperature() - c->getTemperature()));
-        if (mComponentMap.contains({x, y-1}))
-            c->applyTemperatureDelta(0.01 * (mComponentMap[{x, y-1}]->getTemperature() - c->getTemperature()));
-        if (mComponentMap.contains({x, y+1}))
-            c->applyTemperatureDelta(0.01 * (mComponentMap[{x, y+1}]->getTemperature() - c->getTemperature()));
+
+        // Heat transfer is always outgoing
+        heatOutputs.clear();
+        sumHeatOutput = 0;
+        sumTransfer = 0;
+
+        if (mComponentMap.contains({x-1, y})) {
+            if (c->getTemperature() > mComponentMap[{x-1, y}]->getTemperature())
+            {
+                sumHeatOutput += c->getTemperature() - (mComponentMap[{x-1, y}]->getTemperature());
+                sumTransfer += mComponentMap[{x-1, y}]->getHeatTransferRatio();
+                heatOutputs.emplace_back(mComponentMap[{x-1, y}]);
+            }
+        }
+        if (mComponentMap.contains({x+1, y})) {
+            if (c->getTemperature() > mComponentMap[{x+1, y}]->getTemperature())
+            {
+                sumHeatOutput += c->getTemperature() - (mComponentMap[{x+1, y}]->getTemperature());
+                sumTransfer += mComponentMap[{x+1, y}]->getHeatTransferRatio();
+                heatOutputs.emplace_back(mComponentMap[{x+1, y}]);
+            }
+        }
+        if (mComponentMap.contains({x, y-1})) {
+            if (c->getTemperature() > mComponentMap[{x, y-1}]->getTemperature())
+            {
+                sumHeatOutput += c->getTemperature() - (mComponentMap[{x, y-1}]->getTemperature());
+                sumTransfer += mComponentMap[{x, y-1}]->getHeatTransferRatio();
+                heatOutputs.emplace_back(mComponentMap[{x, y-1}]);
+            }
+        }
+        if (mComponentMap.contains({x, y+1})) {
+            if (c->getTemperature() > mComponentMap[{x, y+1}]->getTemperature())
+            {
+                sumHeatOutput += c->getTemperature() - (mComponentMap[{x, y+1}]->getTemperature());
+                sumTransfer += mComponentMap[{x, y+1}]->getHeatTransferRatio();
+                heatOutputs.emplace_back(mComponentMap[{x, y+1}]);
+            }
+        }
+        if (heatOutputs.empty())
+            continue;
+        qreal tempShare = sumHeatOutput/(sumTransfer*qreal(heatOutputs.size()));
+        for (const auto& outC : heatOutputs)
+        {
+            outC->applyTemperatureDelta(tempShare);
+        }
     }
 
     for (auto e : mEngines)
@@ -116,7 +156,7 @@ void PlayerShip::addReactor(int x, int y)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(Component::ComponentType::Reactor, poly);
+    auto component = std::make_shared<Component>(CT::Reactor, poly);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -129,7 +169,7 @@ void PlayerShip::addHeatSink(int x, int y)
                              << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
                              << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(Component::ComponentType::HeatSink, poly);
+    auto component = std::make_shared<Component>(CT::HeatSink, poly);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -142,7 +182,7 @@ void PlayerShip::addRotateThruster(int x, int y)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(Component::ComponentType::RotateThruster, poly);
+    auto component = std::make_shared<Component>(CT::RotateThruster, poly);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -155,7 +195,7 @@ void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(Component::ComponentType::CruiseThruster, poly, direction);
+    auto component = std::make_shared<Component>(CT::CruiseThruster, poly, direction);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -246,7 +286,7 @@ void PlayerShip::computeStaticForceVectors()
         compIter.next();
         int x = compIter.key().first;
         int y = compIter.key().second;
-        if (compIter.value()->getType() == Component::ComponentType::RotateThruster)
+        if (compIter.value()->getType() == CT::RotateThruster)
         {
             // For each unique direction
             for (int i = 0; i < 4; i++) {
@@ -255,7 +295,7 @@ void PlayerShip::computeStaticForceVectors()
                     computeThrusterDirectionForce(x, y, direction);
             }
         }
-        if (compIter.value()->getType() == Component::ComponentType::CruiseThruster)
+        if (compIter.value()->getType() == CT::CruiseThruster)
         {
             TwoDeg direction = compIter.value()->getDirection();
             assert (isGridLineFree(x, y, direction));
@@ -343,20 +383,20 @@ void PlayerShip::receiveTextFromComponent(const QString &text)
     Q_EMIT displayText(text);
 }
 
-void PlayerShip::handleAddPart(Component::ComponentType compType, QPoint pos, TwoDeg direction)
+void PlayerShip::handleAddPart(CT compType, QPoint pos, TwoDeg direction)
 {
     switch (compType)
     {
-        case Component::ComponentType::HeatSink:
+        case CT::HeatSink:
             addHeatSink(pos.x(), pos.y());
             break;
-        case Component::ComponentType::Reactor:
+        case CT::Reactor:
             addReactor(pos.x(), pos.y());
             break;
-        case Component::ComponentType::RotateThruster:
+        case CT::RotateThruster:
             addRotateThruster(pos.x(), pos.y());
             break;
-        case Component::ComponentType::CruiseThruster:
+        case CT::CruiseThruster:
             addCruiseThruster(pos.x(), pos.y(), direction);
             break;
         default:

@@ -46,7 +46,7 @@ void ConfigView::mousePressEvent(QMouseEvent* event)
             break;
         case Qt::MouseButton::RightButton:
             attemptRemovePart(event->pos());
-            //Q_EMIT handleClose();
+            Q_EMIT handleClose();
             break;
         default:;
     }

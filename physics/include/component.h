@@ -14,13 +14,13 @@ public:
         HeatSink,
         RotateThruster,
         CruiseThruster,
-        EmergencyThruster,
     };
 
     Component(ComponentType type, QPolygonF poly, TwoDeg direction = TwoDeg::Up);
 
     qreal getNormTemperature() const { return qMin((mTemperature/1000.0)+0.1, 1.0); }
     void applyTemperatureDelta(qreal deltaTemp);
+    qreal getHeatTransferRatio() const { return mHeatTransfer; }
 
     qreal getMass() const { return mMass; }
     qreal getTemperature() const { return mTemperature; }
@@ -34,4 +34,5 @@ private:
     qreal mTemperature;
     qreal mMass;
     QPolygonF mPoly;
+    qreal mHeatTransfer;
 };

@@ -6,20 +6,25 @@ Component::Component(ComponentType type, QPolygonF poly, TwoDeg direction)
     switch (type)
     {
         case ComponentType::HeatSink:
+            mTemperature = 25;
+            mHeatTransfer = 3.0;
+            mMass = 100;
+            break;
         case ComponentType::RotateThruster:
         case ComponentType::CruiseThruster:
-        case ComponentType::EmergencyThruster:
             mTemperature = 25;
+            mHeatTransfer = 1.0;
             mMass = 100;
             break;
         case ComponentType::Reactor:
             mTemperature = 300;
+            mHeatTransfer = 1.0;
             mMass = 100;
     }
 }
 
 void Component::applyTemperatureDelta(qreal deltaTemp)
 {
-    mTemperature += deltaTemp;
+    mTemperature += deltaTemp*mHeatTransfer;
     if (mTemperature < 0) mTemperature = 0;
 }

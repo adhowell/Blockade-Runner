@@ -14,6 +14,8 @@ class PlayerShip : public QObject {
 public:
     PlayerShip();
 
+    typedef Component::ComponentType CT;
+
     enum RotateState {
         Idle,
         BeforeTargetCW,

@@ -14,12 +14,6 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->setPen(pen);
     painter->rotate(*mAtan2*360.0/(M_PI*2.0));
 
-    for (auto const &c : mComponents)
-    {
-        pen.setColor(QColor(0, int(255.0*c->getNormTemperature()), 0));
-        painter->setPen(pen);
-        painter->drawPolygon(c->getPoly());
-    }
     for (auto const &e : mEngines)
     {
         int gVal = int(255.0*e->getNormTemperature());
@@ -30,6 +24,13 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         painter->setBrush(fillBrush);
 
         painter->drawPolygon(e->getPoly());
+    }
+    painter->setBrush({});
+    for (auto const &c : mComponents)
+    {
+        pen.setColor(QColor(0, int(255.0*c->getNormTemperature()), 0));
+        painter->setPen(pen);
+        painter->drawPolygon(c->getPoly());
     }
     //painter->rotate(-mAtan2*360.0/(M_PI*2.0));
     /*
