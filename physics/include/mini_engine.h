@@ -6,10 +6,10 @@
 
 class MiniEngine : public Engine {
 public:
-    MiniEngine(Component* component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia);
+    MiniEngine(std::shared_ptr<Component> component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia);
 };
 
-MiniEngine::MiniEngine(Component* component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia)
+MiniEngine::MiniEngine(std::shared_ptr<Component> component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia)
         : Engine(component, direction, centreOfMassOffset, mass, inertia, 1, 1.0, Profile::LIN, Size::SMALL) {}
 
 #endif //MINI_ENGINE_H

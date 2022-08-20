@@ -48,8 +48,8 @@ public:
 
 public Q_SLOTS:
     void handleClose();
-    void drawConfigComponent(Component* component);
-    void drawConfigEngine(Engine* engine);
+    void drawConfigComponent(std::shared_ptr<Component> component);
+    void drawConfigEngine(std::shared_ptr<Engine> engine);
     void deleteAllComponents();
 
 Q_SIGNALS:

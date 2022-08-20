@@ -17,12 +17,12 @@ public:
     QRectF boundingRect() const override;
     void update() { prepareGeometryChange(); }
 
-    void addEngine(Engine* engine) { mEngines.push_back(engine); }
-    void addComponent(Component* component) { mComponents.push_back(component); }
+    void addEngine(std::shared_ptr<Engine> engine) { mEngines.push_back(engine); }
+    void addComponent(std::shared_ptr<Component> component) { mComponents.push_back(component); }
     void reset();
 
 private:
     qreal* mAtan2;
-    QVector<Engine*> mEngines;
-    QVector<Component*> mComponents;
+    QVector<std::shared_ptr<Engine>> mEngines;
+    QVector<std::shared_ptr<Component>> mComponents;
 };

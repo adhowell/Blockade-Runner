@@ -116,7 +116,7 @@ void PlayerShip::addReactor(int x, int y)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = new Component(Component::ComponentType::Reactor, poly);
+    auto component = std::make_shared<Component>(Component::ComponentType::Reactor, poly);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -129,7 +129,7 @@ void PlayerShip::addHeatSink(int x, int y)
                              << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
                              << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = new Component(Component::ComponentType::HeatSink, poly);
+    auto component = std::make_shared<Component>(Component::ComponentType::HeatSink, poly);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -142,7 +142,7 @@ void PlayerShip::addRotateThruster(int x, int y)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = new Component(Component::ComponentType::RotateThruster, poly);
+    auto component = std::make_shared<Component>(Component::ComponentType::RotateThruster, poly);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -155,7 +155,7 @@ void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = new Component(Component::ComponentType::CruiseThruster, poly, direction);
+    auto component = std::make_shared<Component>(Component::ComponentType::CruiseThruster, poly, direction);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -165,8 +165,8 @@ void PlayerShip::computeThrusterDirectionForce(int x, int y, TwoDeg direction)
     Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
                             qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
                     - mCentreOfMass;
-    auto engine = new MiniEngine(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
-    connect(engine, &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
+    auto engine = std::make_shared<MiniEngine>(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
+    connect(engine.get(), &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
 
     // For visualising active thrusters
     qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
@@ -195,8 +195,8 @@ void PlayerShip::computeCruiseEngineDirectionForce(int x, int y, TwoDeg directio
     Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
                            qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
                     - mCentreOfMass;
-    auto engine = new CruiseEngine(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
-    connect(engine, &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
+    auto engine = std::make_shared<CruiseEngine>(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
+    connect(engine.get(), &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
 
     // For visualising active thrusters
     qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
@@ -370,7 +370,6 @@ void PlayerShip::handleRemovePart(QPoint pos)
     QPair<int, int> pair {pos.x(), pos.y()};
     if (mComponentMap.contains({pos.x(), pos.y()}))
     {
-        delete mComponentMap[pair];
         mComponentMap.remove(pair);
         reconfigure();
     }
@@ -394,8 +393,6 @@ void PlayerShip::updateVisuals()
 
 void PlayerShip::reconfigure()
 {
-    for (auto e : mEngines)
-        delete e;
     mEngines.clear();
 
     // Compute physics stuff

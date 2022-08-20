@@ -30,7 +30,7 @@ public:
     qreal getLateralAcc() const;
     qreal getRotationalAcc() const;
 
-    Component* getComponent() { return mComponent; }
+    std::shared_ptr<Component> getComponent() { return mComponent; }
 
     bool enabled() const { return mEnabled; }
 
@@ -47,7 +47,7 @@ Q_SIGNALS:
     void transmitStatus(const QString&);
 
 protected:
-    Engine(Component* component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia, qreal thrust, qreal incr, Profile profile, Size size);
+    Engine(std::shared_ptr<Component> component, TwoDeg direction, Vector centreOfMassOffset, qreal mass, qreal inertia, qreal thrust, qreal incr, Profile profile, Size size);
 
     qreal mForwardAcc = 0.0;
     qreal mLateralAcc = 0.0;
@@ -59,7 +59,7 @@ protected:
     Profile mThrustRatioFunction;
     qreal mIncr;
     TwoDeg mDirection;
-    Component* mComponent;
+    std::shared_ptr<Component> mComponent;
     qreal mTemperature;
 
     bool mEnabled = false;

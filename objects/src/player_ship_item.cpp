@@ -51,7 +51,6 @@ QRectF PlayerShipItem::boundingRect() const
 
 void PlayerShipItem::reset()
 {
-    // Assume ptrs deleted by PlayerShip
     mEngines.clear();
     mComponents.clear();
 }

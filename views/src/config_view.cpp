@@ -46,7 +46,7 @@ void ConfigView::mousePressEvent(QMouseEvent* event)
             break;
         case Qt::MouseButton::RightButton:
             attemptRemovePart(event->pos());
-            Q_EMIT handleClose();
+            //Q_EMIT handleClose();
             break;
         default:;
     }
@@ -145,12 +145,12 @@ void ConfigScene::handleClose()
     Q_EMIT close();
 }
 
-void ConfigScene::drawConfigComponent(Component* component)
+void ConfigScene::drawConfigComponent(std::shared_ptr<Component> component)
 {
     mComponents << addPolygon(component->getPoly(), QPen(QColor(0, 255, 0)));
 }
 
-void ConfigScene::drawConfigEngine(Engine* engine)
+void ConfigScene::drawConfigEngine(std::shared_ptr<Engine> engine)
 {
     mComponents << addPolygon(engine->getPoly(), QPen(QColor(0, 255, 0)));
 }

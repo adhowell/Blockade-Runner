@@ -71,8 +71,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void displayText(QString text);
-    void handleAddConfigComponent(Component*);
-    void handleAddConfigEngine(Engine*);
+    void handleAddConfigComponent(std::shared_ptr<Component>);
+    void handleAddConfigEngine(std::shared_ptr<Engine>);
     void handleRemoveAllConfigItems();
 
 private:
@@ -96,7 +96,7 @@ private:
     Vector mCentreOfMass = Vector(0, 0);
 
     PlayerShipItem* mTacticalGraphicsItem;
-    QVector<Engine*> mEngines;
+    QVector<std::shared_ptr<Engine>> mEngines;
 
-    QMap<QPair<int, int>, Component*> mComponentMap;
+    QMap<QPair<int, int>, std::shared_ptr<Component>> mComponentMap;
 };
