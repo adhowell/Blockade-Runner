@@ -15,8 +15,8 @@ void Starfield::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     int sceneInitY = -700 + (int)(mOrigin.y()) % 10;
     int sceneX = sceneInitX;
     int sceneY = sceneInitY;
-    qreal remX = mOrigin.x() - (int)mOrigin.x();
-    qreal remY = mOrigin.y() - (int)mOrigin.y();
+    qreal remX = mOrigin.x() - xOffset;
+    qreal remY = mOrigin.y() - yOffset;
 
     QPen pen;
     pen.setColor(QColor(0, 100, 0));
@@ -35,6 +35,7 @@ void Starfield::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             uint32_t prng = lcg_parkmiller(xHash | yHash) & 0x2AAB;
             if (prng == 0x2AAA)
             {
+                painter->setRenderHint(QPainter::Antialiasing);
                 painter->drawLine(QLineF(sceneX+remX, sceneY+remY,
                                          sceneX+remX+mLastOffset.x(), sceneY+remY+mLastOffset.y()));
             }
