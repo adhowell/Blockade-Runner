@@ -50,6 +50,7 @@ public Q_SLOTS:
     void handleClose();
     void drawConfigComponent(std::shared_ptr<Component> component);
     void drawConfigEngine(std::shared_ptr<Engine> engine);
+    void drawCentreOfMass(qreal x, qreal y);
     void deleteAllComponents();
 
 Q_SIGNALS:
@@ -57,5 +58,5 @@ Q_SIGNALS:
 
 private:
     ConfigView* mView;
-    QVector<QGraphicsItem*> mComponents;
+    QVector<QGraphicsItem*> mTempItems;
 };

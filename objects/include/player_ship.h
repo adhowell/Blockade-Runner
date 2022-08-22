@@ -75,6 +75,7 @@ Q_SIGNALS:
     void displayText(QString text);
     void handleAddConfigComponent(std::shared_ptr<Component>);
     void handleAddConfigEngine(std::shared_ptr<Engine>);
+    void handleAddCentreOfMass(qreal, qreal);
     void handleRemoveAllConfigItems();
 
 private:

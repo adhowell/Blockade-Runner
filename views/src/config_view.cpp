@@ -147,21 +147,32 @@ void ConfigScene::handleClose()
 
 void ConfigScene::drawConfigComponent(std::shared_ptr<Component> component)
 {
-    mComponents << addPolygon(component->getPoly(), QPen(QColor(0, 255, 0)));
+    mTempItems << addPolygon(component->getPoly(), QPen(QColor(0, 255, 0)));
 }
 
 void ConfigScene::drawConfigEngine(std::shared_ptr<Engine> engine)
 {
-    mComponents << addPolygon(engine->getPoly(), QPen(QColor(0, 255, 0)));
+    mTempItems << addPolygon(engine->getPoly(), QPen(QColor(0, 255, 0)));
+}
+
+void ConfigScene::drawCentreOfMass(qreal x, qreal y)
+{
+    auto poly = QPolygonF() << QPointF(x, y)
+            << QPointF(x-10, y) << QPointF(x+10, y) << QPointF(x, y)
+            << QPointF(x, y-10) << QPointF(x, y+10);
+    auto pen = QPen(QColor(0, 255, 0, 100));
+    pen.setWidthF(0.5);
+    pen.setDashPattern({1, 2, 3, 4});
+    mTempItems << addPolygon(poly, pen);
 }
 
 void ConfigScene::deleteAllComponents()
 {
-    for (auto item : mComponents)
+    for (auto item : mTempItems)
     {
         removeItem(item);
         delete item;
     }
-    mComponents.clear();
+    mTempItems.clear();
 }
 

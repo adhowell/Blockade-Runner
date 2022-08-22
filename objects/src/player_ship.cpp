@@ -429,6 +429,7 @@ void PlayerShip::updateVisuals()
         Q_EMIT handleAddConfigEngine(e);
         mTacticalGraphicsItem->addEngine(e);
     }
+    Q_EMIT handleAddCentreOfMass(mCentreOfMass.x(), mCentreOfMass.y());
 }
 
 void PlayerShip::reconfigure()
