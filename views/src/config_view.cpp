@@ -147,7 +147,8 @@ void ConfigScene::handleClose()
 
 void ConfigScene::drawConfigComponent(std::shared_ptr<Component> component)
 {
-    mTempItems << addPolygon(component->getPoly(), QPen(QColor(0, 255, 0)));
+    mTempItems << addPolygon(component->getPoly(),
+                             component->isValid() ? QPen(QColor(0, 255, 0)) : QPen(QColor(255, 0, 0)));
 }
 
 void ConfigScene::drawConfigEngine(std::shared_ptr<Engine> engine)

@@ -275,17 +275,25 @@ void PlayerShip::computeStaticForceVectors()
         if (compIter.value()->getType() == CT::RotateThruster)
         {
             // For each unique direction
+            compIter.value()->setValid(false);
             for (int i = 0; i < 4; i++) {
-                TwoDeg direction = static_cast<TwoDeg>(i);
+                auto direction = static_cast<TwoDeg>(i);
                 if (isGridLineFree(x, y, direction))
+                {
                     computeThrusterDirectionForce(x, y, direction);
+                    compIter.value()->setValid(true);
+                }
             }
         }
         if (compIter.value()->getType() == CT::CruiseThruster)
         {
+            compIter.value()->setValid(false);
             TwoDeg direction = compIter.value()->getDirection();
-            assert (isGridLineFree(x, y, direction));
-            computeCruiseEngineDirectionForce(x, y, direction);
+            if (isGridLineFree(x, y, direction))
+            {
+                computeCruiseEngineDirectionForce(x, y, direction);
+                compIter.value()->setValid(true);
+            }
         }
     }
 }

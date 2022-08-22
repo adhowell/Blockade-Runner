@@ -19,14 +19,17 @@ public:
     Component(ComponentType type, QPolygonF poly, TwoDeg direction = TwoDeg::Up);
 
     qreal getNormTemperature() const { return qMin((mTemperature/1000.0)+0.1, 1.0); }
-    void applyTemperatureDelta(qreal deltaTemp);
     qreal getHeatTransferRatio() const { return mHeatTransfer; }
-
     qreal getMass() const { return mMass; }
     qreal getTemperature() const { return mTemperature; }
     ComponentType getType() const { return mType; }
     TwoDeg getDirection() const { return mDirection; }
     QPolygonF getPoly() const { return mPoly; }
+    bool isValid() { return mIsValid; }
+
+    void setValid(bool isValid) { mIsValid = isValid; }
+
+    void applyTemperatureDelta(qreal deltaTemp);
 
 private:
     ComponentType mType;
@@ -35,4 +38,5 @@ private:
     qreal mMass;
     QPolygonF mPoly;
     qreal mHeatTransfer;
+    bool mIsValid = true;
 };
