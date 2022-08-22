@@ -8,8 +8,13 @@
 
 #pragma once
 
+
 class PlayerShip;
 
+/**
+ * Graphics view for adding and removing components from the
+ * player ship.
+ */
 class ConfigView : public QGraphicsView
 {
     Q_OBJECT
@@ -37,13 +42,16 @@ private:
 
 };
 
+/**
+ * Graphics scene for displaying the ship component menu,
+ * the current ship components, and ship specs.
+ */
 class ConfigScene : public QGraphicsScene
 {
 Q_OBJECT
 public:
     explicit ConfigScene(QWidget *parent = nullptr);
 
-    void updateItems(QPointF offset);
     ConfigView* getView() const;
 
 public Q_SLOTS:

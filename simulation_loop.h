@@ -8,6 +8,9 @@
 
 #pragma once
 
+/**
+ * Controller for linking the updates of the player ship, the world and the terminal.
+ */
 class SimulationLoop : public QObject
 {
     Q_OBJECT
@@ -19,15 +22,17 @@ public:
     void timerEvent(QTimerEvent* event) override;
 
 public Q_SLOTS:
-    void receiveTextFromPlayerShip(const QString& text);
+    void receiveInfoFromPlayerShip(const QString& text);
+    void receiveWarningFromPlayerShip(const QString& text);
+    void receiveErrorFromPlayerShip(const QString& text);
     void setThrust(TwoDeg direction, bool isActive);
     void rotate(int degrees);
 
 Q_SIGNALS:
-    /**
-     * For display in the terminal history window.
-     */
-    void relayText(QString text);
+    // For display in the terminal history window.
+    void relayInfo(QString text);
+    void relayWarning(QString text);
+    void relayError(QString text);
 
 private:
     PlayerShip* mPlayer;

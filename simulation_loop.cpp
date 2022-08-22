@@ -14,7 +14,7 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, ConfigScene* config
 void SimulationLoop::initPlayer()
 {
     mPlayer = new PlayerShip();
-    connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveTextFromPlayerShip);
+    connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveInfoFromPlayerShip);
     connect(mPlayer, &PlayerShip::handleAddConfigComponent, mConfigScene, &ConfigScene::drawConfigComponent);
     connect(mPlayer, &PlayerShip::handleAddConfigEngine, mConfigScene, &ConfigScene::drawConfigEngine);
     connect(mPlayer, &PlayerShip::handleAddCentreOfMass, mConfigScene, &ConfigScene::drawCentreOfMass);
@@ -80,7 +80,17 @@ void SimulationLoop::rotate(int degrees)
     mPlayer->rotate(degrees);
 }
 
-void SimulationLoop::receiveTextFromPlayerShip(const QString& text)
+void SimulationLoop::receiveInfoFromPlayerShip(const QString& text)
 {
-    Q_EMIT relayText(text);
+    Q_EMIT relayInfo(text);
+}
+
+void SimulationLoop::receiveWarningFromPlayerShip(const QString& text)
+{
+    Q_EMIT relayWarning(text);
+}
+
+void SimulationLoop::receiveErrorFromPlayerShip(const QString& text)
+{
+    Q_EMIT relayError(text);
 }

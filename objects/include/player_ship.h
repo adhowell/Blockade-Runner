@@ -16,6 +16,13 @@ public:
 
     typedef Component::ComponentType CT;
 
+    struct HeatFlow
+    {
+        qreal sumHeatToComponents {0};
+        qreal sumHeatTransferRatio {0};
+        std::vector<std::shared_ptr<Component>> outComponents;
+    };
+
     enum RotateState {
         Idle,
         BeforeTargetCW,
@@ -44,6 +51,8 @@ public:
     void computeCruiseEngineDirectionForce(int x, int y, TwoDeg direction);
 
     void update(qreal deltaT);
+
+    HeatFlow computeHeatFlow(const std::shared_ptr<Component>& src, int x, int y, HeatFlow srcOutHeat);
 
     qreal getEnergy() const { return 0.5*mM*qPow(mV.getSize(), 2.0); }
     qreal getVelocity() { return mV.getSize(); }

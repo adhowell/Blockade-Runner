@@ -111,7 +111,7 @@ void Engine::decrementAccProfile()
     if (mThrustRatioStep == 0 && mEnabled)
     {
         mEnabled = false;
-        Q_EMIT transmitStatus("<INFO> - THRUSTER SHUTDOWN SUCCESS");
+        Q_EMIT transmitStatus("THRUSTER SHUTDOWN SUCCESS");
     }
 }
 

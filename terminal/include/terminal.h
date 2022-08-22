@@ -14,13 +14,15 @@ public:
     void setInputFocus() { mInput->setFocus(); }
 
 Q_SIGNALS:
-    void sendParsedInput(const QString& text);
     void setThrustDirection(TwoDeg direction, bool isActive);
     void rotate(int degrees);
 
 public Q_SLOTS:
     void parseInput(const QString& rawText);
-    void displayText(const QString& text);
+    void displayLog(const QString& text);
+    void displayInfo(const QString& text);
+    void displayWarning(const QString& text);
+    void displayError(const QString& text);
 
 private:
     enum Command

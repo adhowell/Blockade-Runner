@@ -9,7 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     mSimulation = new SimulationLoop(mTacticalScene, mConfigScene);
 
-    connect(mSimulation, &SimulationLoop::relayText, mTerminal, &Terminal::displayText);
+    connect(mSimulation, &SimulationLoop::relayInfo, mTerminal, &Terminal::displayInfo);
+    connect(mSimulation, &SimulationLoop::relayWarning, mTerminal, &Terminal::displayWarning);
+    connect(mSimulation, &SimulationLoop::relayError, mTerminal, &Terminal::displayError);
     connect(mConfigScene, &ConfigScene::close, this, &MainWindow::closeConfigScreen);
 
     auto layout = new QHBoxLayout;

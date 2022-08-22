@@ -17,7 +17,6 @@ Terminal::Terminal(QWidget* parent) : QFrame(parent)
     mLookupCommands["ROTATE"] = Command::Rotate;
 
     connect(mInput, &Input::sendRawInput, this, &Terminal::parseInput);
-    connect(this, &Terminal::sendParsedInput, mHistory, &History::addCommand);
 
     auto layout = new QVBoxLayout;
     layout->addWidget(mHistory, 8);
@@ -30,7 +29,7 @@ void Terminal::parseInput(const QString& rawText)
 {
     QRegularExpression re("(\\w+) (.+)");
     QRegularExpressionMatch match = re.match(rawText);
-    Q_EMIT sendParsedInput(QString("<LOG> - %1").arg(rawText));
+    Q_EMIT displayLog(rawText);
 
     if (match.hasMatch())
     {
@@ -39,7 +38,7 @@ void Terminal::parseInput(const QString& rawText)
         parseCommand(aliasedCommand, match.captured(2));
     }
     else
-        Q_EMIT sendParsedInput(QString("<ERROR> - INVALID ENTRY"));
+        Q_EMIT displayError(QString("INVALID ENTRY"));
 }
 
 void Terminal::parseCommand(const QString& command, const QString& input)
@@ -56,7 +55,7 @@ void Terminal::parseCommand(const QString& command, const QString& input)
             parseRotateCommand(input);
             break;
         case Command::None:
-            Q_EMIT sendParsedInput(QString("<ERROR> - INVALID COMMAND: %1").arg(command));
+            displayError(QString("INVALID COMMAND: %1").arg(command));
             return;
     }
 }
@@ -66,7 +65,7 @@ void Terminal::parseThrustCommand(const QString& input, bool isActive)
     QStringList args = input.split(" ");
     if (args.size() > 1)
     {
-        Q_EMIT sendParsedInput(QString("<ERROR> - COMMAND: %1 ACCEPTS ONE ARGUMENT").arg(isActive ? "START" : "STOP"));
+        Q_EMIT displayError(QString("COMMAND: %1 ACCEPTS ONE ARGUMENT").arg(isActive ? "START" : "STOP"));
         return;
     }
     QString direction = args[0];
@@ -75,7 +74,7 @@ void Terminal::parseThrustCommand(const QString& input, bool isActive)
     if (mLookupDirection.contains(direction))
         setThrustDirection(mLookupDirection[direction], isActive);
     else
-        Q_EMIT sendParsedInput(QString("<ERROR> - INVALID DIRECTION: %1").arg(direction));
+        Q_EMIT displayError(QString("INVALID DIRECTION: %1").arg(direction));
 }
 
 void Terminal::parseAliasCommand(const QString& input)
@@ -83,11 +82,11 @@ void Terminal::parseAliasCommand(const QString& input)
     QStringList inputs = input.split(" ");
     if (inputs.size() != 2)
     {
-        Q_EMIT sendParsedInput(QString("<ERROR> - COMMAND: ALIAS ACCEPTS TWO ARGUMENTS"));
+        Q_EMIT displayError(QString("COMMAND: ALIAS ACCEPTS TWO ARGUMENTS"));
         return;
     }
     mAliases[inputs[1]] = inputs[0];
-    Q_EMIT sendParsedInput(QString("<INFO> - ALIAS %1 == %2").arg(inputs[1]).arg(inputs[0]));
+    Q_EMIT displayInfo(QString("ALIAS %1 == %2").arg(inputs[1]).arg(inputs[0]));
 }
 
 void Terminal::parseRotateCommand(const QString &input)
@@ -95,13 +94,28 @@ void Terminal::parseRotateCommand(const QString &input)
     int degrees = input.toInt();
     if (degrees == 0)
     {
-        Q_EMIT sendParsedInput(QString("<ERROR> - COMMAND: ROTATE ACCEPTS ONE NON-ZERO INTEGER"));
+        Q_EMIT displayError(QString("COMMAND: ROTATE ACCEPTS ONE NON-ZERO INTEGER"));
         return;
     }
     rotate(degrees);
 }
 
-void Terminal::displayText(const QString &text)
+void Terminal::displayLog(const QString &text)
 {
-    mHistory->addCommand(text);
+    mHistory->addCommand("<LOG> - " + text);
+}
+
+void Terminal::displayInfo(const QString &text)
+{
+    mHistory->addCommand("<INFO> - " + text);
+}
+
+void Terminal::displayWarning(const QString &text)
+{
+    mHistory->addCommand("<WARNING> - " + text);
+}
+
+void Terminal::displayError(const QString &text)
+{
+    mHistory->addCommand("<ERROR> - " + text);
 }

@@ -25,6 +25,6 @@ Component::Component(ComponentType type, QPolygonF poly, TwoDeg direction)
 
 void Component::applyTemperatureDelta(qreal deltaTemp)
 {
-    mTemperature += deltaTemp*mHeatTransfer;
+    mTemperature += deltaTemp;
     if (mTemperature < 0) mTemperature = 0;
 }

@@ -20,7 +20,7 @@ void PlayerShip::update(qreal deltaT)
                 mRotateLeftThrust = true;
                 mRotateRightThrust = false;
                 mRotateState = RotateState::AfterTargetCW;
-                Q_EMIT displayText("<INFO> - HALF-ROTATION COMPLETE");
+                Q_EMIT displayText("HALF-ROTATION COMPLETE");
             }
             break;
         case RotateState::BeforeTargetCCW:
@@ -31,7 +31,7 @@ void PlayerShip::update(qreal deltaT)
                 mRotateLeftThrust = false;
                 mRotateRightThrust = true;
                 mRotateState = RotateState::AfterTargetCCW;
-                Q_EMIT displayText("<INFO> - HALF-ROTATION COMPLETE");
+                Q_EMIT displayText("HALF-ROTATION COMPLETE");
             }
             break;
         case RotateState::AfterTargetCW:
@@ -49,7 +49,7 @@ void PlayerShip::update(qreal deltaT)
             {
                 mRotV = 0;
                 mRotateState = RotateState::Idle;
-                Q_EMIT displayText("<INFO> - ROTATE COMMAND COMPLETE");
+                Q_EMIT displayText("ROTATE COMMAND COMPLETE");
             }
             break;
         case Idle:;
@@ -57,9 +57,7 @@ void PlayerShip::update(qreal deltaT)
 
     // Temperature flow between components
     QMapIterator compIter(mComponentMap);
-    std::vector<std::shared_ptr<Component>> heatOutputs;
-    qreal sumHeatOutput = 0;
-    qreal sumTransfer = 0;
+    QMap<std::shared_ptr<Component>, qreal> tempDelta;
     while (compIter.hasNext())
     {
         compIter.next();
@@ -67,50 +65,23 @@ void PlayerShip::update(qreal deltaT)
         int x = compIter.key().first;
         int y = compIter.key().second;
 
-        // Heat transfer is always outgoing
-        heatOutputs.clear();
-        sumHeatOutput = 0;
-        sumTransfer = 0;
-
-        if (mComponentMap.contains({x-1, y})) {
-            if (c->getTemperature() > mComponentMap[{x-1, y}]->getTemperature())
-            {
-                sumHeatOutput += c->getTemperature() - (mComponentMap[{x-1, y}]->getTemperature());
-                sumTransfer += mComponentMap[{x-1, y}]->getHeatTransferRatio();
-                heatOutputs.emplace_back(mComponentMap[{x-1, y}]);
-            }
-        }
-        if (mComponentMap.contains({x+1, y})) {
-            if (c->getTemperature() > mComponentMap[{x+1, y}]->getTemperature())
-            {
-                sumHeatOutput += c->getTemperature() - (mComponentMap[{x+1, y}]->getTemperature());
-                sumTransfer += mComponentMap[{x+1, y}]->getHeatTransferRatio();
-                heatOutputs.emplace_back(mComponentMap[{x+1, y}]);
-            }
-        }
-        if (mComponentMap.contains({x, y-1})) {
-            if (c->getTemperature() > mComponentMap[{x, y-1}]->getTemperature())
-            {
-                sumHeatOutput += c->getTemperature() - (mComponentMap[{x, y-1}]->getTemperature());
-                sumTransfer += mComponentMap[{x, y-1}]->getHeatTransferRatio();
-                heatOutputs.emplace_back(mComponentMap[{x, y-1}]);
-            }
-        }
-        if (mComponentMap.contains({x, y+1})) {
-            if (c->getTemperature() > mComponentMap[{x, y+1}]->getTemperature())
-            {
-                sumHeatOutput += c->getTemperature() - (mComponentMap[{x, y+1}]->getTemperature());
-                sumTransfer += mComponentMap[{x, y+1}]->getHeatTransferRatio();
-                heatOutputs.emplace_back(mComponentMap[{x, y+1}]);
-            }
-        }
-        if (heatOutputs.empty())
+        HeatFlow hf;
+        hf = computeHeatFlow(c, x-1, y, hf);
+        hf = computeHeatFlow(c, x+1, y, hf);
+        hf = computeHeatFlow(c, x, y-1, hf);
+        hf = computeHeatFlow(c, x, y+1, hf);
+        if (hf.outComponents.empty())
             continue;
-        qreal tempShare = sumHeatOutput/(sumTransfer*qreal(heatOutputs.size()));
-        for (const auto& outC : heatOutputs)
+        qreal tempShare = hf.sumHeatToComponents/(hf.sumHeatTransferRatio*qreal(hf.outComponents.size()));
+        for (const auto& outC : hf.outComponents)
         {
-            outC->applyTemperatureDelta(tempShare);
+            tempDelta[outC] += tempShare * outC->getHeatTransferRatio();
         }
+        tempDelta[c] -= hf.sumHeatToComponents;
+    }
+    for (auto c : mComponentMap.values())
+    {
+        c->applyTemperatureDelta(tempDelta[c]);
     }
 
     for (auto e : mEngines)
@@ -145,6 +116,21 @@ void PlayerShip::update(qreal deltaT)
     }
     mAtan2 += mRotV * deltaT;
     mTacticalGraphicsItem->update();
+}
+
+PlayerShip::HeatFlow PlayerShip::computeHeatFlow(const std::shared_ptr<Component>& src, int x, int y, HeatFlow srcOutHeat)
+{
+    if (mComponentMap.contains({x, y}))
+    {
+        auto dst = mComponentMap[{x, y}];
+        if (src->getTemperature() > dst->getTemperature())
+        {
+            srcOutHeat.sumHeatToComponents += src->getTemperature() - dst->getTemperature();
+            srcOutHeat.sumHeatTransferRatio += dst->getHeatTransferRatio();
+            srcOutHeat.outComponents.emplace_back(dst);
+        }
+    }
+    return srcOutHeat;
 }
 
 void PlayerShip::addReactor(int x, int y)
