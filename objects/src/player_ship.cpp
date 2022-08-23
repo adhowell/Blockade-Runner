@@ -88,18 +88,17 @@ void PlayerShip::update(qreal deltaT)
     {
         // Determine if the engine should be fired
         bool enable = false;
-        if (mForwardThrust && e->isForwardAcc()) {
-            enable = true;
-        } if (mBackwardThrust && e->isBackwardAcc()) {
-            enable = true;
-        } if (mLeftThrust && e->isLateralLeftAcc()) {
-            enable = true;
-        } if (mRightThrust && e->isLateralRightAcc()) {
-            enable = true;
-        } if (mRotateLeftThrust && e->isRotateLeftAcc()) {
-            enable = true;
-        } if (mRotateRightThrust && e->isRotateRightAcc()) {
-            enable = true;
+        switch (e->getComponent()->getType())
+        {
+            case CT::RotateThruster:
+                if (mLeftThrust && e->isLateralLeftAcc()) enable = true;
+                if (mRightThrust && e->isLateralRightAcc()) enable = true;
+                if (mRotateLeftThrust && e->isRotateLeftAcc()) enable = true;
+                if (mRotateRightThrust && e->isRotateRightAcc()) enable = true;
+            case CT::CruiseThruster:
+                if (mForwardThrust && e->isForwardAcc()) enable = true;
+                if (mBackwardThrust && e->isBackwardAcc()) enable = true;
+            default:;
         }
 
         if (enable)
