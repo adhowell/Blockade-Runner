@@ -79,6 +79,8 @@ Q_SIGNALS:
     void handleRemoveAllConfigItems();
 
 private:
+    bool hasPathToReactor(int x, int y);
+
     bool mForwardThrust = false;
     bool mBackwardThrust = false;
     bool mLeftThrust = false;

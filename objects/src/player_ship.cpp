@@ -233,28 +233,34 @@ void PlayerShip::computeStaticForceVectors()
         compIter.next();
         int x = compIter.key().first;
         int y = compIter.key().second;
+        bool hasValidEngine = false;
+        bool hasEngine = false;
         if (compIter.value()->getType() == CT::RotateThruster)
         {
             // For each unique direction
-            compIter.value()->setValid(false);
             for (int i = 0; i < 4; i++) {
                 auto direction = static_cast<TwoDeg>(i);
                 if (isGridLineFree(x, y, direction))
                 {
                     computeThrusterDirectionForce(x, y, direction);
-                    compIter.value()->setValid(true);
+                    hasValidEngine = true;
                 }
             }
+            hasEngine = true;
         }
         if (compIter.value()->getType() == CT::CruiseThruster)
         {
-            compIter.value()->setValid(false);
             TwoDeg direction = compIter.value()->getDirection();
             if (isGridLineFree(x, y, direction))
             {
                 computeCruiseEngineDirectionForce(x, y, direction);
-                compIter.value()->setValid(true);
+                hasValidEngine = true;
             }
+            hasEngine = true;
+        }
+        if (hasEngine && !hasValidEngine)
+        {
+            compIter.value()->setValid(false);
         }
     }
 }
@@ -269,6 +275,11 @@ void PlayerShip::computeProperties()
         compIter.next();
         auto component = compIter.value();
         auto pos = compIter.key();
+        component->setValid(true);
+        if (!hasPathToReactor(compIter.key().first, compIter.key().second))
+        {
+            component->setValid(false);
+        }
         mCentreOfMass += Vector(qreal((pos.first+0.5)-(sGridSize*0.5))*sBlockSize,
                                 qreal((pos.second+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
         mM += component->getMass();
@@ -396,4 +407,29 @@ void PlayerShip::reconfigure()
     computeStaticForceVectors();
 
     updateVisuals();
+}
+
+bool PlayerShip::hasPathToReactor(int x, int y)
+{
+    QSet<int> checked {x<<4|y};
+    while (true)
+    {
+        int size = checked.size();
+        for (auto c : checked)
+        {
+            int xc {c>>4};
+            int yc {c&0xF};
+            if (mComponentMap.contains({xc-1, yc})) checked << ((xc-1)<<4|yc);
+            if (mComponentMap.contains({xc+1, yc})) checked << ((xc+1)<<4|yc);
+            if (mComponentMap.contains({xc, yc-1})) checked << (xc<<4|(yc-1));
+            if (mComponentMap.contains({xc, yc+1})) checked << (xc<<4|(yc+1));
+        }
+        if (checked.size() == size) break;
+    }
+    for (auto c : checked)
+    {
+        if (mComponentMap[{c>>4, c&0xF}]->getType() == CT::Reactor)
+            return true;
+    }
+    return false;
 }
