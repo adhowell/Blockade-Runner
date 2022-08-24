@@ -1,6 +1,7 @@
 #include "include/player_ship.h"
 #include "include/mini_engine.h"
 #include "include/cruise_engine.h"
+#include "include/heat_flow.h"
 
 PlayerShip::PlayerShip()
 {
@@ -52,36 +53,7 @@ void PlayerShip::update(qreal deltaT)
                 Q_EMIT displayText("ROTATE COMMAND COMPLETE");
             }
             break;
-        case Idle:;
-    }
-
-    // Temperature flow between components
-    QMapIterator compIter(mComponentMap);
-    QMap<std::shared_ptr<Component>, qreal> tempDelta;
-    while (compIter.hasNext())
-    {
-        compIter.next();
-        auto c = compIter.value();
-        int x = compIter.key().first;
-        int y = compIter.key().second;
-
-        HeatFlow hf;
-        hf = computeHeatFlow(c, x-1, y, hf);
-        hf = computeHeatFlow(c, x+1, y, hf);
-        hf = computeHeatFlow(c, x, y-1, hf);
-        hf = computeHeatFlow(c, x, y+1, hf);
-        if (hf.outComponents.empty())
-            continue;
-        qreal tempShare = hf.sumHeatToComponents/(hf.sumHeatTransferRatio*qreal(hf.outComponents.size()));
-        for (const auto& outC : hf.outComponents)
-        {
-            tempDelta[outC] += tempShare * outC->getHeatTransferRatio();
-        }
-        tempDelta[c] -= hf.sumHeatToComponents;
-    }
-    for (auto c : mComponentMap.values())
-    {
-        c->applyTemperatureDelta(tempDelta[c]);
+        case RotateState::Idle:;
     }
 
     for (auto e : mEngines)
@@ -113,23 +85,13 @@ void PlayerShip::update(qreal deltaT)
             mRotV += e->getRotationalAcc() * deltaT;
         }
     }
+
+    // Temperature flow modelling between components
+    HeatFlow hf {mComponentMap};
+    hf.compute();
+
     mAtan2 += mRotV * deltaT;
     mTacticalGraphicsItem->update();
-}
-
-PlayerShip::HeatFlow PlayerShip::computeHeatFlow(const std::shared_ptr<Component>& src, int x, int y, HeatFlow srcOutHeat)
-{
-    if (mComponentMap.contains({x, y}))
-    {
-        auto dst = mComponentMap[{x, y}];
-        if (src->getTemperature() > dst->getTemperature())
-        {
-            srcOutHeat.sumHeatToComponents += src->getTemperature() - dst->getTemperature();
-            srcOutHeat.sumHeatTransferRatio += dst->getHeatTransferRatio();
-            srcOutHeat.outComponents.emplace_back(dst);
-        }
-    }
-    return srcOutHeat;
 }
 
 void PlayerShip::addReactor(int x, int y)

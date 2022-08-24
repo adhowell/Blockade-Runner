@@ -5,7 +5,6 @@ Engine::Engine(std::shared_ptr<Component> component, TwoDeg direction, Vector ce
                Profile profile, Size size)
 {
     mComponent = component;
-    mTemperature = component->getTemperature();
     mDirection = direction;
     mThrust = thrust;
     mIncr = incr;
@@ -88,8 +87,7 @@ qreal Engine::getRotationalAcc() const
 
 void Engine::incrementAccProfile()
 {
-    mTemperature += mThrust*0.1;
-    mComponent->applyTemperatureDelta(mThrust*0.05);
+    mComponent->applyTemperatureDelta(mThrust*0.5);
 
     if (mThrustRatioStep < 1) {
         mThrustRatioStep = qMin(mThrustRatioStep + mIncr, 1.0);
@@ -100,9 +98,7 @@ void Engine::incrementAccProfile()
 
 void Engine::decrementAccProfile()
 {
-    mTemperature -= mThrust*0.1;
-    mComponent->applyTemperatureDelta(-mThrust*0.05);
-    if (mTemperature < 0) mTemperature = 0;
+    mComponent->applyTemperatureDelta(-mThrust*0.5);
 
     if (mThrustRatioStep > 0) {
         mThrustRatioStep = qMax(mThrustRatioStep - mIncr, 0.0);

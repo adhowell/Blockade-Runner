@@ -7,18 +7,21 @@ Component::Component(ComponentType type, QPolygonF poly, TwoDeg direction)
     {
         case ComponentType::HeatSink:
             mTemperature = 25;
-            mHeatTransfer = 3.0;
+            mHeatInRatio = 0.05;
+            mHeatOutRatio = 0.01;
             mMass = 100;
             break;
         case ComponentType::RotateThruster:
         case ComponentType::CruiseThruster:
             mTemperature = 25;
-            mHeatTransfer = 1.0;
+            mHeatInRatio = 0.025;
+            mHeatOutRatio = 0.025;
             mMass = 100;
             break;
         case ComponentType::Reactor:
             mTemperature = 300;
-            mHeatTransfer = 1.0;
+            mHeatInRatio = 0.025;
+            mHeatOutRatio = 0.025;
             mMass = 100;
     }
 }

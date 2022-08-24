@@ -36,7 +36,7 @@ public:
 
     QPolygonF getPoly() const { return mPoly; }
     qreal getOpacity() const { return mThrustRatio; }
-    qreal getNormTemperature() const { return qMin((mTemperature/1000.0)+0.1, 1.0); }
+    qreal getNormTemperature() const { return mComponent->getNormTemperature(); }
     void createPoly(QPointF marker);
 
     void incrementAccProfile();
@@ -60,7 +60,6 @@ protected:
     qreal mIncr;
     TwoDeg mDirection;
     std::shared_ptr<Component> mComponent;
-    qreal mTemperature;
 
     bool mEnabled = false;
     Size mSize;

@@ -18,6 +18,7 @@ add_subdirectory(physics)
 add_subdirectory(effects)
 add_subdirectory(objects)
 add_subdirectory(terminal)
+add_subdirectory(models)
 
 target_link_libraries(projLib Qt5::Widgets)
 
