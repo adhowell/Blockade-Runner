@@ -96,6 +96,18 @@ void PlayerShip::update(qreal deltaT)
 
 void PlayerShip::addReactor(int x, int y)
 {
+    // Do not allow more than one reactor
+    auto compIter = QMapIterator(mComponentMap);
+    while (compIter.hasNext())
+    {
+        compIter.next();
+        if (compIter.value()->getType() == CT::Reactor)
+        {
+            handleRemovePart({compIter.key().first, compIter.key().second});
+            break;
+        }
+    }
+
     qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
     qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
     auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
