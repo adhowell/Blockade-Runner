@@ -34,14 +34,15 @@ public:
 
     void computeRotationalInertia();
     void computeStaticForceVectors();
+    void computeCentreOfRotation();
     void computeProperties();
     void reconfigure();
     void updateVisuals();
 
     bool isGridLineFree(int x, int y, TwoDeg direction);
 
-    void computeThrusterDirectionForce(int x, int y, TwoDeg direction);
-    void computeCruiseEngineDirectionForce(int x, int y, TwoDeg direction);
+    template<class T>
+    void computeEngineDirectionForce(int x, int y, TwoDeg direction);
 
     void update(qreal deltaT);
 
@@ -76,6 +77,7 @@ Q_SIGNALS:
     void handleAddConfigComponent(std::shared_ptr<Component>);
     void handleAddConfigEngine(std::shared_ptr<Engine>);
     void handleAddCentreOfMass(qreal, qreal);
+    void handleAddCentreOfRotation(qreal, qreal);
     void handleRemoveAllConfigItems();
 
 private:
@@ -90,6 +92,7 @@ private:
 
     RotateState mRotateState = RotateState::Idle;
     qreal mRotateTargetRad = 0;
+    bool mCanRotate = false;
 
     qreal mAtan2 = 0; // Bearing (rads)
     qreal mRotA = 0; // Rotational acceleration
@@ -99,6 +102,7 @@ private:
     qreal mM = 0; // Mass
     qreal mI = 0; // Inertia
     Vector mCentreOfMass = Vector(0, 0);
+    Vector mCentreOfRotation = Vector(0, 0);
 
     PlayerShipItem* mTacticalGraphicsItem;
     QVector<std::shared_ptr<Engine>> mEngines;

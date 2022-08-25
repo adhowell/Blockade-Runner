@@ -78,9 +78,17 @@ void Vector::operator+=(qreal scalar)
     mX = qSin(mAtan2) * mSize;
 }
 
+void Vector::operator-=(Vector vec)
+{
+    mX -= vec.mX;
+    mY -= vec.mY;
+    mAtan2 = qAtan2(mX, mY); // Transposed
+    mSize = qSqrt(qPow(mX, 2.0) + qPow(mY, 2.0));
+}
+
 Vector Vector::operator-(Vector vec) const
 {
-    return Vector(mX - vec.mX, mY - vec.mY);
+    return {mX - vec.mX, mY - vec.mY};
 }
 
 qreal Vector::operator*(Vector vec) const
@@ -90,7 +98,7 @@ qreal Vector::operator*(Vector vec) const
 
 Vector Vector::operator*(qreal scalar) const
 {
-    return Vector(mX*scalar, mY*scalar);
+    return {mX*scalar, mY*scalar};
 }
 
 void Vector::operator*=(qreal scalar)

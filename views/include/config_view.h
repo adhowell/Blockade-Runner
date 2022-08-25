@@ -59,6 +59,7 @@ public Q_SLOTS:
     void drawConfigComponent(std::shared_ptr<Component> component);
     void drawConfigEngine(std::shared_ptr<Engine> engine);
     void drawCentreOfMass(qreal x, qreal y);
+    void drawCentreOfRotation(qreal x, qreal y);
     void deleteAllComponents();
 
 Q_SIGNALS:

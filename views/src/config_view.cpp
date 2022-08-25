@@ -167,6 +167,16 @@ void ConfigScene::drawCentreOfMass(qreal x, qreal y)
     mTempItems << addPolygon(poly, pen);
 }
 
+void ConfigScene::drawCentreOfRotation(qreal x, qreal y)
+{
+    auto poly = QPolygonF() << QPointF(x, y)
+                            << QPointF(x-5, y-5) << QPointF(x+5, y+5) << QPointF(x, y)
+                            << QPointF(x+5, y-5) << QPointF(x-5, y+5);
+    auto pen = QPen(QColor(0, 255, 0, 100));
+    pen.setWidthF(0.5);
+    mTempItems << addPolygon(poly, pen);
+}
+
 void ConfigScene::deleteAllComponents()
 {
     for (auto item : mTempItems)

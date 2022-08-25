@@ -1,7 +1,7 @@
 #include "include/component.h"
 
-Component::Component(ComponentType type, QPolygonF poly, TwoDeg direction)
-    : QObject(), mType(type), mPoly(poly), mDirection(direction)
+Component::Component(ComponentType type, QPolygonF poly, int x, int y, TwoDeg direction)
+    : QObject(), mX(x), mY(y), mType(type), mPoly(poly), mDirection(direction)
 {
     switch (type)
     {

@@ -43,10 +43,10 @@ public:
      * Construct vector with radial.
      * @param rad Bearing of vector in radians
      */
-    Vector(qreal rad);
+    explicit Vector(qreal rad);
 
-    QPointF getPosDelta(qreal deltaT) { return QPointF(mSize * deltaT * qSin(mAtan2),
-                                                       -mSize * deltaT * qCos(mAtan2)); }
+    QPointF getPosDelta(qreal deltaT) const { return {mSize * deltaT * qSin(mAtan2),
+                                                      -mSize * deltaT * qCos(mAtan2)}; }
 
     /**
      * Return a new vector created by subtracting the
@@ -54,6 +54,12 @@ public:
      * @param vec
      */
     Vector operator-(Vector vec) const;
+
+    /**
+     * Subtract the given vector from this vector
+     * @param vec
+     */
+    void operator-=(Vector vec);
 
     /**
      * Add the given vector to this vector.

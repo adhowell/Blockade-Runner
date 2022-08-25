@@ -16,7 +16,7 @@ public:
         CruiseThruster,
     };
 
-    Component(ComponentType type, QPolygonF poly, TwoDeg direction = TwoDeg::Up);
+    Component(ComponentType type, QPolygonF poly, int x, int y, TwoDeg direction = TwoDeg::Up);
 
     qreal getNormTemperature() const { return qMin((mTemperature/1000.0)+0.1, 1.0); }
     qreal getHeatInRatio() const { return mHeatInRatio; }
@@ -27,12 +27,16 @@ public:
     TwoDeg getDirection() const { return mDirection; }
     QPolygonF getPoly() const { return mPoly; }
     bool isValid() { return mIsValid; }
+    int x() const { return mX; }
+    int y() const { return mY; }
 
     void setValid(bool isValid) { mIsValid = isValid; }
 
     void applyTemperatureDelta(qreal deltaTemp);
 
 private:
+    int mX;
+    int mY;
     ComponentType mType;
     TwoDeg mDirection;
     qreal mTemperature;

@@ -56,7 +56,7 @@ void PlayerShip::update(qreal deltaT)
         case RotateState::Idle:;
     }
 
-    for (auto e : mEngines)
+    for (const auto& e : mEngines)
     {
         // Determine if the engine should be fired
         bool enable = false;
@@ -115,7 +115,7 @@ void PlayerShip::addReactor(int x, int y)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(CT::Reactor, poly);
+    auto component = std::make_shared<Component>(CT::Reactor, poly, x, y);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -128,7 +128,7 @@ void PlayerShip::addHeatSink(int x, int y)
                              << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
                              << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(CT::HeatSink, poly);
+    auto component = std::make_shared<Component>(CT::HeatSink, poly, x, y);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -141,7 +141,7 @@ void PlayerShip::addRotateThruster(int x, int y)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(CT::RotateThruster, poly);
+    auto component = std::make_shared<Component>(CT::RotateThruster, poly, x, y);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -154,47 +154,18 @@ void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
 
-    auto component = std::make_shared<Component>(CT::CruiseThruster, poly, direction);
+    auto component = std::make_shared<Component>(CT::CruiseThruster, poly, x, y, direction);
     mComponentMap[QPair{x, y}] = component;
 }
 
-void PlayerShip::computeThrusterDirectionForce(int x, int y, TwoDeg direction)
-{
-    // The centre-of-mass offset of the thruster determines which forces it will affect
-    Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
-                            qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
-                    - mCentreOfMass;
-    auto engine = std::make_shared<MiniEngine>(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
-    connect(engine.get(), &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
-
-    // For visualising active thrusters
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    switch (direction) {
-        case TwoDeg::Up:
-            scenePosY += sGridSize;
-            break;
-        case TwoDeg::Down:
-            scenePosY -= sGridSize;
-            break;
-        case TwoDeg::Left:
-            scenePosX += sGridSize;
-            break;
-        case TwoDeg::Right:
-            scenePosX -= sGridSize;
-            break;
-    }
-    engine->createPoly(QPointF(scenePosX, scenePosY));
-    mEngines.push_back(engine);
-}
-
-void PlayerShip::computeCruiseEngineDirectionForce(int x, int y, TwoDeg direction)
+template<class T>
+void PlayerShip::computeEngineDirectionForce(int x, int y, TwoDeg direction)
 {
     // The centre-of-mass offset of the thruster determines which forces it will affect
     Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
                            qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
                     - mCentreOfMass;
-    auto engine = std::make_shared<CruiseEngine>(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
+    auto engine = std::make_shared<T>(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
     connect(engine.get(), &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
 
     // For visualising active thrusters
@@ -254,7 +225,7 @@ void PlayerShip::computeStaticForceVectors()
                 auto direction = static_cast<TwoDeg>(i);
                 if (isGridLineFree(x, y, direction))
                 {
-                    computeThrusterDirectionForce(x, y, direction);
+                    computeEngineDirectionForce<MiniEngine>(x, y, direction);
                     hasValidEngine = true;
                 }
             }
@@ -265,7 +236,7 @@ void PlayerShip::computeStaticForceVectors()
             TwoDeg direction = compIter.value()->getDirection();
             if (isGridLineFree(x, y, direction))
             {
-                computeCruiseEngineDirectionForce(x, y, direction);
+                computeEngineDirectionForce<CruiseEngine>(x, y, direction);
                 hasValidEngine = true;
             }
             hasEngine = true;
@@ -274,6 +245,53 @@ void PlayerShip::computeStaticForceVectors()
         {
             compIter.value()->setValid(false);
         }
+    }
+}
+
+void PlayerShip::computeCentreOfRotation()
+{
+    /**
+     * This isn't really a thing, but it's a somewhat useful indicator for
+     * when rotational symmetry is either off or misaligned with the CoM.
+     */
+    Vector leftRotate {0, 0};
+    Vector rightRotate {0, 0};
+    qreal leftRotateEffectiveMass;
+    qreal rightRotateEffectiveMass;
+    mCanRotate = false;
+    for (const auto& e : mEngines)
+    {
+        if (e->getComponent()->getType() == CT::CruiseThruster)
+            continue;
+        if (e->isRotateLeftAcc())
+        {
+            leftRotate += Vector(qreal((e->getComponent()->x()+0.5)-(sGridSize*0.5))*sBlockSize,
+                                 qreal((e->getComponent()->y()+0.5)-(sGridSize*0.5))*sBlockSize) * e->getComponent()->getMass();
+            leftRotateEffectiveMass += e->getComponent()->getMass();
+            mCanRotate = true;
+        }
+        else if (e->isRotateRightAcc())
+        {
+            rightRotate += Vector(qreal((e->getComponent()->x()+0.5)-(sGridSize*0.5))*sBlockSize,
+                                  qreal((e->getComponent()->y()+0.5)-(sGridSize*0.5))*sBlockSize) * e->getComponent()->getMass();
+            rightRotateEffectiveMass += e->getComponent()->getMass();
+            mCanRotate = true;
+        }
+    }
+    leftRotate *= 1.0/leftRotateEffectiveMass;
+    rightRotate *= 1.0/rightRotateEffectiveMass;
+    if (rightRotateEffectiveMass > 0 && leftRotateEffectiveMass > 0)
+    {
+        mCentreOfRotation = Vector(rightRotate.x() + 0.5 * (leftRotate.x() - rightRotate.x()),
+                                   rightRotate.y() + 0.5 * (leftRotate.y() - rightRotate.y()));
+    }
+    else if (leftRotateEffectiveMass > 0)
+    {
+        mCentreOfRotation = leftRotate;
+    }
+    else if (rightRotateEffectiveMass > 0)
+    {
+        mCentreOfRotation = rightRotate;
     }
 }
 
@@ -397,17 +415,21 @@ void PlayerShip::updateVisuals()
 {
     Q_EMIT handleRemoveAllConfigItems();
     mTacticalGraphicsItem->reset();
-    for (auto c : mComponentMap.values())
+    for (const auto& c : mComponentMap)
     {
         Q_EMIT handleAddConfigComponent(c);
         mTacticalGraphicsItem->addComponent(c);
     }
-    for (auto e : mEngines)
+    for (const auto& e : mEngines)
     {
         Q_EMIT handleAddConfigEngine(e);
         mTacticalGraphicsItem->addEngine(e);
     }
     Q_EMIT handleAddCentreOfMass(mCentreOfMass.x(), mCentreOfMass.y());
+    if (mCanRotate)
+    {
+        Q_EMIT handleAddCentreOfRotation(mCentreOfRotation.x(), mCentreOfRotation.y());
+    }
 }
 
 void PlayerShip::reconfigure()
@@ -417,6 +439,7 @@ void PlayerShip::reconfigure()
     // Compute physics stuff
     computeProperties();
     computeStaticForceVectors();
+    computeCentreOfRotation();
 
     updateVisuals();
 }
@@ -438,7 +461,7 @@ bool PlayerShip::hasPathToReactor(int x, int y)
         }
         if (checked.size() == size) break;
     }
-    for (auto c : checked)
+    for (const auto& c : checked)
     {
         if (mComponentMap[{c>>4, c&0xF}]->getType() == CT::Reactor)
             return true;
