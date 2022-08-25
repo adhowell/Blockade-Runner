@@ -30,7 +30,14 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     {
         pen.setColor(QColor(0, int(255.0*c->getNormTemperature()), 0));
         painter->setPen(pen);
+        painter->setBrush({});
         painter->drawPolygon(c->getPoly());
+        if (!c->getTexturePoly().isEmpty())
+        {
+            painter->setPen({0, 0, 0, 0});
+            painter->setBrush(QColor(0, int(255.0*c->getNormTemperature()), 0));
+            painter->drawPolygon(c->getTexturePoly());
+        }
     }
     //painter->rotate(-mAtan2*360.0/(M_PI*2.0));
     /*

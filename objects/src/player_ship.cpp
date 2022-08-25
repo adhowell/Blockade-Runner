@@ -107,54 +107,25 @@ void PlayerShip::addReactor(int x, int y)
             break;
         }
     }
-
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-            << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-            << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-            << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
-
-    auto component = std::make_shared<Component>(CT::Reactor, poly, x, y);
+    auto component = std::make_shared<Component>(CT::Reactor, x, y);
     mComponentMap[QPair{x, y}] = component;
 }
 
 void PlayerShip::addHeatSink(int x, int y)
 {
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-                             << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-                             << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-                             << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
-
-    auto component = std::make_shared<Component>(CT::HeatSink, poly, x, y);
+    auto component = std::make_shared<Component>(CT::HeatSink, x, y);
     mComponentMap[QPair{x, y}] = component;
 }
 
 void PlayerShip::addRotateThruster(int x, int y)
 {
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-            << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-            << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-            << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
-
-    auto component = std::make_shared<Component>(CT::RotateThruster, poly, x, y);
+    auto component = std::make_shared<Component>(CT::RotateThruster,x, y);
     mComponentMap[QPair{x, y}] = component;
 }
 
 void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
 {
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    auto poly  = QPolygonF() << QPointF(scenePosX - sGridSceneSize, scenePosY - sGridSceneSize)
-            << QPointF(scenePosX + sGridSceneSize, scenePosY - sGridSceneSize)
-            << QPointF(scenePosX + sGridSceneSize, scenePosY + sGridSceneSize)
-            << QPointF(scenePosX - sGridSceneSize, scenePosY + sGridSceneSize);
-
-    auto component = std::make_shared<Component>(CT::CruiseThruster, poly, x, y, direction);
+    auto component = std::make_shared<Component>(CT::CruiseThruster, x, y, direction);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -162,27 +133,27 @@ template<class T>
 void PlayerShip::computeEngineDirectionForce(int x, int y, TwoDeg direction)
 {
     // The centre-of-mass offset of the thruster determines which forces it will affect
-    Vector offset = Vector(qreal((x+0.5)-sGridSize*0.5)*sBlockSize,
-                           qreal((y+0.5)-sGridSize*0.5)*sBlockSize)
+    Vector offset = Vector(qreal((x+0.5)-gGridSize*0.5)*gBlockSize,
+                           qreal((y+0.5)-gGridSize*0.5)*gBlockSize)
                     - mCentreOfMass;
     auto engine = std::make_shared<T>(mComponentMap[QPair(x, y)], direction, offset, mM, mI);
     connect(engine.get(), &Engine::transmitStatus, this, &PlayerShip::receiveTextFromComponent);
 
     // For visualising active thrusters
-    qreal scenePosX = ((x+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
-    qreal scenePosY = ((y+0.5) - (sGridSize*0.5)) * sGridSize * 2.0;
+    qreal scenePosX = ((x+0.5) - (gGridSize*0.5)) * gGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (gGridSize*0.5)) * gGridSize * 2.0;
     switch (direction) {
         case TwoDeg::Up:
-            scenePosY += sGridSize;
+            scenePosY += gGridSize;
             break;
         case TwoDeg::Down:
-            scenePosY -= sGridSize;
+            scenePosY -= gGridSize;
             break;
         case TwoDeg::Left:
-            scenePosX += sGridSize;
+            scenePosX += gGridSize;
             break;
         case TwoDeg::Right:
-            scenePosX -= sGridSize;
+            scenePosX -= gGridSize;
             break;
     }
     engine->createPoly(QPointF(scenePosX, scenePosY));
@@ -200,8 +171,8 @@ void PlayerShip::computeRotationalInertia()
         int x = compIter.key().first;
         int y = compIter.key().second;
         mI += compIter.value()->getMass()
-              * (qPow(qreal((x+0.5)-sGridSize*0.5)*sBlockSize - mCentreOfMass.x(), 2.0)
-                 + qPow(qreal((y+0.5)-sGridSize*0.5)*sBlockSize - mCentreOfMass.y(), 2.0));
+              * (qPow(qreal((x+0.5)-gGridSize*0.5)*gBlockSize - mCentreOfMass.x(), 2.0)
+                 + qPow(qreal((y+0.5)-gGridSize*0.5)*gBlockSize - mCentreOfMass.y(), 2.0));
     }
 }
 
@@ -265,15 +236,15 @@ void PlayerShip::computeCentreOfRotation()
             continue;
         if (e->isRotateLeftAcc())
         {
-            leftRotate += Vector(qreal((e->getComponent()->x()+0.5)-(sGridSize*0.5))*sBlockSize,
-                                 qreal((e->getComponent()->y()+0.5)-(sGridSize*0.5))*sBlockSize) * e->getComponent()->getMass();
+            leftRotate += Vector(qreal((e->getComponent()->x()+0.5)-(gGridSize*0.5))*gBlockSize,
+                                 qreal((e->getComponent()->y()+0.5)-(gGridSize*0.5))*gBlockSize) * e->getComponent()->getMass();
             leftRotateEffectiveMass += e->getComponent()->getMass();
             mCanRotate = true;
         }
         else if (e->isRotateRightAcc())
         {
-            rightRotate += Vector(qreal((e->getComponent()->x()+0.5)-(sGridSize*0.5))*sBlockSize,
-                                  qreal((e->getComponent()->y()+0.5)-(sGridSize*0.5))*sBlockSize) * e->getComponent()->getMass();
+            rightRotate += Vector(qreal((e->getComponent()->x()+0.5)-(gGridSize*0.5))*gBlockSize,
+                                  qreal((e->getComponent()->y()+0.5)-(gGridSize*0.5))*gBlockSize) * e->getComponent()->getMass();
             rightRotateEffectiveMass += e->getComponent()->getMass();
             mCanRotate = true;
         }
@@ -310,8 +281,8 @@ void PlayerShip::computeProperties()
         {
             component->setValid(false);
         }
-        mCentreOfMass += Vector(qreal((pos.first+0.5)-(sGridSize*0.5))*sBlockSize,
-                                qreal((pos.second+0.5)-(sGridSize*0.5))*sBlockSize) * component->getMass();
+        mCentreOfMass += Vector(qreal((pos.first+0.5)-(gGridSize*0.5))*gBlockSize,
+                                qreal((pos.second+0.5)-(gGridSize*0.5))*gBlockSize) * component->getMass();
         mM += component->getMass();
     }
 }
@@ -340,7 +311,7 @@ bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction)
     }
     x += deltaX;
     y += deltaY;
-    while (0 <= x && x <= sGridSize && 0 <= y && y <= sGridSize)
+    while (0 <= x && x <= gGridSize && 0 <= y && y <= gGridSize)
     {
         if (mComponentMap.contains(QPair{x, y})) return false;
         x += deltaX;

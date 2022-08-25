@@ -149,6 +149,11 @@ void ConfigScene::drawConfigComponent(std::shared_ptr<Component> component)
 {
     mTempItems << addPolygon(component->getPoly(),
                              component->isValid() ? QPen(QColor(0, 255, 0)) : QPen(QColor(255, 0, 0)));
+    if (!component->getTexturePoly().isEmpty())
+    {
+        mTempItems << addPolygon(component->getTexturePoly(), QPen(QColor(0, 0, 0, 0)),
+                                 component->isValid() ? QBrush(QColor(0, 255, 0)) : QBrush(QColor(255, 0, 0)));
+    }
 }
 
 void ConfigScene::drawConfigEngine(std::shared_ptr<Engine> engine)
@@ -179,11 +184,7 @@ void ConfigScene::drawCentreOfRotation(qreal x, qreal y)
 
 void ConfigScene::deleteAllComponents()
 {
-    for (auto item : mTempItems)
-    {
-        removeItem(item);
-        delete item;
-    }
+    qDeleteAll(mTempItems);
     mTempItems.clear();
 }
 

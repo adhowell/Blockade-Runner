@@ -1,8 +1,15 @@
 #include "include/component.h"
 
-Component::Component(ComponentType type, QPolygonF poly, int x, int y, TwoDeg direction)
-    : QObject(), mX(x), mY(y), mType(type), mPoly(poly), mDirection(direction)
+Component::Component(ComponentType type, int x, int y, TwoDeg direction)
+    : QObject(), mX(x), mY(y), mType(type), mDirection(direction)
 {
+    qreal scenePosX = ((x+0.5) - (gGridSize*0.5)) * gGridSize * 2.0;
+    qreal scenePosY = ((y+0.5) - (gGridSize*0.5)) * gGridSize * 2.0;
+    mPoly = QPolygonF() << QPointF(scenePosX - gGridSceneSize, scenePosY - gGridSceneSize)
+            << QPointF(scenePosX + gGridSceneSize, scenePosY - gGridSceneSize)
+            << QPointF(scenePosX + gGridSceneSize, scenePosY + gGridSceneSize)
+            << QPointF(scenePosX - gGridSceneSize, scenePosY + gGridSceneSize);
+
     switch (type)
     {
         case ComponentType::HeatSink:
@@ -10,6 +17,10 @@ Component::Component(ComponentType type, QPolygonF poly, int x, int y, TwoDeg di
             mHeatInRatio = 0.05;
             mHeatOutRatio = 0.01;
             mMass = 100;
+            mTexturePoly << QPointF(scenePosX - (0.6*gGridSceneSize), scenePosY - (0.6*gGridSceneSize))
+                         << QPointF(scenePosX + (0.6*gGridSceneSize), scenePosY - (0.6*gGridSceneSize))
+                         << QPointF(scenePosX + (0.6*gGridSceneSize), scenePosY + (0.6*gGridSceneSize))
+                         << QPointF(scenePosX - (0.6*gGridSceneSize), scenePosY + (0.6*gGridSceneSize));
             break;
         case ComponentType::RotateThruster:
         case ComponentType::CruiseThruster:
@@ -23,6 +34,9 @@ Component::Component(ComponentType type, QPolygonF poly, int x, int y, TwoDeg di
             mHeatInRatio = 0.025;
             mHeatOutRatio = 0.025;
             mMass = 100;
+            mTexturePoly << QPointF(scenePosX, scenePosY - (0.6*gGridSceneSize))
+                         << QPointF(scenePosX + (0.6*gGridSceneSize), scenePosY + (0.6*gGridSceneSize))
+                         << QPointF(scenePosX - (0.6*gGridSceneSize), scenePosY + (0.6*gGridSceneSize));
     }
 }
 

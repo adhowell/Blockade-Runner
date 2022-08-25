@@ -63,10 +63,6 @@ public:
 
     void rotate(int degrees);
 
-    constexpr static qreal const sBlockSize = 10;
-    constexpr static qreal const sGridSize = 5;
-    constexpr static qreal const sGridSceneSize = 4.5;
-
 public Q_SLOTS:
     void receiveTextFromComponent(const QString& text);
     void handleAddPart(Component::ComponentType, QPoint, TwoDeg);

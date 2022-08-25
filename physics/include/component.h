@@ -1,4 +1,5 @@
 #include "include/directions.h"
+#include "../views/include/globals.h"
 
 #include <QtWidgets>
 
@@ -16,7 +17,7 @@ public:
         CruiseThruster,
     };
 
-    Component(ComponentType type, QPolygonF poly, int x, int y, TwoDeg direction = TwoDeg::Up);
+    Component(ComponentType type, int x, int y, TwoDeg direction = TwoDeg::Up);
 
     qreal getNormTemperature() const { return qMin((mTemperature/1000.0)+0.1, 1.0); }
     qreal getHeatInRatio() const { return mHeatInRatio; }
@@ -26,6 +27,7 @@ public:
     ComponentType getType() const { return mType; }
     TwoDeg getDirection() const { return mDirection; }
     QPolygonF getPoly() const { return mPoly; }
+    QPolygonF getTexturePoly() const { return mTexturePoly; }
     bool isValid() { return mIsValid; }
     int x() const { return mX; }
     int y() const { return mY; }
@@ -42,6 +44,7 @@ private:
     qreal mTemperature;
     qreal mMass;
     QPolygonF mPoly;
+    QPolygonF mTexturePoly;
     qreal mHeatInRatio;
     qreal mHeatOutRatio;
     bool mIsValid = true;
