@@ -158,7 +158,9 @@ void ConfigScene::drawConfigComponent(std::shared_ptr<Component> component)
 
 void ConfigScene::drawConfigEngine(std::shared_ptr<Engine> engine)
 {
-    mTempItems << addPolygon(engine->getPoly(), QPen(QColor(0, 255, 0)));
+    mTempItems << addPolygon(engine->getPoly(),
+                             engine->getComponent()->isValid() ? QPen(QColor(0, 255, 0)) : QPen(QColor(255, 0, 0)),
+                             QBrush(QColor(0, 0, 0)));
 }
 
 void ConfigScene::drawCentreOfMass(qreal x, qreal y)

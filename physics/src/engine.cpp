@@ -107,6 +107,7 @@ void Engine::decrementAccProfile()
     if (mThrustRatioStep == 0 && mEnabled)
     {
         mEnabled = false;
+        mThrustRatio = 0;
         Q_EMIT transmitStatus("THRUSTER SHUTDOWN SUCCESS");
     }
 }
@@ -131,14 +132,14 @@ void Engine::createPoly(QPointF centre)
     switch (mSize)
     {
         case BIG:
-            height = 10;
-            minWidth = 3;
-            maxWidth = 5;
-            break;
-        case SMALL:
-            height = 3;
+            height = 8;
             minWidth = 2;
             maxWidth = 4;
+            break;
+        case SMALL:
+            height = -3;
+            minWidth = 2;
+            maxWidth = 1;
     }
 
     switch (mDirection)

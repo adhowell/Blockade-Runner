@@ -16,11 +16,10 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     for (auto const &e : mEngines)
     {
-        int gVal = int(255.0*e->getNormTemperature());
-        pen.setColor(QColor(0, gVal, 0));
+        pen.setColor(QColor(0, int(255.0*e->getNormTemperature()), 0));
         painter->setPen(pen);
 
-        fillBrush.setColor(QColor(0, gVal, 0));
+        fillBrush.setColor(QColor(0, int(255.0*e->getOpacity()), 0));
         painter->setBrush(fillBrush);
 
         painter->drawPolygon(e->getPoly());
