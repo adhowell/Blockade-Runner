@@ -2,6 +2,7 @@
 
 void Starfield::updateOffset(QPointF offset)
 {
+    offset *= mScaleFactor;
     mOrigin += offset;
     mLastOffset = offset;
     prepareGeometryChange();
@@ -11,8 +12,8 @@ void Starfield::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 {
     int xOffset = (int)mOrigin.x();
     int yOffset = (int)mOrigin.y();
-    int sceneInitX = -1000 + (int)(mOrigin.x()) % 10;
-    int sceneInitY = -700 + (int)(mOrigin.y()) % 10;
+    int sceneInitX = -1000 + (int)(mOrigin.x()) % mDensityFactor;
+    int sceneInitY = -700 + (int)(mOrigin.y()) % mDensityFactor;
     int sceneX = sceneInitX;
     int sceneY = sceneInitY;
     qreal remX = mOrigin.x() - xOffset;
@@ -21,11 +22,12 @@ void Starfield::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     QPen pen;
     pen.setColor(QColor(0, 100, 0));
     painter->setPen(pen);
+    painter->setRenderHint(QPainter::Antialiasing);
 
     // TODO: Improve the procedural generation seeding logic
-    for (int x = xOffset; x < xOffset + 2000; x += 10)
+    for (int x = xOffset; x < xOffset + 2000; x += mDensityFactor)
     {
-        for (int y = yOffset; y < yOffset + 1400; y += 10)
+        for (int y = yOffset; y < yOffset + 1400; y += mDensityFactor)
         {
             uint32_t xHash = uint32_t(qAbs(sceneX - xOffset)) << 16;
             uint32_t yHash = uint32_t(qAbs(sceneY - yOffset));
@@ -35,14 +37,13 @@ void Starfield::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             uint32_t prng = lcg_parkmiller(xHash | yHash) & 0x2AAB;
             if (prng == 0x2AAA)
             {
-                painter->setRenderHint(QPainter::Antialiasing);
                 painter->drawLine(QLineF(sceneX+remX, sceneY+remY,
                                          sceneX+remX+mLastOffset.x(), sceneY+remY+mLastOffset.y()));
             }
-            sceneY += 10;
+            sceneY += mDensityFactor;
         }
         sceneY = sceneInitY;
-        sceneX += 10;
+        sceneX += mDensityFactor;
     }
 }
 

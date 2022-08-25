@@ -68,8 +68,9 @@ void TacticalScene::initBackground()
     brush.setColor(QColor(0, 0, 15));
     addRect(-1000, -700, 2000, 1400, QPen(), brush);
 
-    auto starField = new Starfield(QPointF(0, 0));
-    addItem(starField);
+    addItem(new Starfield(QPointF(0, 0), 0.3, 17));
+    addItem(new Starfield(QPointF(0, 0), 0.5, 35));
+    addItem(new Starfield(QPointF(0, 0), 1.0, 29));
 }
 
 void TacticalScene::initAsteroidField()

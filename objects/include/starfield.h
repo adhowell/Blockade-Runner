@@ -5,7 +5,8 @@
 
 class Starfield : public QGraphicsItem {
 public:
-    explicit Starfield(QPointF origin) : mOrigin(origin) {}
+    Starfield(QPointF origin, qreal scale, int densityFactor)
+            : mOrigin(origin), mScaleFactor(scale), mDensityFactor(densityFactor) {}
 
     /**
      * Fast PRNG. Nicked from: https://en.wikipedia.org/wiki/Lehmer_random_number_generator
@@ -20,6 +21,8 @@ public:
 private:
     QPointF mOrigin;
     QPointF mLastOffset;
+    qreal mScaleFactor;
+    int mDensityFactor;
 };
 
 #endif //STARFIELD_H
