@@ -43,8 +43,8 @@ void Vector::reflectAbout(qreal rad)
 void Vector::setSize(qreal scalar)
 {
     mSize = scalar;
-    mX = qCos(mAtan2) * mSize;
-    mY = qSin(mAtan2) * mSize;
+    mX = qSin(mAtan2) * mSize;
+    mY = qCos(mAtan2) * mSize;
 }
 
 qreal Vector::separationAngle(Vector v) const

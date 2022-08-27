@@ -3,11 +3,13 @@
 
 MainWindow::MainWindow(QWidget *parent)
 {
+    setStyleSheet("color: #00ff00; background-color: black;");
     mTerminal = new Terminal(this);
     mTacticalScene = new TacticalScene(this);
+    mStrategicScene = new StrategicScene(this);
     mConfigScene = new ConfigScene(this);
 
-    mSimulation = new SimulationLoop(mTacticalScene, mConfigScene);
+    mSimulation = new SimulationLoop(mTacticalScene, mStrategicScene, mConfigScene);
 
     connect(mSimulation, &SimulationLoop::relayInfo, mTerminal, &Terminal::displayInfo);
     connect(mSimulation, &SimulationLoop::relayWarning, mTerminal, &Terminal::displayWarning);
@@ -29,10 +31,14 @@ void MainWindow::closeConfigScreen()
     currLayout->removeWidget(mConfigScene->getView());
     delete currLayout;
 
-    auto newLayout = new QHBoxLayout;
-    newLayout->addWidget(mTacticalScene->getView());
-    newLayout->addWidget(mTerminal);
-    setLayout(newLayout);
+    auto viewLayout = new QVBoxLayout;
+    viewLayout->addWidget(mStrategicScene->getView());
+    viewLayout->addWidget(mTacticalScene->getView());
+
+    auto fullLayout = new QHBoxLayout;
+    fullLayout->addLayout(viewLayout);
+    fullLayout->addWidget(mTerminal);
+    setLayout(fullLayout);
 
     connect(mTerminal, &Terminal::setThrustDirection, mSimulation, &SimulationLoop::setThrust);
     connect(mTerminal, &Terminal::rotate, mSimulation, &SimulationLoop::rotate);

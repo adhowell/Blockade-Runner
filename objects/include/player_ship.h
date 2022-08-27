@@ -76,9 +76,9 @@ public:
     void update(qreal deltaT);
 
     qreal getEnergy() const { return 0.5*mM*qPow(mV.getSize(), 2.0); }
-    qreal getVelocity() { return mV.getSize(); }
-    Vector getVelocityVector() { return mV; }
-    qreal getAtan2() { return mAtan2; }
+    qreal getVelocity() const { return mV.getSize(); }
+    Vector getVelocityVector() const { return mV; }
+    qreal getAtan2() const { return mAtan2; }
 
     QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
 

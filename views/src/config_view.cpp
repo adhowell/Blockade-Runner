@@ -5,6 +5,7 @@
 ConfigView::ConfigView(QGraphicsScene* scene) : QGraphicsView()
 {
     setScene(scene);
+    setStyleSheet("border: 1px solid green");
     setBackgroundBrush(QBrush(QColor(0, 0, 0)));
     ensureVisible(QRectF(0, 0, 0, 0));
 }
@@ -36,6 +37,12 @@ void ConfigView::wheelEvent(QWheelEvent* event)
     updateGridBoxes();
 }
 
+void ConfigView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Space)
+        Q_EMIT handleClose();
+}
+
 void ConfigView::mousePressEvent(QMouseEvent* event)
 {
     switch (event->button())
@@ -46,7 +53,6 @@ void ConfigView::mousePressEvent(QMouseEvent* event)
             break;
         case Qt::MouseButton::RightButton:
             attemptRemovePart(event->pos());
-            Q_EMIT handleClose();
             break;
         default:;
     }

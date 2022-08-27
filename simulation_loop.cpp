@@ -3,9 +3,10 @@
 #include <QFrame>
 #include <QDebug>
 
-SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, ConfigScene* configScene) : QObject()
+SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* strategicScene, ConfigScene* configScene) : QObject()
 {
     mTacticalScene = tacticalScene;
+    mStrategicScene = strategicScene;
     mConfigScene = configScene;
     initPlayer();
     startTimer(1000/gTargetFramerate);
@@ -30,11 +31,14 @@ void SimulationLoop::initPlayer()
 
 void SimulationLoop::timerEvent(QTimerEvent *event)
 {
+    // In the tactical scene the player is always at the origin, the world moves instead
     applyPlayerInput();
     Vector playerVelocity = mPlayer->getVelocityVector();
     playerVelocity.flip();
     QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
     mTacticalScene->updateItems(playerOffset);
+
+    mStrategicScene->updatePlayerSymbol(-playerOffset, mPlayer->getAtan2(), mPlayer->getVelocityVector());
 }
 
 void SimulationLoop::applyPlayerInput()

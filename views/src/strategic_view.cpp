@@ -1,19 +1,17 @@
-#include "include/tactical_view.h"
-#include "include/starfield.h"
-#include "include/asteroid.h"
-#include "include/phosphor_ghost.h"
+#include "include/strategic_view.h"
+
 #include <QtWidgets>
 #include <QGraphicsView>
 #include <QFrame>
 #include <QDebug>
 
-TacticalView::TacticalView(QGraphicsScene* scene) : QGraphicsView()
+StrategicView::StrategicView(QGraphicsScene* scene) : QGraphicsView()
 {
     setStyleSheet("border: 1px solid green");
     setScene(scene);
     ensureVisible(QRectF(0, 0, 0, 0));
 }
-
+/*
 void TacticalView::wheelEvent(QWheelEvent *event)
 {
     if (event->angleDelta().y() > 0) {
@@ -28,15 +26,22 @@ void TacticalView::wheelEvent(QWheelEvent *event)
         }
     }
 }
-
-TacticalScene::TacticalScene(QWidget* parent) : QGraphicsScene(parent)
+*/
+StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
 {
     initBackground();
     setSceneRect(QRectF(-100, -100, 200, 200));
-    mView = new TacticalView(this);
+    mView = new StrategicView(this);
+    mPlayerSymbol = new PlayerSymbolItem({0, 0});
+    addItem(mPlayerSymbol);
 }
 
-void TacticalScene::updateItems(QPointF offset)
+void StrategicScene::updatePlayerSymbol(QPointF posOffset, qreal angle, Vector velocity)
+{
+    mPlayerSymbol->applyUpdate(posOffset*mScaleFactor, angle, velocity);
+}
+/*
+void StrategicScene::updateItems(QPointF offset)
 {
     QList<QGraphicsItem*> forDeletion;
     for (QGraphicsItem *item: items()) {
@@ -46,7 +51,7 @@ void TacticalScene::updateItems(QPointF offset)
         }
         if (PhosphorGhost *g = dynamic_cast<PhosphorGhost*>(item)) {
             if (g->isDone()) forDeletion << g;
-            g->posUpdate(offset);
+            g->applyPosOffset(offset);
             g->update();
         }
         if (Starfield *s = dynamic_cast<Starfield*>(item)) {
@@ -60,23 +65,14 @@ void TacticalScene::updateItems(QPointF offset)
     //auto ghost = new PhosphorGhost(mPlayer->getPoly(), 20);
     //scene()->addItem(ghost);
 }
-
-void TacticalScene::initBackground()
+*/
+void StrategicScene::initBackground()
 {
     setBackgroundBrush(QColor(0, 0, 15));
 
-    addItem(new Starfield(QPointF(0, 0), 0.3, 17));
-    addItem(new Starfield(QPointF(0, 0), 0.5, 35));
-    addItem(new Starfield(QPointF(0, 0), 1.0, 29));
 }
 
-void TacticalScene::initAsteroidField()
-{
-    auto asteroid = new Asteroid(QColor(0, 255, 0), 0, -200, Vector(0, 0), 10, 25);
-    addItem(asteroid);
-}
-
-TacticalView* TacticalScene::getView() const
+StrategicView* StrategicScene::getView() const
 {
     return mView;
 }

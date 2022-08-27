@@ -1,4 +1,5 @@
 #include "include/tactical_view.h"
+#include "include/strategic_view.h"
 #include "include/config_view.h"
 #include "include/terminal.h"
 #include "simulation_loop.h"
@@ -17,5 +18,6 @@ private:
     SimulationLoop* mSimulation;
     Terminal* mTerminal;
     TacticalScene* mTacticalScene;
+    StrategicScene* mStrategicScene;
     ConfigScene* mConfigScene;
 };

@@ -37,22 +37,14 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
             painter->drawPolygon(c->getTexturePoly());
         }
     }
-    //painter->rotate(-mAtan2*360.0/(M_PI*2.0));
-    /*
-    QPolygonF poly = QPolygonF() << QPointF(qCos(mAtan2)*50.0, qSin(mAtan2)*50.0)
-                                 << QPointF(qCos(mAtan2 + M_PI - 0.5)*50.0, qSin(mAtan2 + M_PI - 0.5)*50.0)
-                                 << QPointF(qCos(mAtan2 + M_PI)*25.0, qSin(mAtan2 + M_PI)*25.0)
-                                 << QPointF(qCos(mAtan2 + M_PI + 0.5)*50.0, qSin(mAtan2 + M_PI + 0.5)*50.0);
-    painter->drawPolygon(poly);
-    */
+
     painter->rotate(-*mAtan2*360.0/(M_PI*2.0));
-    //painter->drawLine(0, 0, mV.x()*10, -mV.y()*10);
 }
 
 QRectF PlayerShipItem::boundingRect() const
 {
     // Making the bounding rect too big helps with rendering fast moving PlayerShips
-    return QRectF(-50, -50, 100, 100);
+    return {-50, -50, 100, 100};
 }
 
 void PlayerShipItem::reset()

@@ -23,6 +23,7 @@ public:
 
     void wheelEvent(QWheelEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 Q_SIGNALS:
     void addShipPart(Component::ComponentType, QPoint, TwoDeg);
