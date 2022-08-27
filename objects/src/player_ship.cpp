@@ -267,20 +267,16 @@ void PlayerShip::computeProperties()
 {
     mM = 0;
     mCentreOfMass = Vector(0, 0);
-    QMapIterator compIter(mComponentMap);
-    while (compIter.hasNext())
+    for (auto c : mComponentMap)
     {
-        compIter.next();
-        auto component = compIter.value();
-        auto pos = compIter.key();
-        component->setValid(true);
-        if (!hasPathToReactor(compIter.key().first, compIter.key().second))
+        c->setValid(true);
+        if (!hasPathToReactor(c->x(), c->y()))
         {
-            component->setValid(false);
+            c->setValid(false);
         }
-        mCentreOfMass += Vector(qreal((pos.first+0.5)-(gGridSize*0.5))*gBlockSize,
-                                qreal((pos.second+0.5)-(gGridSize*0.5))*gBlockSize) * component->getMass();
-        mM += component->getMass();
+        mCentreOfMass += Vector(qreal((c->x()+0.5)-(gGridSize*0.5))*gBlockSize,
+                                qreal((c->y()+0.5)-(gGridSize*0.5))*gBlockSize) * c->getMass();
+        mM += c->getMass();
     }
     mCentreOfMass *= 1.0/mM;
 }
