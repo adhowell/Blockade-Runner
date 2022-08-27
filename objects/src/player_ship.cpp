@@ -162,60 +162,57 @@ void PlayerShip::computeEngineDirectionForce(int x, int y, TwoDeg direction)
 
 void PlayerShip::computeRotationalInertia()
 {
-    mCentreOfMass *= 1.0/mM;
-    QMapIterator compIter(mComponentMap);
     mI = 0;
-    while (compIter.hasNext())
-    {
-        compIter.next();
-        int x = compIter.key().first;
-        int y = compIter.key().second;
-        mI += compIter.value()->getMass()
-              * (qPow(qreal((x+0.5)-gGridSize*0.5)*gBlockSize - mCentreOfMass.x(), 2.0)
-                 + qPow(qreal((y+0.5)-gGridSize*0.5)*gBlockSize - mCentreOfMass.y(), 2.0));
-    }
+    mI = std::accumulate(mComponentMap.cbegin(), mComponentMap.cend(), mI,
+                    [this](auto inertia, auto c)
+                    {
+                        inertia += c->getMass()
+                                   *(qPow(qreal((c->x()+0.5)-gGridSize*0.5)*gBlockSize - mCentreOfMass.x(), 2.0)
+                                     + qPow(qreal((c->y()+0.5)-gGridSize*0.5)*gBlockSize - mCentreOfMass.y(), 2.0));
+                        return inertia;
+                    });
 }
 
-void PlayerShip::computeStaticForceVectors()
+void PlayerShip::createAllEngines()
 {
     computeRotationalInertia();
+    std::for_each(mComponentMap.cbegin(), mComponentMap.cend(),
+                  [this](auto c)
+                  {
+                      createComponentEngines(c);
+                  });
+}
 
-    // Thrusters can only be used if there is free LOS to the edge of the grid
-    QMapIterator compIter(mComponentMap);
-    while (compIter.hasNext())
+void PlayerShip::createComponentEngines(std::shared_ptr<Component>& c)
+{
+    bool hasValidEngine = false;
+    bool hasEngine = false;
+    if (c->getType() == CT::RotateThruster)
     {
-        compIter.next();
-        int x = compIter.key().first;
-        int y = compIter.key().second;
-        bool hasValidEngine = false;
-        bool hasEngine = false;
-        if (compIter.value()->getType() == CT::RotateThruster)
-        {
-            // For each unique direction
-            for (int i = 0; i < 4; i++) {
-                auto direction = static_cast<TwoDeg>(i);
-                if (isGridLineFree(x, y, direction))
-                {
-                    computeEngineDirectionForce<MiniEngine>(x, y, direction);
-                    hasValidEngine = true;
-                }
-            }
-            hasEngine = true;
-        }
-        if (compIter.value()->getType() == CT::CruiseThruster)
-        {
-            TwoDeg direction = compIter.value()->getDirection();
-            if (isGridLineFree(x, y, direction))
+        // For each unique direction
+        for (int i = 0; i < 4; i++) {
+            auto direction = static_cast<TwoDeg>(i);
+            if (isGridLineFree(c->x(), c->y(), direction))
             {
-                computeEngineDirectionForce<CruiseEngine>(x, y, direction);
+                computeEngineDirectionForce<MiniEngine>(c->x(), c->y(), direction);
                 hasValidEngine = true;
             }
-            hasEngine = true;
         }
-        if (hasEngine && !hasValidEngine)
+        hasEngine = true;
+    }
+    if (c->getType() == CT::CruiseThruster)
+    {
+        TwoDeg direction = c->getDirection();
+        if (isGridLineFree(c->x(), c->y(), direction))
         {
-            compIter.value()->setValid(false);
+            computeEngineDirectionForce<CruiseEngine>(c->x(), c->y(), direction);
+            hasValidEngine = true;
         }
+        hasEngine = true;
+    }
+    if (hasEngine && !hasValidEngine)
+    {
+        c->setValid(false);
     }
 }
 
@@ -285,6 +282,7 @@ void PlayerShip::computeProperties()
                                 qreal((pos.second+0.5)-(gGridSize*0.5))*gBlockSize) * component->getMass();
         mM += component->getMass();
     }
+    mCentreOfMass *= 1.0/mM;
 }
 
 bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction)
@@ -409,7 +407,7 @@ void PlayerShip::reconfigure()
 
     // Compute physics stuff
     computeProperties();
-    computeStaticForceVectors();
+    createAllEngines();
     computeCentreOfRotation();
 
     updateVisuals();
@@ -432,10 +430,9 @@ bool PlayerShip::hasPathToReactor(int x, int y)
         }
         if (checked.size() == size) break;
     }
-    for (const auto& c : checked)
-    {
-        if (mComponentMap[{c>>4, c&0xF}]->getType() == CT::Reactor)
-            return true;
-    }
-    return false;
+    return std::any_of(checked.cbegin(), checked.cend(),
+                       [this](auto c)
+                       {
+                           return mComponentMap[{c>>4, c&0xF}]->getType() == CT::Reactor;
+                       });
 }

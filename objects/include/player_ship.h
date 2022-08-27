@@ -33,10 +33,34 @@ public:
     void addCruiseThruster(int x, int y, TwoDeg direction);
 
     void computeRotationalInertia();
-    void computeStaticForceVectors();
+
+    /**
+     * Iterates over every component in the ship and creates the
+     * associated engines.
+     */
+    void createAllEngines();
+
+    /**
+     * Add engines to the player ship based on the component position
+     * and type.
+     *
+     * @param c - The component to use for adding engines.
+     */
+    void createComponentEngines(std::shared_ptr<Component>& c);
+
     void computeCentreOfRotation();
     void computeProperties();
+
+    /**
+     * Re-computes the player ship using only the component map. This
+     * discards the current engines and physical properties.
+     */
     void reconfigure();
+
+    /**
+     * Sends signals to the tactical view and config menu to display the
+     * components, engines and misc items.
+     */
     void updateVisuals();
 
     bool isGridLineFree(int x, int y, TwoDeg direction);
@@ -44,6 +68,11 @@ public:
     template<class T>
     void computeEngineDirectionForce(int x, int y, TwoDeg direction);
 
+    /**
+     * Update the position and orientation of the ship using the given delta-t.
+     *
+     * @param deltaT - The time step value.
+     */
     void update(qreal deltaT);
 
     qreal getEnergy() const { return 0.5*mM*qPow(mV.getSize(), 2.0); }

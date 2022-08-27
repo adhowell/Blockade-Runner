@@ -35,7 +35,7 @@ public:
     bool enabled() const { return mEnabled; }
 
     QPolygonF getPoly() const { return mPoly; }
-    qreal getOpacity() const { return mThrustRatio; }
+    qreal getOpacity() const { return qMax(mThrustRatio, 0.1); }
     qreal getNormTemperature() const { return mComponent->getNormTemperature(); }
     void createPoly(QPointF marker);
 

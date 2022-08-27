@@ -21,15 +21,14 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
         fillBrush.setColor(QColor(0, int(255.0*e->getOpacity()), 0));
         painter->setBrush(fillBrush);
-
         painter->drawPolygon(e->getPoly());
     }
-    painter->setBrush({});
+    painter->setBrush(QColor(0, 0, 0, 0));
     for (auto const &c : mComponents)
     {
         pen.setColor(QColor(0, int(255.0*c->getNormTemperature()), 0));
         painter->setPen(pen);
-        painter->setBrush({});
+        painter->setBrush(QColor(0, 0, 0, 0));
         painter->drawPolygon(c->getPoly());
         if (!c->getTexturePoly().isEmpty())
         {
