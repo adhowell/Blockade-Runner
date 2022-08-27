@@ -17,7 +17,7 @@ Q_SIGNALS:
 private:
     void displayAdjacentCommand(bool isPrevious);
 
-    int mLimit = 20;
+    int mLimit = 53;
 
     int mCommandIndex = 0;
     QVector<QString> mCommandHistory;

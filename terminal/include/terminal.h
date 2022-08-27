@@ -9,7 +9,7 @@ class Terminal : public QFrame
 {
     Q_OBJECT
 public:
-    Terminal(QWidget* parent = nullptr);
+    explicit Terminal(QWidget* parent = nullptr);
 
     void setInputFocus() { mInput->setFocus(); }
 

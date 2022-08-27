@@ -18,8 +18,10 @@ Terminal::Terminal(QWidget* parent) : QFrame(parent)
 
     connect(mInput, &Input::sendRawInput, this, &Terminal::parseInput);
 
+    setStyleSheet("border: 1px solid green");
     auto layout = new QVBoxLayout;
-    layout->addWidget(mHistory, 8);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(mHistory, 15);
     layout->addWidget(mInput, 1);
     setLayout(layout);
     hide();

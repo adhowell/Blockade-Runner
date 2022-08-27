@@ -2,9 +2,11 @@
 
 Input::Input() : QPlainTextEdit()
 {
-    setStyleSheet("color: #00ff00; background-color: black; font-size: 25px; font-family: \"OCR A Extended\"");
+    setFixedHeight(25);  // Don't like this
+    setStyleSheet("border: 0px; color: #00ff00; background-color: black; font-size: 15px; font-family: \"OCR A Extended\"");
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    insertPlainText(">> ");
 }
 
 void Input::keyPressEvent(QKeyEvent *e)
@@ -13,13 +15,16 @@ void Input::keyPressEvent(QKeyEvent *e)
     {
         case Qt::Key::Key_Enter:
         case Qt::Key::Key_Return:
-            Q_EMIT sendRawInput(toPlainText());
-            mCommandHistory << toPlainText();
+            Q_EMIT sendRawInput(toPlainText().mid(3));
+            mCommandHistory << toPlainText().mid(3);
             mCommandIndex = mCommandHistory.size();
             clear();
+            insertPlainText(">> ");
             return;
         case Qt::Key::Key_Backspace:
+            if (toPlainText().size() == 3) return;
         case Qt::Key::Key_Left:
+            if (textCursor().columnNumber() == 3) return;
         case Qt::Key::Key_Right:
             QPlainTextEdit::keyPressEvent(e);
             break;
@@ -39,9 +44,16 @@ void Input::keyPressEvent(QKeyEvent *e)
 
 void Input::displayAdjacentCommand(bool isPrevious)
 {
+    if (mCommandHistory.empty()) return;
     if (mCommandIndex == 0 && isPrevious) return;
-    if (mCommandIndex == mCommandHistory.size()-1 && !isPrevious) return;
+    if (mCommandIndex >= mCommandHistory.size()-1 && !isPrevious)
+    {
+        clear();
+        insertPlainText(">> ");
+        mCommandIndex = mCommandHistory.size();
+        return;
+    }
     clear();
     mCommandIndex += isPrevious ? -1 : 1;
-    insertPlainText(mCommandHistory[mCommandIndex]);
+    insertPlainText(">> " + mCommandHistory[mCommandIndex]);
 }
