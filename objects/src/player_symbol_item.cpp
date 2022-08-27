@@ -25,15 +25,9 @@ void PlayerSymbolItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     painter->setBrush(QColor(0, 255, 0));
 
     painter->drawPolygon(mPoly);
-    if (mVelocity.getSize() > 1)
-    {
-        if (mVelocity.getSize() > mMaxVelocityLength)
-            mVelocity.setSize(mMaxVelocityLength);
-        painter->drawLine(QLineF(0, 0, mVelocity.x(), -mVelocity.y()));
-    }
 }
 
 QRectF PlayerSymbolItem::boundingRect() const
 {
-    return {-mMaxVelocityLength, -mMaxVelocityLength, mMaxVelocityLength * 2, mMaxVelocityLength * 2};
+    return {-mHalfLength, -mHalfLength, mHalfLength * 2, mHalfLength * 2};
 }

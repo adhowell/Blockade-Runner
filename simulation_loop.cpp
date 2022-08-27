@@ -1,4 +1,5 @@
 #include "simulation_loop.h"
+
 #include <QtWidgets>
 #include <QFrame>
 #include <QDebug>
@@ -33,12 +34,11 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
 {
     // The player ship is always at the origin, the world moves instead
     applyPlayerInput();
-    Vector playerVelocity = mPlayer->getVelocityVector();
+    Vector playerVelocity = mPlayer->getVelVector();
     playerVelocity.flip();
     QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
     mTacticalScene->updateItems(playerOffset);
-
-    mStrategicScene->updatePlayer(playerOffset, mPlayer->getAtan2(), mPlayer->getVelocityVector());
+    mStrategicScene->updatePlayer(playerOffset, mPlayer->getAtan2(), mPlayer->getVelVector(), mPlayer->getAccVector());
 }
 
 void SimulationLoop::applyPlayerInput()

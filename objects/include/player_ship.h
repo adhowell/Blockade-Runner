@@ -77,7 +77,8 @@ public:
 
     qreal getEnergy() const { return 0.5*mM*qPow(mV.getSize(), 2.0); }
     qreal getVelocity() const { return mV.getSize(); }
-    Vector getVelocityVector() const { return mV; }
+    Vector getVelVector() const { return mV; }
+    Vector getAccVector() const { return mA; }
     qreal getAtan2() const { return mAtan2; }
 
     QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }

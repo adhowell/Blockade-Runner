@@ -1,4 +1,5 @@
 #include "include/strategic_view.h"
+#include "../global_config.h"
 
 #include <QtWidgets>
 #include <QGraphicsView>
@@ -30,12 +31,22 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
     mView = new StrategicView(this);
     mPlayerSymbol = new PlayerSymbolItem({0, 0});
     addItem(mPlayerSymbol);
+    mVelMarkers << new VelocityMarker(10 * gTargetFramerate);
+    mVelMarkers << new VelocityMarker(20 * gTargetFramerate);
+    mVelMarkers << new VelocityMarker(30 * gTargetFramerate);
+    std::for_each(mVelMarkers.cbegin(), mVelMarkers.cend(),
+                  [this](auto v){ addItem(v); });
 }
 
-void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector velocity)
+void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector vel, Vector acc)
 {
     posOffset *= mScaleFactor;
-    mPlayerSymbol->applyUpdate(angle, velocity);
+    mPlayerSymbol->applyUpdate(angle, vel);
+
+    vel *= mScaleFactor;
+    acc *= mScaleFactor;
+    std::for_each(mVelMarkers.cbegin(), mVelMarkers.cend(),
+                  [vel, acc](auto v){ v->updateOffset(vel, acc); });
     mGridLines->updateOffset(posOffset);
 }
 /*

@@ -40,16 +40,19 @@ void TacticalScene::updateItems(QPointF offset)
 {
     QList<QGraphicsItem*> forDeletion;
     for (QGraphicsItem *item: items()) {
-        if (Asteroid *a = dynamic_cast<Asteroid*>(item)) {
+        if (auto a = dynamic_cast<Asteroid*>(item))
+        {
             a->posUpdate(offset);
             a->update();
         }
-        if (PhosphorGhost *g = dynamic_cast<PhosphorGhost*>(item)) {
+        else if (auto g = dynamic_cast<PhosphorGhost*>(item))
+        {
             if (g->isDone()) forDeletion << g;
             g->posUpdate(offset);
             g->update();
         }
-        if (Starfield *s = dynamic_cast<Starfield*>(item)) {
+        else if (auto s = dynamic_cast<Starfield*>(item))
+        {
             s->updateOffset(offset);
             s->update();
         }

@@ -56,6 +56,8 @@ void PlayerShip::update(qreal deltaT)
         case RotateState::Idle:;
     }
 
+    mA = {0, 0};
+    mRotA = 0;
     for (const auto& e : mEngines)
     {
         // Determine if the engine should be fired
@@ -80,15 +82,18 @@ void PlayerShip::update(qreal deltaT)
 
         // Update velocity if engine is firing
         if (e->enabled()) {
-            mV += (Vector(mAtan2) * e->getLongitudinalAcc() * deltaT);
-            mV += (Vector(mAtan2 + M_PI_2) * e->getLateralAcc() * deltaT);
-            mRotV += e->getRotationalAcc() * deltaT;
+            mA += (Vector(mAtan2) * e->getLongitudinalAcc());
+            mA += (Vector(mAtan2 + M_PI_2) * e->getLateralAcc());
+            mRotA += e->getRotationalAcc();
         }
     }
 
     // Temperature flow modelling between components
     HeatFlow hf {mComponentMap};
     hf.compute();
+
+    mRotV += mRotA * deltaT;
+    mV += mA * deltaT;
 
     mAtan2 += mRotV * deltaT;
     mTacticalGraphicsItem->update();

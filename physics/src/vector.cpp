@@ -78,6 +78,11 @@ void Vector::operator+=(qreal scalar)
     mX = qSin(mAtan2) * mSize;
 }
 
+Vector Vector::operator+(Vector vec) const
+{
+    return {mX + vec.mX, mY + vec.mY};
+}
+
 void Vector::operator-=(Vector vec)
 {
     mX -= vec.mX;

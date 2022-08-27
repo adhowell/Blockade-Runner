@@ -62,6 +62,13 @@ public:
     void operator-=(Vector vec);
 
     /**
+     * Return a new vector created by adding the
+     * given vector to this vector.
+     * @param vec
+     */
+    Vector operator+(Vector vec) const;
+
+    /**
      * Add the given vector to this vector.
      * @param vec
      */
