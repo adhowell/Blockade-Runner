@@ -3,6 +3,7 @@
 #include <QtWidgets>
 
 #include "../objects/include/player_symbol_item.h"
+#include "../objects/include/grid_lines.h"
 
 #pragma once
 
@@ -13,7 +14,7 @@ class StrategicView : public QGraphicsView
 public:
     explicit StrategicView(QGraphicsScene* scene);
 
-    //void wheelEvent(QWheelEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     int mScaleFactor = 3;
@@ -27,13 +28,14 @@ public:
 
     void initBackground();
 
-    void updatePlayerSymbol(QPointF posDelta, qreal angleDelta, Vector velocity);
+    void updatePlayer(QPointF posDelta, qreal angleDelta, Vector velocity);
     StrategicView* getView() const;
 
 private:
     StrategicView* mView;
     PlayerSymbolItem* mPlayerSymbol;
-    qreal mScaleFactor = 0.0005;
+    GridLines* mGridLines;
+    qreal mScaleFactor = 0.001;
 };
 
 

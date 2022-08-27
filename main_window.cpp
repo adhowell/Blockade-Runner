@@ -31,13 +31,13 @@ void MainWindow::closeConfigScreen()
     currLayout->removeWidget(mConfigScene->getView());
     delete currLayout;
 
-    auto viewLayout = new QVBoxLayout;
-    viewLayout->addWidget(mStrategicScene->getView());
-    viewLayout->addWidget(mTacticalScene->getView());
+    auto rightLayout = new QVBoxLayout;
+    rightLayout->addWidget(mTacticalScene->getView());
+    rightLayout->addWidget(mTerminal);
 
     auto fullLayout = new QHBoxLayout;
-    fullLayout->addLayout(viewLayout);
-    fullLayout->addWidget(mTerminal);
+    fullLayout->addWidget(mStrategicScene->getView(), 2);
+    fullLayout->addLayout(rightLayout, 1);
     setLayout(fullLayout);
 
     connect(mTerminal, &Terminal::setThrustDirection, mSimulation, &SimulationLoop::setThrust);

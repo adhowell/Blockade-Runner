@@ -17,6 +17,8 @@ public:
         mTriangles[TwoDeg::Right] << p[1] << p[2] << p[3];
         mTriangles[TwoDeg::Down] << p[2] << p[3] << p[0];
         mTriangles[TwoDeg::Left] << p[3] << p[0] << p[1];
+
+        mPen.setWidthF(0.5);
     }
 
     constexpr static qreal sGridSize = 10;

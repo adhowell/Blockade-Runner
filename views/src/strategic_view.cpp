@@ -11,22 +11,18 @@ StrategicView::StrategicView(QGraphicsScene* scene) : QGraphicsView()
     setScene(scene);
     ensureVisible(QRectF(0, 0, 0, 0));
 }
-/*
-void TacticalView::wheelEvent(QWheelEvent *event)
+
+void StrategicView::wheelEvent(QWheelEvent *event)
 {
-    if (event->angleDelta().y() > 0) {
-        if (mScaleFactor > 0) {
-            scale(1.1, 1.1);
-            mScaleFactor--;
-        }
-    } else {
-        if (mScaleFactor < 10) {
-            scale(0.91, 0.91);
-            mScaleFactor++;
-        }
+    if (event->angleDelta().y() > 0)
+    {
+        scale(1.1, 1.1);
+    } else
+    {
+        scale(0.91, 0.91);
     }
 }
-*/
+
 StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
 {
     initBackground();
@@ -36,9 +32,11 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
     addItem(mPlayerSymbol);
 }
 
-void StrategicScene::updatePlayerSymbol(QPointF posOffset, qreal angle, Vector velocity)
+void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector velocity)
 {
-    mPlayerSymbol->applyUpdate(posOffset*mScaleFactor, angle, velocity);
+    posOffset *= mScaleFactor;
+    mPlayerSymbol->applyUpdate(angle, velocity);
+    mGridLines->updateOffset(posOffset);
 }
 /*
 void StrategicScene::updateItems(QPointF offset)
@@ -69,7 +67,8 @@ void StrategicScene::updateItems(QPointF offset)
 void StrategicScene::initBackground()
 {
     setBackgroundBrush(QColor(0, 0, 15));
-
+    mGridLines = new GridLines(200);
+    addItem(mGridLines);
 }
 
 StrategicView* StrategicScene::getView() const

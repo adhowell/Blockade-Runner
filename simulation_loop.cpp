@@ -31,14 +31,14 @@ void SimulationLoop::initPlayer()
 
 void SimulationLoop::timerEvent(QTimerEvent *event)
 {
-    // In the tactical scene the player is always at the origin, the world moves instead
+    // The player ship is always at the origin, the world moves instead
     applyPlayerInput();
     Vector playerVelocity = mPlayer->getVelocityVector();
     playerVelocity.flip();
     QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
     mTacticalScene->updateItems(playerOffset);
 
-    mStrategicScene->updatePlayerSymbol(-playerOffset, mPlayer->getAtan2(), mPlayer->getVelocityVector());
+    mStrategicScene->updatePlayer(playerOffset, mPlayer->getAtan2(), mPlayer->getVelocityVector());
 }
 
 void SimulationLoop::applyPlayerInput()

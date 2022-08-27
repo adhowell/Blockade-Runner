@@ -24,6 +24,7 @@ public:
             default:
                 break;
         }
+        mPen.setWidthF(0.5);
     }
 
     constexpr static qreal sHeight = 20;
