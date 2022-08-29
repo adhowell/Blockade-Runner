@@ -15,6 +15,7 @@ public:
         HeatSink,
         RotateThruster,
         CruiseThruster,
+        RADAR
     };
 
     Component(ComponentType type, int x, int y, TwoDeg direction = TwoDeg::Up);

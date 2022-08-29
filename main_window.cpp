@@ -44,4 +44,6 @@ void MainWindow::closeConfigScreen()
     connect(mTerminal, &Terminal::rotate, mSimulation, &SimulationLoop::rotate);
     mTerminal->show();
     mTerminal->setInputFocus();
+
+    mSimulation->start();
 }

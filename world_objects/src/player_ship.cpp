@@ -1,7 +1,8 @@
-#include "../include/player_ship.h"
+#include "include/player_ship.h"
 #include "include/mini_engine.h"
 #include "include/cruise_engine.h"
 #include "include/heat_flow.h"
+
 
 PlayerShip::PlayerShip(WorldObject::Faction faction, uint32_t uid) : WorldObject(faction, uid)
 {
@@ -102,13 +103,11 @@ void PlayerShip::update(qreal deltaT)
 void PlayerShip::addReactor(int x, int y)
 {
     // Do not allow more than one reactor
-    auto compIter = QMapIterator(mComponentMap);
-    while (compIter.hasNext())
+    for (const auto& c : mComponentMap)
     {
-        compIter.next();
-        if (compIter.value()->getType() == CT::Reactor)
+        if (c->getType() == CT::Reactor)
         {
-            handleRemovePart({compIter.key().first, compIter.key().second});
+            handleRemovePart({c->x(), c->y()});
             break;
         }
     }
@@ -131,6 +130,12 @@ void PlayerShip::addRotateThruster(int x, int y)
 void PlayerShip::addCruiseThruster(int x, int y, TwoDeg direction)
 {
     auto component = std::make_shared<Component>(CT::CruiseThruster, x, y, direction);
+    mComponentMap[QPair{x, y}] = component;
+}
+
+void PlayerShip::addSensor(int x, int y, TwoDeg direction)
+{
+    auto component = std::make_shared<Component>(CT::RADAR, x, y, direction);
     mComponentMap[QPair{x, y}] = component;
 }
 
@@ -178,14 +183,44 @@ void PlayerShip::computeRotationalInertia()
                     });
 }
 
+void PlayerShip::createAllSensors()
+{
+    for (auto c : mComponentMap)
+    {
+        createComponentSensors(c);
+    }
+}
+
+void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
+{
+    bool hasValidArc = false;
+    if (c->getType() != CT::RADAR)
+        return;
+
+    // Get the bearing angle to every other component
+    qreal minBearing;
+    qreal maxBearing;
+
+    TwoDeg direction = c->getDirection();
+    if (isGridLineFree(c->x(), c->y(), direction, true))
+    {
+        Q_EMIT handleCreatePlayerSensor(direction);
+        hasValidArc = true;
+    }
+
+    if (!hasValidArc)
+    {
+        c->setValid(false);
+    }
+}
+
 void PlayerShip::createAllEngines()
 {
     computeRotationalInertia();
-    std::for_each(mComponentMap.cbegin(), mComponentMap.cend(),
-                  [this](auto c)
-                  {
-                      createComponentEngines(c);
-                  });
+    for (auto c : mComponentMap)
+    {
+        createComponentEngines(c);
+    }
 }
 
 void PlayerShip::createComponentEngines(std::shared_ptr<Component>& c)
@@ -286,7 +321,7 @@ void PlayerShip::computeProperties()
     mCentreOfMass *= 1.0/mM;
 }
 
-bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction)
+bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction, bool flip)
 {
     int deltaX;
     int deltaY;
@@ -307,6 +342,11 @@ bool PlayerShip::isGridLineFree(int x, int y, TwoDeg direction)
             deltaX = 1;
             deltaY = 0;
             break;
+    }
+    if (flip)
+    {
+        deltaX *= -1;
+        deltaY *= -1;
     }
     x += deltaX;
     y += deltaY;
@@ -365,6 +405,9 @@ void PlayerShip::handleAddPart(CT compType, QPoint pos, TwoDeg direction)
         case CT::CruiseThruster:
             addCruiseThruster(pos.x(), pos.y(), direction);
             break;
+        case CT::RADAR:
+            addSensor(pos.x(), pos.y(), direction);
+            break;
         default:
             break;
     }
@@ -408,9 +451,11 @@ void PlayerShip::updateVisuals()
 void PlayerShip::reconfigure()
 {
     mEngines.clear();
+    Q_EMIT handleClearSensors();
 
     // Compute physics stuff
     computeProperties();
+    createAllSensors();
     createAllEngines();
     computeCentreOfRotation();
 

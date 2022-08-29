@@ -1,6 +1,8 @@
+#include <exception>
+
 #pragma once
 
-enum TwoDeg {
+enum class TwoDeg {
     Up,
     Down,
     Left,

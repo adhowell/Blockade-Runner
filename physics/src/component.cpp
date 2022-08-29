@@ -24,6 +24,7 @@ Component::Component(ComponentType type, int x, int y, TwoDeg direction)
             break;
         case ComponentType::RotateThruster:
         case ComponentType::CruiseThruster:
+        case ComponentType::RADAR:
             mTemperature = 25;
             mHeatInRatio = 0.025;
             mHeatOutRatio = 0.025;

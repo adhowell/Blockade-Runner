@@ -31,6 +31,7 @@ public:
     void addHeatSink(int x, int y);
     void addRotateThruster(int x, int y);
     void addCruiseThruster(int x, int y, TwoDeg direction);
+    void addSensor(int x, int y, TwoDeg direction);
 
     void computeRotationalInertia();
 
@@ -39,6 +40,20 @@ public:
      * associated engines.
      */
     void createAllEngines();
+
+    /**
+     * Iterates over every component in the ship and creates the
+     * associated sensors.
+     */
+    void createAllSensors();
+
+    /**
+     * Add a sensor to the player ship based on the component position
+     * and type.
+     *
+     * @param c - The component to use for adding the sensor.
+     */
+    void createComponentSensors(std::shared_ptr<Component>& c);
 
     /**
      * Add engines to the player ship based on the component position
@@ -63,7 +78,7 @@ public:
      */
     void updateVisuals();
 
-    bool isGridLineFree(int x, int y, TwoDeg direction);
+    bool isGridLineFree(int x, int y, TwoDeg direction, bool flip = false);
 
     template<class T>
     void computeEngineDirectionForce(int x, int y, TwoDeg direction);
@@ -97,6 +112,8 @@ Q_SIGNALS:
     void handleAddCentreOfMass(qreal, qreal);
     void handleAddCentreOfRotation(qreal, qreal);
     void handleRemoveAllConfigItems();
+    void handleCreatePlayerSensor(TwoDeg);
+    void handleClearSensors();
 
 private:
     bool hasPathToReactor(int x, int y);

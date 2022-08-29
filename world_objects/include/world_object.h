@@ -31,6 +31,7 @@ public:
     Vector getVelVector() const { return mV; }
     Vector getAccVector() const { return mA; }
     Vector getPosVector() const { return mP; }
+    QPointF getPoint() const { return {mP.x(), mP.y()}; }
     qreal getAtan2() const { return mAtan2; }
     QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
     uint32_t getId() const { return mId; }

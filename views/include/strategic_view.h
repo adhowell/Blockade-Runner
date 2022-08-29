@@ -37,7 +37,6 @@ private:
     PlayerSymbolItem* mPlayerSymbol;
     GridLines* mGridLines;
     QVector<VelocityMarker*> mVelMarkers;
-    qreal mScaleFactor = 0.001;
 };
 
 

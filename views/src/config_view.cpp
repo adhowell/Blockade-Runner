@@ -88,7 +88,7 @@ void ConfigView::attemptFocusTile(QPoint pos)
         }
         mFocusComponent = focusTile->getType();
         mItemRequiresDirection = false;
-        if (mFocusComponent == Component::ComponentType::CruiseThruster)
+        if (mFocusComponent == Component::ComponentType::CruiseThruster || mFocusComponent == Component::ComponentType::RADAR)
             mItemRequiresDirection = true;
         updateGridBoxes();
         return;
@@ -135,10 +135,11 @@ ConfigScene::ConfigScene(QWidget* parent) : QGraphicsScene(parent)
             addItem(new GridBox(x, y));
 
     // Draw component tiles
-    addItem(new ComponentTile(-30, -80, Component::ComponentType::Reactor));
-    addItem(new ComponentTile(-30, -55, Component::ComponentType::HeatSink));
     addItem(new ComponentTile(-95, -55, Component::ComponentType::RotateThruster));
     addItem(new ComponentTile(-95, -80, Component::ComponentType::CruiseThruster));
+    addItem(new ComponentTile(-30, -80, Component::ComponentType::Reactor));
+    addItem(new ComponentTile(-30, -55, Component::ComponentType::HeatSink));
+    addItem(new ComponentTile( 35, -80, Component::ComponentType::RADAR));
 }
 
 ConfigView* ConfigScene::getView() const

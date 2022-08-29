@@ -21,6 +21,9 @@ public:
             case Component::ComponentType::CruiseThruster:
                 mLabel = "ENGINE";
                 break;
+            case Component::ComponentType::RADAR:
+                mLabel = "RADAR";
+                break;
             default:
                 break;
         }

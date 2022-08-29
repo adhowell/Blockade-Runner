@@ -1,5 +1,6 @@
 #include "include/strategic_view.h"
 #include "../global_config.h"
+#include "include/globals.h"
 
 #include <QtWidgets>
 #include <QGraphicsView>
@@ -40,11 +41,11 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
 
 void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector vel, Vector acc)
 {
-    posOffset *= mScaleFactor;
+    posOffset *= gScaleFactor;
     mPlayerSymbol->applyUpdate(angle, vel);
 
-    vel *= mScaleFactor;
-    acc *= mScaleFactor;
+    vel *= gScaleFactor;
+    acc *= gScaleFactor;
     std::for_each(mVelMarkers.cbegin(), mVelMarkers.cend(),
                   [vel, acc](auto v){ v->updateOffset(vel, acc); });
     mGridLines->updateOffset(posOffset);
