@@ -2,6 +2,7 @@
 #include "include/mini_engine.h"
 #include "include/cruise_engine.h"
 #include "include/heat_flow.h"
+#include "include/radar_sensor.h"
 
 
 PlayerShip::PlayerShip(WorldObject::Faction faction, uint32_t uid) : WorldObject(faction, uid)
@@ -167,7 +168,7 @@ void PlayerShip::computeEngineDirectionForce(int x, int y, TwoDeg direction)
             break;
     }
     engine->createPoly(QPointF(scenePosX, scenePosY));
-    mEngines.push_back(engine);
+    mEngines << engine;
 }
 
 void PlayerShip::computeRotationalInertia()
@@ -183,20 +184,13 @@ void PlayerShip::computeRotationalInertia()
                     });
 }
 
-void PlayerShip::createAllSensors()
-{
-    for (auto c : mComponentMap)
-    {
-        createComponentSensors(c);
-    }
-}
-
 void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
 {
     bool hasValidArc = false;
     if (c->getType() != CT::RADAR)
         return;
 
+    // TODO: Check for allowed arc
     // Get the bearing angle to every other component
     qreal minBearing;
     qreal maxBearing;
@@ -204,22 +198,30 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
     TwoDeg direction = c->getDirection();
     if (isGridLineFree(c->x(), c->y(), direction, true))
     {
-        Q_EMIT handleCreatePlayerSensor(direction);
+        qreal angle = 0;
+        switch (direction)
+        {
+            case TwoDeg::Up: break;
+            case TwoDeg::Right: angle = M_PI * 1.5; break;
+            case TwoDeg::Down: angle = M_PI; break;
+            case TwoDeg::Left: angle = M_PI * 0.5; break;
+        }
+        mSensors << std::make_shared<RadarSensor>(this, angle);
         hasValidArc = true;
     }
-
     if (!hasValidArc)
     {
         c->setValid(false);
     }
 }
 
-void PlayerShip::createAllEngines()
+void PlayerShip::createAllSubComponents()
 {
     computeRotationalInertia();
     for (auto c : mComponentMap)
     {
         createComponentEngines(c);
+        createComponentSensors(c);
     }
 }
 
@@ -446,17 +448,20 @@ void PlayerShip::updateVisuals()
     {
         Q_EMIT handleAddCentreOfRotation(mCentreOfRotation.x(), mCentreOfRotation.y());
     }
+
+    Q_EMIT handleAddSensors(mSensors);
 }
 
 void PlayerShip::reconfigure()
 {
+    // Clear stuff
     mEngines.clear();
-    Q_EMIT handleClearSensors();
+    Q_EMIT handleClearSensors(mSensors);
+    mSensors.clear();
 
     // Compute physics stuff
     computeProperties();
-    createAllSensors();
-    createAllEngines();
+    createAllSubComponents();
     computeCentreOfRotation();
 
     updateVisuals();

@@ -27,7 +27,7 @@ void SimulationLoop::initPlayer()
     connect(mPlayer, &PlayerShip::handleAddCentreOfMass, mConfigScene, &ConfigScene::drawCentreOfMass);
     connect(mPlayer, &PlayerShip::handleAddCentreOfRotation, mConfigScene, &ConfigScene::drawCentreOfRotation);
     connect(mPlayer, &PlayerShip::handleRemoveAllConfigItems, mConfigScene, &ConfigScene::deleteAllComponents);
-    connect(mPlayer, &PlayerShip::handleCreatePlayerSensor, this, &SimulationLoop::createPlayerSensor);
+    connect(mPlayer, &WorldObject::handleAddSensors, this, &SimulationLoop::addSensors);
     connect(mPlayer, &PlayerShip::handleClearSensors, this, &SimulationLoop::clearSensors);
     connect(mConfigScene->getView(), &ConfigView::addShipPart, mPlayer, &PlayerShip::handleAddPart);
     connect(mConfigScene->getView(), &ConfigView::removeShipPart, mPlayer, &PlayerShip::handleRemovePart);
@@ -46,10 +46,8 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
 
     // Update sensors
-    for (auto sensor : mSensors)
-    {
-        sensor->update();
-    }
+    mPlayer->updateSensors();
+    //std::for_each(mObjects.cbegin(), mObjects.cend(), [](auto obj){obj->updateSensors();});
 
     mTacticalScene->updateItems(playerOffset);
     mStrategicScene->updatePlayer(playerOffset, mPlayer->getAtan2(), mPlayer->getVelVector(), mPlayer->getAccVector());
@@ -94,33 +92,20 @@ void SimulationLoop::setThrust(TwoDeg direction, bool isActive)
     }
 }
 
-void SimulationLoop::createPlayerSensor(TwoDeg direction)
+void SimulationLoop::addSensors(QVector<std::shared_ptr<Sensor>> sensors)
 {
-    qreal angle = 0;
-    switch (direction)
+    for (const auto& sensor : sensors)
     {
-        case TwoDeg::Up: break;
-        case TwoDeg::Right: angle = M_PI * 1.5; break;
-        case TwoDeg::Down: angle = M_PI; break;
-        case TwoDeg::Left: angle = M_PI * 0.5; break;
+        mStrategicScene->addItem(sensor->getItem());
     }
-    auto sensor = createSensor(mPlayer, angle);
-    mStrategicScene->addItem(sensor->getItem());
-    mSensors << sensor;
 }
 
-std::shared_ptr<Sensor> SimulationLoop::createSensor(WorldObject* parent, qreal boreOffsetAngle)
+void SimulationLoop::clearSensors(QVector<std::shared_ptr<Sensor>> sensors)
 {
-    return std::make_shared<RadarSensor>(parent, boreOffsetAngle);
-}
-
-void SimulationLoop::clearSensors()
-{
-    for (const auto& s : mSensors)
+    for (const auto& sensor : sensors)
     {
-        mStrategicScene->removeItem(s->getItem());
+        mStrategicScene->removeItem(sensor->getItem());
     }
-    mSensors.clear();
 }
 
 void SimulationLoop::rotate(int degrees)

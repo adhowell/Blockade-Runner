@@ -1,5 +1,6 @@
 #include <QtWidgets>
 #include "../physics/include/vector.h"
+#include "../models/include/sensor.h"
 
 #pragma once
 
@@ -36,6 +37,14 @@ public:
     QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
     uint32_t getId() const { return mId; }
 
+    void updateSensors()
+    {
+        for (const auto& s : mSensors) s->update({mP.x(), mP.y()}, mAtan2);
+    }
+
+Q_SIGNALS:
+    void handleAddSensors(QVector<std::shared_ptr<Sensor>>);
+
 protected:
     Faction mFaction;
     uint32_t mId;
@@ -43,5 +52,6 @@ protected:
     Vector mV = Vector(0, 0); // Velocity vector
     Vector mA = Vector(0, 0); // Acceleration vector
     Vector mP = Vector(0, 0); // Position vector
+    QVector<std::shared_ptr<Sensor>> mSensors;
     QGraphicsItem* mTacticalGraphicsItem = nullptr;
 };

@@ -19,7 +19,7 @@ std::optional<Sensor::Track> Sensor::computeTrack(WorldObject* obj)
     return {};
 }
 
-void Sensor::update()
+void Sensor::update(QPointF parentPosition, qreal parentAngle)
 {
     if (mIsActive)
     {
@@ -45,5 +45,5 @@ void Sensor::update()
         }
     }
     if (mItem)
-        mItem->updateScan(mParent->getPoint(), mBoreAngleOffset - mParent->getAtan2(), mScanPosition);
+        mItem->updateScan(parentPosition, mBoreAngleOffset - parentAngle, mScanPosition);
 }

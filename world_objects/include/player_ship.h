@@ -39,7 +39,7 @@ public:
      * Iterates over every component in the ship and creates the
      * associated engines.
      */
-    void createAllEngines();
+    void createAllSubComponents();
 
     /**
      * Iterates over every component in the ship and creates the
@@ -106,14 +106,13 @@ public Q_SLOTS:
     void handleRemovePart(QPoint);
 
 Q_SIGNALS:
-    void displayText(QString text);
+    void displayText(QString);
     void handleAddConfigComponent(std::shared_ptr<Component>);
     void handleAddConfigEngine(std::shared_ptr<Engine>);
     void handleAddCentreOfMass(qreal, qreal);
     void handleAddCentreOfRotation(qreal, qreal);
     void handleRemoveAllConfigItems();
-    void handleCreatePlayerSensor(TwoDeg);
-    void handleClearSensors();
+    void handleClearSensors(QVector<std::shared_ptr<Sensor>>);
 
 private:
     bool hasPathToReactor(int x, int y);
@@ -137,6 +136,5 @@ private:
     Vector mCentreOfRotation = Vector(0, 0);
 
     QVector<std::shared_ptr<Engine>> mEngines;
-
     QMap<QPair<int, int>, std::shared_ptr<Component>> mComponentMap;
 };

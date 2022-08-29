@@ -1,9 +1,10 @@
 #include <QtWidgets>
-#include "../world_objects/include/world_object.h"
 #include "../objects/include/sensor_fov_item.h"
 
 #pragma once
 
+
+class WorldObject;
 
 class Sensor
 {
@@ -17,7 +18,7 @@ public:
         qreal bearingOffBore;
         qreal distance;
         qreal receivedPower;
-        WorldObject::Faction faction;
+        //WorldObject::Faction faction;
         uint32_t targetUid;
     };
 
@@ -29,8 +30,8 @@ public:
         UV,
     };
 
-    Sensor(WorldObject* parent, Radiation radTx, Radiation radRx, qreal txPower, qreal rxPower, qreal boreAngleOffset, qreal totalFOV, qreal scanFOV, qreal scanSpeed)
-            : mParent(parent), mRadTx(radTx), mRadRx(radRx), mTxPower(txPower), mRxPower(rxPower), mBoreAngleOffset(boreAngleOffset), mTotalFOV(totalFOV), mScanFOV(scanFOV), mScanSpeed(scanSpeed)
+    Sensor(Radiation radTx, Radiation radRx, qreal txPower, qreal rxPower, qreal boreAngleOffset, qreal totalFOV, qreal scanFOV, qreal scanSpeed)
+            : mRadTx(radTx), mRadRx(radRx), mTxPower(txPower), mRxPower(rxPower), mBoreAngleOffset(boreAngleOffset), mTotalFOV(totalFOV), mScanFOV(scanFOV), mScanSpeed(scanSpeed)
             {
                 mItem = new SensorFOV(totalFOV, scanFOV);
             }
@@ -48,12 +49,10 @@ public:
     /**
      * Update the scan angle and the associated graphics item (if any).
      */
-    void update();
+    void update(QPointF parentPosition, qreal parentAngle);
 
 protected:
     std::optional<Track> computeTrack(WorldObject* obj);
-
-    WorldObject* mParent;
 
     Radiation mRadTx; // The radiation the sensor emits
     Radiation mRadRx; // The radiation the sensor receives
@@ -66,7 +65,7 @@ protected:
     qreal mTotalFOV;
     qreal mScanFOV;
     qreal mScanSpeed;
-    qreal mScanPosition; // The bearing (rads) the scan cone is pointing
+    qreal mScanPosition = 0; // The bearing (rads) the scan cone is pointing
     bool mScanCW = true; // Scan direction
     bool mIsActive = true;
 

@@ -3,7 +3,6 @@
 #include "include/strategic_view.h"
 #include "include/config_view.h"
 #include "../global_config.h"
-#include "../models/include/sensor.h"
 
 #include <QFrame>
 #include <QGraphicsView>
@@ -31,8 +30,8 @@ public Q_SLOTS:
     void receiveErrorFromPlayerShip(const QString& text);
     void setThrust(TwoDeg direction, bool isActive);
     void rotate(int degrees);
-    void createPlayerSensor(TwoDeg);
-    void clearSensors();
+    void addSensors(QVector<std::shared_ptr<Sensor>> sensors);
+    void clearSensors(QVector<std::shared_ptr<Sensor>> sensors);
 
 Q_SIGNALS:
     // For display in the terminal history window.
@@ -44,7 +43,6 @@ private:
     PlayerShip* mPlayer;
 
     QVector<std::shared_ptr<WorldObject>> mObjects;
-    QVector<std::shared_ptr<Sensor>> mSensors;
 
     TacticalScene* mTacticalScene;
     StrategicScene* mStrategicScene;
@@ -52,8 +50,6 @@ private:
 
     void applyPlayerInput();
     void updatePlayer();
-
-    std::shared_ptr<Sensor> createSensor(WorldObject* parent, qreal boreOffsetAngle);
 
     bool mForwardThrust = false;
     bool mBackwardThrust = false;
