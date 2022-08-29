@@ -11,7 +11,7 @@ void VelocityMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 {
     QPen pen;
     pen.setColor(QColor(0, 255, 0));
-    pen.setWidthF(2.0);
+    pen.setWidthF(1.0);
     painter->setPen(pen);
     painter->setRenderHint(QPainter::Antialiasing);
     painter->drawEllipse(-mSize, -mSize, mSize*2, mSize*2);

@@ -15,7 +15,7 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* str
 
 void SimulationLoop::initPlayer()
 {
-    mPlayer = new PlayerShip();
+    mPlayer = new PlayerShip(WorldObject::Faction::Blue, 0);
     connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveInfoFromPlayerShip);
     connect(mPlayer, &PlayerShip::handleAddConfigComponent, mConfigScene, &ConfigScene::drawConfigComponent);
     connect(mPlayer, &PlayerShip::handleAddConfigEngine, mConfigScene, &ConfigScene::drawConfigEngine);

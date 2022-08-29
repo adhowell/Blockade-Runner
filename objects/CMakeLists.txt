@@ -4,7 +4,6 @@ target_sources(projLib
         include/grid_lines.h
         include/menu_grid_box.h
         include/phosphor_ghost.h
-        include/player_ship.h
         include/player_ship_item.h
         include/player_symbol_item.h
         include/starfield.h
@@ -12,7 +11,6 @@ target_sources(projLib
         src/asteroid.cpp
         src/grid_lines.cpp
         src/phosphor_ghost.cpp
-        src/player_ship.cpp
         src/player_ship_item.cpp
         src/player_symbol_item.cpp
         src/starfield.cpp

@@ -1,9 +1,9 @@
-#include "include/player_ship.h"
+#include "../include/player_ship.h"
 #include "include/mini_engine.h"
 #include "include/cruise_engine.h"
 #include "include/heat_flow.h"
 
-PlayerShip::PlayerShip()
+PlayerShip::PlayerShip(WorldObject::Faction faction, uint32_t uid) : WorldObject(faction, uid)
 {
     mTacticalGraphicsItem = new PlayerShipItem(&mAtan2);
 }
@@ -383,17 +383,20 @@ void PlayerShip::handleRemovePart(QPoint pos)
 
 void PlayerShip::updateVisuals()
 {
+    // TODO: Make this less bad
+    auto playerItem = dynamic_cast<PlayerShipItem*>(mTacticalGraphicsItem);
+
     Q_EMIT handleRemoveAllConfigItems();
-    mTacticalGraphicsItem->reset();
+    playerItem->reset();
     for (const auto& c : mComponentMap)
     {
         Q_EMIT handleAddConfigComponent(c);
-        mTacticalGraphicsItem->addComponent(c);
+        playerItem->addComponent(c);
     }
     for (const auto& e : mEngines)
     {
         Q_EMIT handleAddConfigEngine(e);
-        mTacticalGraphicsItem->addEngine(e);
+        playerItem->addEngine(e);
     }
     Q_EMIT handleAddCentreOfMass(mCentreOfMass.x(), mCentreOfMass.y());
     if (mCanRotate)

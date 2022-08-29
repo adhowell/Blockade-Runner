@@ -1,18 +1,18 @@
-#include "include/vector.h"
+#include "../world_objects/include/world_object.h"
 #include "blur.h"
 #include "include/engine.h"
 #include "include/component.h"
-#include "player_ship_item.h"
+#include "include/player_ship_item.h"
 
 #include <QGraphicsItem>
 #include <QtMath>
 
 #pragma once
 
-class PlayerShip : public QObject {
+class PlayerShip : public WorldObject {
     Q_OBJECT
 public:
-    PlayerShip();
+    PlayerShip(WorldObject::Faction faction, uint32_t uid);
 
     typedef Component::ComponentType CT;
 
@@ -75,14 +75,6 @@ public:
      */
     void update(qreal deltaT);
 
-    qreal getEnergy() const { return 0.5*mM*qPow(mV.getSize(), 2.0); }
-    qreal getVelocity() const { return mV.getSize(); }
-    Vector getVelVector() const { return mV; }
-    Vector getAccVector() const { return mA; }
-    qreal getAtan2() const { return mAtan2; }
-
-    QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
-
     void resetMovement();
     void enableForward() { mForwardThrust = true; }
     void enableBackward() { mBackwardThrust = true; }
@@ -120,17 +112,13 @@ private:
     qreal mRotateTargetRad = 0;
     bool mCanRotate = false;
 
-    qreal mAtan2 = 0; // Bearing (rads)
     qreal mRotA = 0; // Rotational acceleration
     qreal mRotV = 0; // Rotational velocity
-    Vector mV = Vector(0, 0); // Velocity vector
-    Vector mA = Vector(0, 0); // Acceleration vector
     qreal mM = 0; // Mass
     qreal mI = 0; // Inertia
     Vector mCentreOfMass = Vector(0, 0);
     Vector mCentreOfRotation = Vector(0, 0);
 
-    PlayerShipItem* mTacticalGraphicsItem;
     QVector<std::shared_ptr<Engine>> mEngines;
 
     QMap<QPair<int, int>, std::shared_ptr<Component>> mComponentMap;

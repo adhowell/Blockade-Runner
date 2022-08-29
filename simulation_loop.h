@@ -1,4 +1,4 @@
-#include "include/player_ship.h"
+#include "world_objects/include/player_ship.h"
 #include "include/tactical_view.h"
 #include "include/strategic_view.h"
 #include "include/config_view.h"
