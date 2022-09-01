@@ -3,6 +3,7 @@
 #include "include/strategic_view.h"
 #include "include/config_view.h"
 #include "../global_config.h"
+#include "models/include/signal_track_processor.h"
 
 #include <QFrame>
 #include <QGraphicsView>
@@ -20,6 +21,7 @@ public:
     explicit SimulationLoop(TacticalScene* tacticalScene, StrategicScene* strategicScene, ConfigScene* configScene);
 
     void initPlayer();
+    void initMissile();
 
     void start();
     void timerEvent(QTimerEvent* event) override;
@@ -42,14 +44,14 @@ Q_SIGNALS:
 private:
     PlayerShip* mPlayer;
 
-    QVector<std::shared_ptr<WorldObject>> mObjects;
+    QVector<WorldObject*> mObjects;
+    QVector<SignalTrackProcessor*> mProcessors;
 
     TacticalScene* mTacticalScene;
     StrategicScene* mStrategicScene;
     ConfigScene* mConfigScene;
 
     void applyPlayerInput();
-    void updatePlayer();
 
     bool mForwardThrust = false;
     bool mBackwardThrust = false;
@@ -57,4 +59,6 @@ private:
     bool mRightThrust = false;
 
     qreal mDeltaT = 1.0;
+
+    int mNextUid = 0;
 };

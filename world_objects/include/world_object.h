@@ -12,6 +12,8 @@ class WorldObject : public QWidget
 {
     Q_OBJECT
 public:
+    friend class SignalTrackProcessor;
+
     enum class Faction
     {
         Blue, // Player
@@ -36,6 +38,9 @@ public:
     qreal getAtan2() const { return mAtan2; }
     QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
     uint32_t getId() const { return mId; }
+    QVector<std::shared_ptr<Sensor>> getSensors() const { return mSensors; }
+
+    virtual void updatePosition(qreal deltaT, QPointF offset) {}
 
     void updateSensors()
     {

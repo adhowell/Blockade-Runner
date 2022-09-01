@@ -45,6 +45,8 @@ public:
      */
     explicit Vector(qreal rad);
 
+    qreal getDistance(Vector vec) const { return qSqrt(qPow(mX-vec.x(), 2.) + (qPow(mY-vec.y(), 2.))); }
+
     QPointF getPosDelta(qreal deltaT) const { return {mSize * deltaT * qSin(mAtan2),
                                                       -mSize * deltaT * qCos(mAtan2)}; }
 
@@ -99,6 +101,8 @@ public:
      * @param scalar
      */
     void operator*=(qreal scalar);
+
+    bool operator==(Vector vec) const;
 
     /**
      * Returns the separation angle in radians between this vector

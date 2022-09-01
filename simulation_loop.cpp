@@ -1,5 +1,6 @@
 #include "simulation_loop.h"
 #include "models/include/radar_sensor.h"
+#include "include/missile.h"
 
 #include <QtWidgets>
 #include <QFrame>
@@ -11,6 +12,7 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* str
     mStrategicScene = strategicScene;
     mConfigScene = configScene;
     initPlayer();
+    initMissile();
 }
 
 void SimulationLoop::start()
@@ -20,7 +22,10 @@ void SimulationLoop::start()
 
 void SimulationLoop::initPlayer()
 {
-    mPlayer = new PlayerShip(WorldObject::Faction::Blue, 0);
+    mPlayer = new PlayerShip(WorldObject::Faction::Blue, mNextUid++);
+    mObjects << mPlayer;
+    mProcessors << new SignalTrackProcessor(mPlayer);
+
     connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveInfoFromPlayerShip);
     connect(mPlayer, &PlayerShip::handleAddConfigComponent, mConfigScene, &ConfigScene::drawConfigComponent);
     connect(mPlayer, &PlayerShip::handleAddConfigEngine, mConfigScene, &ConfigScene::drawConfigEngine);
@@ -37,6 +42,11 @@ void SimulationLoop::initPlayer()
     mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());
 }
 
+void SimulationLoop::initMissile()
+{
+    mObjects << new Missile(WorldObject::Faction::Red, {200, 200}, mNextUid++);
+}
+
 void SimulationLoop::timerEvent(QTimerEvent *event)
 {
     // The player ship is always at the origin, the world moves instead
@@ -45,9 +55,18 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     playerVelocity.flip();
     QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
 
+    for (const auto& object : mObjects)
+    {
+        object->updatePosition(mDeltaT, playerOffset);
+    }
+
     // Update sensors
-    mPlayer->updateSensors();
     //std::for_each(mObjects.cbegin(), mObjects.cend(), [](auto obj){obj->updateSensors();});
+    for (const auto& processor : mProcessors)
+    {
+        processor->updateSensors();
+        auto tracks = processor->getTracks(mObjects);
+    }
 
     mTacticalScene->updateItems(playerOffset);
     mStrategicScene->updatePlayer(playerOffset, mPlayer->getAtan2(), mPlayer->getVelVector(), mPlayer->getAccVector());
@@ -65,11 +84,6 @@ void SimulationLoop::applyPlayerInput()
     if (mBackwardThrust)
         mPlayer->enableBackward();
 
-    updatePlayer();
-}
-
-void SimulationLoop::updatePlayer()
-{
     mPlayer->update(mDeltaT);
 }
 

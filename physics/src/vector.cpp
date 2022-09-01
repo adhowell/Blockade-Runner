@@ -113,3 +113,8 @@ void Vector::operator*=(qreal scalar)
     mY = qCos(mAtan2) * mSize;
     mX = qSin(mAtan2) * mSize;
 }
+
+bool Vector::operator==(Vector vec) const
+{
+    return (mX == vec.x() && mY == vec.y());
+}

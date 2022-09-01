@@ -1,5 +1,6 @@
 target_sources(projLib
         PUBLIC
+        include/missile.h
         include/player_ship.h
         include/world_object.h
         src/player_ship.cpp

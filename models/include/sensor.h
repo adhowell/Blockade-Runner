@@ -4,24 +4,9 @@
 #pragma once
 
 
-class WorldObject;
-
 class Sensor
 {
 public:
-    /**
-     * A track is a container for the information a sensor knows
-     * about a particular object in the world.
-     */
-    struct Track
-    {
-        qreal bearingOffBore;
-        qreal distance;
-        qreal receivedPower;
-        //WorldObject::Faction faction;
-        uint32_t targetUid;
-    };
-
     enum class Radiation
     {
         None,
@@ -40,20 +25,19 @@ public:
     QGraphicsItem* getItem() { return mItem; }
 
     /**
-     * Returns all of the valid tracks of the given objects.
-     * @param worldObjects
-     * @return
-     */
-    QVector<Track> getTracks(const QVector<WorldObject*>& worldObjects);
-
-    /**
      * Update the scan angle and the associated graphics item (if any).
      */
     void update(QPointF parentPosition, qreal parentAngle);
 
-protected:
-    std::optional<Track> computeTrack(WorldObject* obj);
+    /**
+     * Determines if the given angle is inside the sensor FOV.
+     *
+     * @param offBoreAngle - Angle relative to the longitudinal axis of the parent.
+     * @return True if the given angle is within the sensor FOV.
+     */
+    bool withinFOV(qreal offBoreAngle) const;
 
+protected:
     Radiation mRadTx; // The radiation the sensor emits
     Radiation mRadRx; // The radiation the sensor receives
 

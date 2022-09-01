@@ -1,5 +1,6 @@
 target_sources(projLib
         PUBLIC
+        include/acceleration_marker.h
         include/asteroid.h
         include/grid_lines.h
         include/menu_grid_box.h
@@ -9,6 +10,7 @@ target_sources(projLib
         include/sensor_fov_item.h
         include/starfield.h
         include/velocity_marker.h
+        src/acceleration_marker.cpp
         src/asteroid.cpp
         src/grid_lines.cpp
         src/phosphor_ghost.cpp

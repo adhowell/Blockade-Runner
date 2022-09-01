@@ -1,24 +1,5 @@
 #include "include/sensor.h"
 
-QVector<Sensor::Track> Sensor::getTracks(const QVector<WorldObject*>& worldObjects)
-{
-    QVector<Sensor::Track> tracks;
-    std::for_each(worldObjects.cbegin(), worldObjects.cend(),
-                  [this, &tracks](auto obj)
-                  {
-                        auto track = computeTrack(obj);
-                        if (track.has_value()) tracks << track.value();
-                  });
-    return tracks;
-}
-
-std::optional<Sensor::Track> Sensor::computeTrack(WorldObject* obj)
-{
-    // TODO: Implement signatures and detection algorithms
-
-    return {};
-}
-
 void Sensor::update(QPointF parentPosition, qreal parentAngle)
 {
     if (mIsActive)
@@ -46,4 +27,10 @@ void Sensor::update(QPointF parentPosition, qreal parentAngle)
     }
     if (mItem)
         mItem->updateScan(parentPosition, mBoreAngleOffset - parentAngle, mScanPosition);
+}
+
+bool Sensor::withinFOV(qreal offBoreAngle) const
+{
+    if (!mIsActive) return false;
+    return offBoreAngle > mScanPosition - mScanFOV && offBoreAngle < mScanPosition + mScanFOV;
 }

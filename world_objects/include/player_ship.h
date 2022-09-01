@@ -37,15 +37,9 @@ public:
 
     /**
      * Iterates over every component in the ship and creates the
-     * associated engines.
+     * associated engines and sensors.
      */
     void createAllSubComponents();
-
-    /**
-     * Iterates over every component in the ship and creates the
-     * associated sensors.
-     */
-    void createAllSensors();
 
     /**
      * Add a sensor to the player ship based on the component position
