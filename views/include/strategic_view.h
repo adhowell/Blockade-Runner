@@ -5,6 +5,7 @@
 #include "../objects/include/player_symbol_item.h"
 #include "../objects/include/grid_lines.h"
 #include "../objects/include/velocity_marker.h"
+#include "../objects/include/acceleration_marker.h"
 
 #pragma once
 
@@ -36,6 +37,7 @@ private:
     StrategicView* mView;
     PlayerSymbolItem* mPlayerSymbol;
     GridLines* mGridLines;
+    QVector<AccelerationMarker*> mAccMarkers;
     QVector<VelocityMarker*> mVelMarkers;
 };
 

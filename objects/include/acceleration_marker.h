@@ -5,13 +5,13 @@
 
 #pragma once
 
-class VelocityMarker : public QGraphicsItem {
+class AccelerationMarker : public QGraphicsItem {
 public:
-    explicit VelocityMarker(int seconds) : mOrigin(0, 0), mSeconds(seconds), mSize(seconds/600) {}
+    explicit AccelerationMarker(int seconds) : mOrigin(0, 0), mSeconds(seconds), mSize(seconds/600) {}
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    void updateOffset(Vector vel);
+    void updateOffset(Vector vel, Vector acc);
 
 private:
     Vector mOrigin;

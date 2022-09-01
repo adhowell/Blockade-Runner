@@ -32,11 +32,15 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
     mView = new StrategicView(this);
     mPlayerSymbol = new PlayerSymbolItem({0, 0});
     addItem(mPlayerSymbol);
-    mVelMarkers << new VelocityMarker(10 * gTargetFramerate);
-    mVelMarkers << new VelocityMarker(20 * gTargetFramerate);
-    mVelMarkers << new VelocityMarker(30 * gTargetFramerate);
-    std::for_each(mVelMarkers.cbegin(), mVelMarkers.cend(),
-                  [this](auto v){ addItem(v); });
+    for (int i = 1; i <= 6; i++)
+    {
+        auto velItem = new VelocityMarker(i * 10 * gTargetFramerate);
+        auto accItem = new AccelerationMarker(i * 10 * gTargetFramerate);
+        mVelMarkers << velItem;
+        mAccMarkers << accItem;
+        addItem(velItem);
+        addItem(accItem);
+    }
 }
 
 void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector vel, Vector acc)
@@ -47,9 +51,12 @@ void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector vel, Ve
     vel *= gScaleFactor;
     acc *= gScaleFactor;
     std::for_each(mVelMarkers.cbegin(), mVelMarkers.cend(),
+                  [vel](auto v){ v->updateOffset(vel); });
+    std::for_each(mAccMarkers.cbegin(), mAccMarkers.cend(),
                   [vel, acc](auto v){ v->updateOffset(vel, acc); });
     mGridLines->updateOffset(posOffset);
 }
+
 /*
 void StrategicScene::updateItems(QPointF offset)
 {
