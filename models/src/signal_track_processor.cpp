@@ -19,20 +19,15 @@ QVector<SignalTrackProcessor::Track> SignalTrackProcessor::getTracks(const QVect
 
 std::optional<SignalTrackProcessor::Track> SignalTrackProcessor::computeTrack(WorldObject* obj)
 {
-    qreal offBoreAngle = mParent->mAtan2 - mParent->mP.separationAngle(obj->mP);
+    qreal sepAngle = Vector(obj->mP.x() - mParent->mP.x(), mParent->mP.y() - obj->mP.y()).getAtan2();
+    qreal offBoreAngle = sepAngle - mParent->mAtan2;
     for (const auto& sensor : mParent->mSensors)
     {
         // TODO: More fidelity
-        //if (sensor->withinFOV(offBoreAngle))
-        //{
-        auto t = Track();
-        t.bearingOffBore = offBoreAngle;
-        t.distance = mParent->mP.getDistance(obj->getPosVector());
-        t.factionKnown = true;
-        t.receivedPower = 1;
-        t.targetUid = obj->getId();
-        return t;
-        //}
+        if (sensor->withinFOV(offBoreAngle))
+        {
+            return Track{obj->mP - mParent->mP, 0, Faction::Unknown, obj->mId};
+        }
     }
     return {};
 }

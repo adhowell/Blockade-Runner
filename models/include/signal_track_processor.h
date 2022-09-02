@@ -22,11 +22,10 @@ public:
      */
     struct Track
     {
-        qreal bearingOffBore;
-        qreal distance;
+        Vector offset;
         qreal receivedPower;
-        bool factionKnown;
-        uint32_t targetUid;
+        Faction faction;
+        uint32_t uid;
     };
 
     /**
@@ -47,6 +46,8 @@ public:
      * Updates all the sensors assigned to the parent world object.
      */
     void updateSensors();
+
+    WorldObject* getParent() const { return mParent; }
 
 private:
     WorldObject* mParent;

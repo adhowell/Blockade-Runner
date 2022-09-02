@@ -5,7 +5,7 @@
 #include "include/radar_sensor.h"
 
 
-PlayerShip::PlayerShip(WorldObject::Faction faction, uint32_t uid) : WorldObject(faction, uid)
+PlayerShip::PlayerShip(Faction faction, uint32_t uid) : WorldObject(faction, uid)
 {
     mTacticalGraphicsItem = new PlayerShipItem(&mAtan2);
 }
@@ -202,9 +202,9 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
         switch (direction)
         {
             case TwoDeg::Up: break;
-            case TwoDeg::Right: angle = M_PI * 1.5; break;
+            case TwoDeg::Right: angle = M_PI * 0.5; break;
             case TwoDeg::Down: angle = M_PI; break;
-            case TwoDeg::Left: angle = M_PI * 0.5; break;
+            case TwoDeg::Left: angle = M_PI * 1.5; break;
         }
         mSensors << std::make_shared<RadarSensor>(this, angle);
         hasValidArc = true;

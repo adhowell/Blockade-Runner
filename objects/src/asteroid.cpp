@@ -54,6 +54,9 @@ void Asteroid::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(pen);
 
+    // DEBUG
+    painter->setBrush(QBrush(mColor));
+
     painter->drawEllipse(QRectF(-mR, -mR, mR*2.0, mR*2.0));
 }
 

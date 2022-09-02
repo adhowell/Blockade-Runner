@@ -12,7 +12,7 @@
 class PlayerShip : public WorldObject {
     Q_OBJECT
 public:
-    PlayerShip(WorldObject::Faction faction, uint32_t uid);
+    PlayerShip(Faction faction, uint32_t uid);
 
     typedef Component::ComponentType CT;
 

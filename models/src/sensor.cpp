@@ -26,11 +26,11 @@ void Sensor::update(QPointF parentPosition, qreal parentAngle)
         }
     }
     if (mItem)
-        mItem->updateScan(parentPosition, mBoreAngleOffset - parentAngle, mScanPosition);
+        mItem->updateScan(parentPosition, parentAngle + mBoreAngleOffset, mScanPosition);
 }
 
 bool Sensor::withinFOV(qreal offBoreAngle) const
 {
     if (!mIsActive) return false;
-    return offBoreAngle > mScanPosition - mScanFOV && offBoreAngle < mScanPosition + mScanFOV;
+    return offBoreAngle > mBoreAngleOffset + mScanPosition - mScanFOV && offBoreAngle < mBoreAngleOffset + mScanPosition + mScanFOV;
 }

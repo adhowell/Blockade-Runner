@@ -43,7 +43,28 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
     }
 }
 
-void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector vel, Vector acc)
+void StrategicScene::visualiseTracks(const QVector<SignalTrackProcessor::Track>& tracks)
+{
+    for (auto track : tracks)
+    {
+        updateTrack(track);
+    }
+}
+
+void StrategicScene::updateTrack(SignalTrackProcessor::Track track)
+{
+    qreal x = track.offset.x() * gScaleFactor;
+    qreal y = track.offset.y() * gScaleFactor;
+    if (!mTracks.contains(track.uid))
+    {
+        auto item = new StrategicSymbol();
+        mTracks[track.uid] = item;
+        addItem(item);
+    }
+    mTracks[track.uid]->updateTrack(x, y, track.faction);
+}
+
+void StrategicScene::applyPlayerUpdate(QPointF posOffset, qreal angle, Vector vel, Vector acc)
 {
     posOffset *= gScaleFactor;
     mPlayerSymbol->applyUpdate(angle, vel);
@@ -55,6 +76,11 @@ void StrategicScene::updatePlayer(QPointF posOffset, qreal angle, Vector vel, Ve
     std::for_each(mAccMarkers.cbegin(), mAccMarkers.cend(),
                   [vel, acc](auto v){ v->updateOffset(vel, acc); });
     mGridLines->updateOffset(posOffset);
+
+    for (auto item : mTracks)
+    {
+        item->updateOffset(posOffset);
+    }
 }
 
 /*

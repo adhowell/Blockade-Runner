@@ -21,7 +21,7 @@ public:
     explicit SimulationLoop(TacticalScene* tacticalScene, StrategicScene* strategicScene, ConfigScene* configScene);
 
     void initPlayer();
-    void initMissile();
+    void initMissile(qreal x, qreal y);
 
     void start();
     void timerEvent(QTimerEvent* event) override;

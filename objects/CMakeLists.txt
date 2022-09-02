@@ -9,6 +9,7 @@ target_sources(projLib
         include/player_symbol_item.h
         include/sensor_fov_item.h
         include/starfield.h
+        include/strategic_symbol.h
         include/velocity_marker.h
         src/acceleration_marker.cpp
         src/asteroid.cpp
@@ -18,6 +19,7 @@ target_sources(projLib
         src/player_symbol_item.cpp
         src/sensor_fov_item.cpp
         src/starfield.cpp
+        src/strategic_symbol.cpp
         src/velocity_marker.cpp
         )
 

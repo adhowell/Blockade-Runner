@@ -12,7 +12,12 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* str
     mStrategicScene = strategicScene;
     mConfigScene = configScene;
     initPlayer();
-    initMissile();
+
+    //DEBUG
+    initMissile(20000, 20000);
+    initMissile(40000, 20000);
+    initMissile(20000, 40000);
+    initMissile(40000, 40000);
 }
 
 void SimulationLoop::start()
@@ -22,7 +27,7 @@ void SimulationLoop::start()
 
 void SimulationLoop::initPlayer()
 {
-    mPlayer = new PlayerShip(WorldObject::Faction::Blue, mNextUid++);
+    mPlayer = new PlayerShip(Faction::Blue, mNextUid++);
     mObjects << mPlayer;
     mProcessors << new SignalTrackProcessor(mPlayer);
 
@@ -42,9 +47,11 @@ void SimulationLoop::initPlayer()
     mTacticalScene->addItem(mPlayer->getTacticalGraphicsItem());
 }
 
-void SimulationLoop::initMissile()
+void SimulationLoop::initMissile(qreal x, qreal y)
 {
-    mObjects << new Missile(WorldObject::Faction::Red, {200, 200}, mNextUid++);
+    auto missile = new Missile(Faction::Red, {x, y}, mNextUid++);
+    mObjects << missile;
+    mTacticalScene->addItem(missile->getTacticalGraphicsItem());
 }
 
 void SimulationLoop::timerEvent(QTimerEvent *event)
@@ -66,10 +73,15 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     {
         processor->updateSensors();
         auto tracks = processor->getTracks(mObjects);
+        if (processor->getParent() == mPlayer)
+        {
+            mStrategicScene->visualiseTracks(tracks);
+        }
     }
 
     mTacticalScene->updateItems(playerOffset);
-    mStrategicScene->updatePlayer(playerOffset, mPlayer->getAtan2(), mPlayer->getVelVector(), mPlayer->getAccVector());
+    mStrategicScene->applyPlayerUpdate(playerOffset, mPlayer->getAtan2(), mPlayer->getVelVector(),
+                                       mPlayer->getAccVector());
 }
 
 void SimulationLoop::applyPlayerInput()

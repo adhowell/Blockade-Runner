@@ -1,6 +1,7 @@
 #include <QtWidgets>
 #include "../physics/include/vector.h"
 #include "../models/include/sensor.h"
+#include "include/faction.h"
 
 #pragma once
 
@@ -13,14 +14,6 @@ class WorldObject : public QWidget
     Q_OBJECT
 public:
     friend class SignalTrackProcessor;
-
-    enum class Faction
-    {
-        Blue, // Player
-        Green, // Civilians
-        Red, // Hostile
-        Unknown
-    };
 
     /**
      * Initialises a new object in the world.

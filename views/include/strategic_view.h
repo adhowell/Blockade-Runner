@@ -2,10 +2,12 @@
 #include <QGraphicsView>
 #include <QtWidgets>
 
-#include "../objects/include/player_symbol_item.h"
-#include "../objects/include/grid_lines.h"
-#include "../objects/include/velocity_marker.h"
-#include "../objects/include/acceleration_marker.h"
+#include "include/player_symbol_item.h"
+#include "include/grid_lines.h"
+#include "include/velocity_marker.h"
+#include "include/acceleration_marker.h"
+#include "include/signal_track_processor.h"
+#include "include/strategic_symbol.h"
 
 #pragma once
 
@@ -30,7 +32,10 @@ public:
 
     void initBackground();
 
-    void updatePlayer(QPointF posDelta, qreal angleDelta, Vector vel, Vector acc);
+    void visualiseTracks(const QVector<SignalTrackProcessor::Track>& tracks);
+    void updateTrack(SignalTrackProcessor::Track track);
+
+    void applyPlayerUpdate(QPointF posOffset, qreal angle, Vector vel, Vector acc);
     StrategicView* getView() const;
 
 private:
@@ -39,6 +44,7 @@ private:
     GridLines* mGridLines;
     QVector<AccelerationMarker*> mAccMarkers;
     QVector<VelocityMarker*> mVelMarkers;
+    QMap<uint32_t, StrategicSymbol*> mTracks;
 };
 
 
