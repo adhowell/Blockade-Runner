@@ -1,9 +1,9 @@
-#include "world_objects/include/player_ship.h"
+#include "include/player_ship.h"
 #include "include/tactical_view.h"
 #include "include/strategic_view.h"
 #include "include/config_view.h"
-#include "../global_config.h"
-#include "models/include/signal_track_processor.h"
+#include "global_config.h"
+#include "include/signal_track_processor.h"
 
 #include <QFrame>
 #include <QGraphicsView>

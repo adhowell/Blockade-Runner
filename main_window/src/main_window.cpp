@@ -1,9 +1,9 @@
-#include "main_window.h"
+#include "include/main_window.h"
 
 #include <QHBoxLayout>
 
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
 {
     setStyleSheet("color: #00ff00; background-color: black;");
     mTerminal = new Terminal(this);

@@ -1,4 +1,4 @@
-#include "simulation_loop.h"
+#include "include/simulation_loop.h"
 #include "include/radar_sensor.h"
 #include "include/missile.h"
 
@@ -15,10 +15,10 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* str
     initPlayer();
 
     //DEBUG
-    initMissile(20000, 20000);
-    initMissile(40000, 20000);
-    initMissile(20000, 40000);
+    initMissile(-40000, -40000);
+    initMissile(40000, -40000);
     initMissile(40000, 40000);
+    initMissile(-40000, 40000);
 }
 
 void SimulationLoop::start()

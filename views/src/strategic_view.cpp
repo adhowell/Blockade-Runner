@@ -1,5 +1,5 @@
 #include "include/strategic_view.h"
-#include "../global_config.h"
+#include "../../main_window/include/global_config.h"
 #include "include/globals.h"
 
 #include <QtWidgets>

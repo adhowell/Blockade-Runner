@@ -11,6 +11,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 add_library(blockadeRunnerLib STATIC)
+add_subdirectory(main_window)
 add_subdirectory(views)
 add_subdirectory(physics)
 add_subdirectory(effects)
@@ -23,8 +24,7 @@ add_subdirectory(world_objects)
 
 target_link_libraries(blockadeRunnerLib PUBLIC Qt5::Widgets)
 
-add_executable(blockade_runner
-        main.cpp main_window.cpp simulation_loop.cpp main_window.h global_config.h simulation_loop.h)
+add_executable(blockade_runner main.cpp)
 
 target_link_libraries(blockade_runner PUBLIC Qt5::Core Qt5::Widgets blockadeRunnerLib)
 
