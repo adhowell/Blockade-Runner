@@ -10,20 +10,22 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-add_library(projLib STATIC)
+add_library(blockadeRunnerLib STATIC)
 add_subdirectory(views)
 add_subdirectory(physics)
 add_subdirectory(effects)
-add_subdirectory(objects)
+add_subdirectory(menu_items)
+add_subdirectory(tactical_items)
+add_subdirectory(strategic_items)
 add_subdirectory(terminal)
 add_subdirectory(models)
 add_subdirectory(world_objects)
 
-target_link_libraries(projLib PUBLIC Qt5::Widgets)
+target_link_libraries(blockadeRunnerLib PUBLIC Qt5::Widgets)
 
 add_executable(blockade_runner
         main.cpp main_window.cpp simulation_loop.cpp main_window.h global_config.h simulation_loop.h)
 
-target_link_libraries(blockade_runner PUBLIC Qt5::Core Qt5::Widgets projLib)
+target_link_libraries(blockade_runner PUBLIC Qt5::Core Qt5::Widgets blockadeRunnerLib)
 
 #add_subdirectory(tests)

@@ -1,9 +1,11 @@
 #include "include/input.h"
 #include "include/history.h"
-#include "../physics/include/directions.h"
+#include "include/directions.h"
+
 #include <QtWidgets>
 
 #pragma once
+
 
 class Terminal : public QFrame
 {

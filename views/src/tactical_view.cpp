@@ -2,10 +2,12 @@
 #include "include/starfield.h"
 #include "include/asteroid.h"
 #include "include/phosphor_ghost.h"
+
 #include <QtWidgets>
 #include <QGraphicsView>
 #include <QFrame>
 #include <QDebug>
+
 
 TacticalView::TacticalView(QGraphicsScene* scene) : QGraphicsView()
 {

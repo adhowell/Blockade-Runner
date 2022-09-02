@@ -1,11 +1,11 @@
-#ifndef ENGINE_H
-#define ENGINE_H
 #include "include/vector.h"
 #include "include/directions.h"
 #include "include/component.h"
+
 #include <QtWidgets>
 
 #pragma once
+
 
 class Engine : public QObject {
     Q_OBJECT
@@ -65,4 +65,3 @@ protected:
     Size mSize;
     QPolygonF mPoly;
 };
-#endif

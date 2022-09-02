@@ -1,5 +1,7 @@
 #include "include/terminal.h"
+
 #include <QRegExp>
+
 
 Terminal::Terminal(QWidget* parent) : QFrame(parent)
 {

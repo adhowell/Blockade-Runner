@@ -1,4 +1,4 @@
-#include "../world_objects/include/world_object.h"
+#include "include/world_object.h"
 #include "blur.h"
 #include "include/engine.h"
 #include "include/component.h"
@@ -8,6 +8,7 @@
 #include <QtMath>
 
 #pragma once
+
 
 class PlayerShip : public WorldObject {
     Q_OBJECT

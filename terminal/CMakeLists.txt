@@ -1,11 +1,8 @@
-target_sources(projLib
+target_sources(blockadeRunnerLib
         PUBLIC
-        include/history.h
-        include/input.h
-        include/terminal.h
-        src/history.cpp
-        src/input.cpp
-        src/terminal.cpp
+        include/history.h src/history.cpp
+        include/input.h src/input.cpp
+        include/terminal.h src/terminal.cpp
         )
 
-target_include_directories(projLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(blockadeRunnerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})

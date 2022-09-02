@@ -7,7 +7,7 @@ QVector<SignalTrackProcessor::Track> SignalTrackProcessor::getTracks(const QVect
     std::for_each(worldObjects.cbegin(), worldObjects.cend(),
                   [this, &tracks](auto obj)
                   {
-                      // Sensors ignore objects belonging to the same faction
+                      // Sensors ignore menu_items belonging to the same faction
                       if (mParent->mId != obj->mId && mParent->mFaction != obj->mFaction)
                       {
                           auto track = computeTrack(obj);

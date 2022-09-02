@@ -3,6 +3,7 @@
 
 #pragma once
 
+
 class History : public QPlainTextEdit
 {
 Q_OBJECT

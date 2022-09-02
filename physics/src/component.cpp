@@ -1,5 +1,6 @@
 #include "include/component.h"
 
+
 Component::Component(ComponentType type, int x, int y, TwoDeg direction)
     : QObject(), mX(x), mY(y), mType(type), mDirection(direction)
 {

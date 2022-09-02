@@ -1,13 +1,13 @@
-#include <QFrame>
-#include <QGraphicsView>
-#include <QtWidgets>
-
 #include "include/player_symbol_item.h"
 #include "include/grid_lines.h"
 #include "include/velocity_marker.h"
 #include "include/acceleration_marker.h"
 #include "include/signal_track_processor.h"
 #include "include/strategic_symbol.h"
+
+#include <QFrame>
+#include <QGraphicsView>
+#include <QtWidgets>
 
 #pragma once
 

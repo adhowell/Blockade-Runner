@@ -1,12 +1,13 @@
-#include <QtWidgets>
-
-#include "../world_objects/include/world_object.h"
+#include "include/world_object.h"
 #include "include/sensor.h"
+
+#include <QtWidgets>
 
 #pragma once
 
+
 /**
- *
+ * For handling how objects are detected by the senors aboard each platform
  */
 class SignalTrackProcessor
 {
@@ -29,9 +30,9 @@ public:
     };
 
     /**
-     * Returns all of the valid tracks of the given objects.
+     * Returns all of the valid tracks of the given menu_items.
      * @param worldObjects
-     * @return vector of track objects
+     * @return vector of track menu_items
      */
     QVector<Track> getTracks(const QVector<WorldObject*>& worldObjects);
 

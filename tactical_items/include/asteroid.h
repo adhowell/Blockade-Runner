@@ -1,6 +1,8 @@
 #include "include/vector.h"
+
 #include <QGraphicsItem>
 #include <QtMath>
+
 
 /**
  * Physics-enabled Asteroid graphics item

@@ -1,6 +1,8 @@
 #include "blur.h"
+
 #include <QGraphicsItem>
 #include <QtWidgets>
+
 
 class PhosphorGhost : public QGraphicsItem {
 public:

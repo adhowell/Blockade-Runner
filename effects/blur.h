@@ -3,6 +3,7 @@
 
 #pragma once
 
+
 class Blur : public QGraphicsBlurEffect
 {
 public:

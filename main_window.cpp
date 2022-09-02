@@ -1,5 +1,7 @@
 #include "main_window.h"
+
 #include <QHBoxLayout>
+
 
 MainWindow::MainWindow(QWidget *parent)
 {

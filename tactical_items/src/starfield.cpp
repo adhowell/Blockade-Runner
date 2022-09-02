@@ -1,5 +1,6 @@
 #include "include/starfield.h"
 
+
 void Starfield::updateOffset(QPointF offset)
 {
     offset *= mScaleFactor;

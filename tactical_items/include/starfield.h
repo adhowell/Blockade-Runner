@@ -1,7 +1,8 @@
-#ifndef STARFIELD_H
-#define STARFIELD_H
 #include <QGraphicsItem>
 #include <QtWidgets>
+
+#pragma once
+
 
 class Starfield : public QGraphicsItem {
 public:
@@ -24,5 +25,3 @@ private:
     qreal mScaleFactor;
     int mDensityFactor;
 };
-
-#endif //STARFIELD_H

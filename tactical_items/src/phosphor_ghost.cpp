@@ -1,5 +1,6 @@
 #include "include/phosphor_ghost.h"
 
+
 PhosphorGhost::PhosphorGhost(QPolygonF poly, int lifetime) : mPoly(poly), mLifetime(lifetime)
 {
     mBlurEffect = new Blur(this);

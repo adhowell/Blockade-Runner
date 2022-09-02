@@ -1,5 +1,6 @@
 #include "include/velocity_marker.h"
 
+
 void VelocityMarker::updateOffset(Vector vel)
 {
     mOrigin = vel * mSeconds;

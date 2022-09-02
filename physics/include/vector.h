@@ -3,6 +3,7 @@
 
 #pragma once
 
+
 /**
  * Represents a normalised vector
  */

@@ -1,5 +1,6 @@
 #include "include/player_ship_item.h"
 
+
 void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
 
     Q_UNUSED(widget);

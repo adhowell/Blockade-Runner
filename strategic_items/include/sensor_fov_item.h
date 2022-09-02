@@ -1,5 +1,5 @@
-#include "../physics/include/vector.h"
-#include "../views/include/globals.h"
+#include "include/vector.h"
+#include "include/globals.h"
 
 #include <QGraphicsItem>
 #include <QtWidgets>

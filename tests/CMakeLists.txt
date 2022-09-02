@@ -14,5 +14,5 @@ include(GoogleTest)
 enable_testing()
 add_executable(unit_tests vector_test.cpp)
 target_link_libraries(unit_tests PUBLIC gtest gtest_main)
-target_link_libraries(unit_tests PUBLIC projLib) # Why tf is gtest throwing a fit over libraries
+target_link_libraries(unit_tests PUBLIC blockadeRunnerLib) # Why tf is gtest throwing a fit over libraries
 gtest_discover_tests(unit_tests)

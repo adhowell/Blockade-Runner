@@ -1,5 +1,6 @@
 #include "include/engine.h"
 
+
 Engine::Engine(std::shared_ptr<Component> component, TwoDeg direction, Vector centreOfMassOffset,
                qreal mass, qreal inertia, qreal thrust, qreal incr,
                Profile profile, Size size)

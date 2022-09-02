@@ -1,9 +1,7 @@
 target_sources(blockadeRunnerLib
         PUBLIC
-        include/faction.h
-        include/missile.h
-        include/player_ship.h src/player_ship.cpp
-        include/world_object.h
+        include/menu_component.h
+        include/menu_grid_box.h
         )
 
 target_include_directories(blockadeRunnerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})

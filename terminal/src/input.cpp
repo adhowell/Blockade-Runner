@@ -1,5 +1,6 @@
 #include "include/input.h"
 
+
 Input::Input() : QPlainTextEdit()
 {
     setFixedHeight(25);  // Don't like this

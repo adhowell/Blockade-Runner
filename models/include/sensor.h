@@ -1,5 +1,6 @@
+#include "include/sensor_fov_item.h"
+
 #include <QtWidgets>
-#include "../objects/include/sensor_fov_item.h"
 
 #pragma once
 

@@ -3,7 +3,9 @@
 #include "include/config_view.h"
 #include "include/terminal.h"
 #include "simulation_loop.h"
+
 #include <QGraphicsScene>
+
 
 class MainWindow : public QWidget
 {

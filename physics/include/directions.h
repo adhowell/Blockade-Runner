@@ -2,6 +2,7 @@
 
 #pragma once
 
+
 enum class TwoDeg {
     Up,
     Down,

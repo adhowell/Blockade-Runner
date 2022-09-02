@@ -2,6 +2,7 @@
 
 #pragma once
 
+
 class GridBox : public QGraphicsItem
 {
 public:

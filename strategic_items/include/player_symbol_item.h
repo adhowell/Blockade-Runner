@@ -1,4 +1,4 @@
-#include "../physics/include/vector.h"
+#include "include/vector.h"
 
 #include <QGraphicsItem>
 #include <QtWidgets>

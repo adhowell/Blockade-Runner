@@ -1,5 +1,5 @@
 #include "sensor.h"
-#include "../world_objects/include/world_object.h"
+#include "include/world_object.h"
 
 #pragma once
 

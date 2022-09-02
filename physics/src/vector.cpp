@@ -1,5 +1,7 @@
 #include "include/vector.h"
+
 #include <QtMath>
+
 
 NormVector::NormVector(qreal dx, qreal dy)
 {

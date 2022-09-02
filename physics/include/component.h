@@ -1,9 +1,10 @@
 #include "include/directions.h"
-#include "../views/include/globals.h"
+#include "include/globals.h"
 
 #include <QtWidgets>
 
 #pragma once
+
 
 class Component : public QObject
 {

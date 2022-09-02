@@ -11,6 +11,7 @@
 
 #pragma once
 
+
 /**
  * Controller for linking the updates of the player ship, the world and the terminal.
  */

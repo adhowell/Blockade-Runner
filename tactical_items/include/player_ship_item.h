@@ -7,6 +7,7 @@
 
 #pragma once
 
+
 class PlayerShipItem : public QGraphicsItem {
 public:
     PlayerShipItem(qreal* angle) : mAtan2(angle) {};

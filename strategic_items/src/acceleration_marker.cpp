@@ -1,5 +1,6 @@
 #include "include/acceleration_marker.h"
 
+
 void AccelerationMarker::updateOffset(Vector vel, Vector acc)
 {
     mOrigin = (vel * mSeconds) + (acc * mSeconds * mSeconds * 0.5);

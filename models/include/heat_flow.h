@@ -1,4 +1,4 @@
-#include "../physics/include/component.h"
+#include "include/component.h"
 
 
 /**

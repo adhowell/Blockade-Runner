@@ -1,5 +1,6 @@
 #include "include/asteroid.h"
 
+
 qreal Asteroid::sMinRadius = 5.0;
 qreal Asteroid::sMaxRadius = 15.0;
 qreal Asteroid::sMinMass = 1.0;

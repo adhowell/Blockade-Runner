@@ -1,5 +1,6 @@
 #include "blur.h"
 
+
 Blur::Blur(QGraphicsItem *item) : QGraphicsBlurEffect()
 {
     setBlurHints(QGraphicsBlurEffect::AnimationHint);

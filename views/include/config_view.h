@@ -1,6 +1,6 @@
-#include "../physics/include/component.h"
-#include "../physics/include/engine.h"
-#include "../objects/include/menu_component.h"
+#include "include/component.h"
+#include "include/engine.h"
+#include "include/menu_component.h"
 
 #include <QFrame>
 #include <QGraphicsView>

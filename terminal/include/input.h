@@ -3,6 +3,7 @@
 
 #pragma once
 
+
 class Input : public QPlainTextEdit
 {
     Q_OBJECT

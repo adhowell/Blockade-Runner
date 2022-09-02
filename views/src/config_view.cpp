@@ -1,6 +1,6 @@
 #include "include/config_view.h"
+#include "include/menu_grid_box.h"
 
-#include "../objects/include/menu_grid_box.h"
 
 ConfigView::ConfigView(QGraphicsScene* scene) : QGraphicsView()
 {

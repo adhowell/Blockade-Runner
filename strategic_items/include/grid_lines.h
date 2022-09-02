@@ -3,6 +3,7 @@
 
 #pragma once
 
+
 class GridLines : public QGraphicsItem {
 public:
     GridLines(int spacing) : mOrigin(0, 0), mSpacing(spacing) {}

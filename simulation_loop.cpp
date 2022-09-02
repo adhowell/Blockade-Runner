@@ -1,10 +1,11 @@
 #include "simulation_loop.h"
-#include "models/include/radar_sensor.h"
+#include "include/radar_sensor.h"
 #include "include/missile.h"
 
 #include <QtWidgets>
 #include <QFrame>
 #include <QDebug>
+
 
 SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* strategicScene, ConfigScene* configScene) : QObject()
 {

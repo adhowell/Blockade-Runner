@@ -1,5 +1,6 @@
 #include "include/history.h"
 
+
 History::History() : QPlainTextEdit()
 {
     setReadOnly(true);

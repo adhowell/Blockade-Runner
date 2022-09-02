@@ -1,9 +1,11 @@
-#include <QtWidgets>
-#include "../physics/include/vector.h"
-#include "../models/include/sensor.h"
+#include "include/vector.h"
+#include "include/sensor.h"
 #include "include/faction.h"
 
+#include <QtWidgets>
+
 #pragma once
+
 
 /**
  * Class that every world object must inherit from. I.e. Anything that moves in
