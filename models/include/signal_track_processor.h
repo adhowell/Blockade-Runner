@@ -51,5 +51,7 @@ public:
     WorldObject* getParent() const { return mParent; }
 
 private:
+    qreal returnOffsetAngle(qreal bore, qreal target);
+
     WorldObject* mParent;
 };

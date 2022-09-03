@@ -78,8 +78,7 @@ public:
     void operator+=(Vector vec);
 
     /**
-     * Increases the magnitude (NOT the component
-     * directions) of this vector by the given scalar.
+     * Increases the magnitude of this vector by the given scalar.
      * @param scalar
      */
     void operator+=(qreal scalar);
@@ -133,7 +132,9 @@ public:
     /**
      * Flips the direction of the vector.
      */
-    void flip() { mAtan2 += M_PI; };
+    void flip();
+
+    void correctAngle();
 
     qreal x() const { return mX; }
     qreal y() const { return mY; }

@@ -10,7 +10,7 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-add_library(blockadeRunnerLib STATIC)
+add_library(blockadeRunnerLib)
 add_subdirectory(main_window)
 add_subdirectory(views)
 add_subdirectory(physics)
@@ -27,5 +27,3 @@ target_link_libraries(blockadeRunnerLib PUBLIC Qt5::Widgets)
 add_executable(blockade_runner main.cpp)
 
 target_link_libraries(blockade_runner PUBLIC Qt5::Core Qt5::Widgets blockadeRunnerLib)
-
-#add_subdirectory(tests)

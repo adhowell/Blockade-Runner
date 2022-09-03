@@ -98,6 +98,8 @@ void PlayerShip::update(qreal deltaT)
     mV += mA * deltaT;
 
     mAtan2 += mRotV * deltaT;
+    while (mAtan2 > 2.0*M_PI) mAtan2 -= 2.0*M_PI;
+    while (mAtan2 < 0.0) mAtan2 += 2.0*M_PI;
     mTacticalGraphicsItem->update();
 }
 
@@ -384,6 +386,8 @@ void PlayerShip::rotate(int degrees)
     else
         mRotateState = RotateState::BeforeTargetCCW;
     mRotateTargetRad = mAtan2 + (degrees*M_PI/360.0);
+    while (mRotateTargetRad > 2.0*M_PI) mRotateTargetRad -= 2.0*M_PI;
+    while (mRotateTargetRad < 0.0) mRotateTargetRad += 2.0*M_PI;
 }
 
 void PlayerShip::receiveTextFromComponent(const QString &text)

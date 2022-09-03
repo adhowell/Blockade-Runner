@@ -14,6 +14,7 @@ Vector::Vector(QLineF l, qreal vel)
     mAtan2 = qAtan2(l.x2()-l.x1(), l.y2()-l.y1()); // Transposed
     mY = qCos(mAtan2) * vel;
     mX = qSin(mAtan2) * vel;
+    correctAngle();
 }
 
 Vector::Vector(qreal dx, qreal dy)
@@ -22,6 +23,7 @@ Vector::Vector(qreal dx, qreal dy)
     mAtan2 = qAtan2(dx, dy); // Transposed
     mX = dx;
     mY = dy;
+    correctAngle();
 }
 
 Vector::Vector(qreal rad)
@@ -30,6 +32,7 @@ Vector::Vector(qreal rad)
     mAtan2 = rad;
     mY = qCos(mAtan2);
     mX = qSin(mAtan2);
+    correctAngle();
 }
 
 void Vector::reflectAbout(qreal rad)
@@ -40,6 +43,7 @@ void Vector::reflectAbout(qreal rad)
     mX -= 2.0*dot*otherX;
     mY -= 2.0*dot*otherY;
     mAtan2 = qAtan2(mY, mX);
+    correctAngle();
 }
 
 void Vector::setSize(qreal scalar)
@@ -71,6 +75,7 @@ void Vector::operator+=(Vector vec)
     mY += vec.mY;
     mAtan2 = qAtan2(mX, mY); // Transposed
     mSize = qSqrt(qPow(mX, 2.0) + qPow(mY, 2.0));
+    correctAngle();
 }
 
 void Vector::operator+=(qreal scalar)
@@ -91,6 +96,7 @@ void Vector::operator-=(Vector vec)
     mY -= vec.mY;
     mAtan2 = qAtan2(mX, mY); // Transposed
     mSize = qSqrt(qPow(mX, 2.0) + qPow(mY, 2.0));
+    correctAngle();
 }
 
 Vector Vector::operator-(Vector vec) const
@@ -114,9 +120,23 @@ void Vector::operator*=(qreal scalar)
     if (scalar < 0) mAtan2 += M_PI;
     mY = qCos(mAtan2) * mSize;
     mX = qSin(mAtan2) * mSize;
+    correctAngle();
 }
 
 bool Vector::operator==(Vector vec) const
 {
     return (mX == vec.x() && mY == vec.y());
+}
+
+void Vector::flip()
+{
+    mAtan2 += M_PI;
+    correctAngle();
+}
+
+
+void Vector::correctAngle()
+{
+    while (mAtan2 > 2.0*M_PI) mAtan2 -= 2.0*M_PI;
+    while (mAtan2 < 0.0) mAtan2 += 2.0*M_PI;
 }
