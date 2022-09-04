@@ -119,12 +119,8 @@ private:
     bool mRotateLeftThrust = false;
     bool mRotateRightThrust = false;
 
-    RotateState mRotateState = RotateState::Idle;
-    qreal mRotateTargetRad = 0;
     bool mCanRotate = false;
 
-    qreal mRotA = 0; // Rotational acceleration
-    qreal mRotV = 0; // Rotational velocity
     qreal mM = 0; // Mass
     qreal mI = 0; // Inertia
     Vector mCentreOfMass = Vector(0, 0);

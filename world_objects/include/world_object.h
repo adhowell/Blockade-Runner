@@ -1,6 +1,7 @@
 #include "include/vector.h"
 #include "include/sensor.h"
 #include "include/faction.h"
+#include "include/rotation_controller.h"
 
 #include <QtWidgets>
 
@@ -49,9 +50,15 @@ protected:
     Faction mFaction;
     uint32_t mId;
     qreal mAtan2 = 0; // Bearing (rads)
+    qreal mRotV = 0; // Rotational velocity
+    qreal mRotA = 0; // Rotational acceleration
     Vector mV = Vector(0, 0); // Velocity vector
     Vector mA = Vector(0, 0); // Acceleration vector
     Vector mP = Vector(0, 0); // Position vector
+    qreal mMaxRightRotateAcc = 0;
+    qreal mMaxLeftRotateAcc = 0;
+
     QVector<std::shared_ptr<Sensor>> mSensors;
     QGraphicsItem* mTacticalGraphicsItem = nullptr;
+    RotationController mRotationController = RotationController(mRotV);
 };

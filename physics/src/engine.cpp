@@ -86,6 +86,11 @@ qreal Engine::getRotationalAcc() const
     return mRotateAcc * mThrustRatio;
 }
 
+qreal Engine::getMaxRotationalAcc() const
+{
+    return mRotateAcc;
+}
+
 void Engine::incrementAccProfile()
 {
     mComponent->applyTemperatureDelta(mThrust*0.5);

@@ -12,50 +12,21 @@ PlayerShip::PlayerShip(Faction faction, uint32_t uid) : WorldObject(faction, uid
 
 void PlayerShip::update(qreal deltaT)
 {
-    // State machine for rotation commands
-    switch (mRotateState)
+    switch (mRotationController.getDirection())
     {
-        case RotateState::BeforeTargetCW:
-            resetMovement();
-            mRotateRightThrust = true;
-            if (mAtan2 >= mRotateTargetRad)
-            {
-                mRotateLeftThrust = true;
-                mRotateRightThrust = false;
-                mRotateState = RotateState::AfterTargetCW;
-                Q_EMIT displayText("HALF-ROTATION COMPLETE");
-            }
-            break;
-        case RotateState::BeforeTargetCCW:
+        case RotationController::OneDeg::Left:
             resetMovement();
             mRotateLeftThrust = true;
-            if (mAtan2 <= mRotateTargetRad)
-            {
-                mRotateLeftThrust = false;
-                mRotateRightThrust = true;
-                mRotateState = RotateState::AfterTargetCCW;
-                Q_EMIT displayText("HALF-ROTATION COMPLETE");
-            }
+            mRotateRightThrust = false;
             break;
-        case RotateState::AfterTargetCW:
-        case RotateState::AfterTargetCCW:
+        case RotationController::OneDeg::Right:
             resetMovement();
-            if (qAbs(mRotV) < 0.001) {
-                mRotateLeftThrust = false;
-                mRotateRightThrust = false;
-                mRotateState = RotateState::Shutdown;
-            }
+            mRotateLeftThrust = false;
+            mRotateRightThrust = true;
             break;
-        case RotateState::Shutdown:
-            mRotV *= 0.8;
-            if (qAbs(mRotV) < 0.0000001)
-            {
-                mRotV = 0;
-                mRotateState = RotateState::Idle;
-                Q_EMIT displayText("ROTATE COMMAND COMPLETE");
-            }
-            break;
-        case RotateState::Idle:;
+        default:
+            mRotateLeftThrust = false;
+            mRotateRightThrust = false;
     }
 
     mA = {0, 0};
@@ -271,6 +242,8 @@ void PlayerShip::computeCentreOfRotation()
     qreal leftRotateEffectiveMass;
     qreal rightRotateEffectiveMass;
     mCanRotate = false;
+    mMaxRightRotateAcc = 0;
+    mMaxLeftRotateAcc = 0;
     for (const auto& e : mEngines)
     {
         if (e->getComponent()->getType() == CT::CruiseThruster)
@@ -281,6 +254,7 @@ void PlayerShip::computeCentreOfRotation()
                                  qreal((e->getComponent()->y()+0.5)-(gGridSize*0.5))*gBlockSize) * e->getComponent()->getMass();
             leftRotateEffectiveMass += e->getComponent()->getMass();
             mCanRotate = true;
+            mMaxLeftRotateAcc += -e->getMaxRotationalAcc();
         }
         else if (e->isRotateRightAcc())
         {
@@ -288,6 +262,7 @@ void PlayerShip::computeCentreOfRotation()
                                   qreal((e->getComponent()->y()+0.5)-(gGridSize*0.5))*gBlockSize) * e->getComponent()->getMass();
             rightRotateEffectiveMass += e->getComponent()->getMass();
             mCanRotate = true;
+            mMaxRightRotateAcc += e->getMaxRotationalAcc();
         }
     }
     leftRotate *= 1.0/leftRotateEffectiveMass;
@@ -375,19 +350,11 @@ void PlayerShip::resetMovement()
 
 void PlayerShip::rotate(int degrees)
 {
-    if (mRotateState != RotateState::Idle)
-    {
-        Q_EMIT displayText("<ERROR> - ROTATE COMMAND IN PROGRESS");
-        return;
-    }
     resetMovement();
     if (degrees > 0)
-        mRotateState = RotateState::BeforeTargetCW;
+        mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxRightRotateAcc, mMaxLeftRotateAcc);
     else
-        mRotateState = RotateState::BeforeTargetCCW;
-    mRotateTargetRad = mAtan2 + (degrees*M_PI/360.0);
-    while (mRotateTargetRad > 2.0*M_PI) mRotateTargetRad -= 2.0*M_PI;
-    while (mRotateTargetRad < 0.0) mRotateTargetRad += 2.0*M_PI;
+        mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxLeftRotateAcc, mMaxRightRotateAcc);
 }
 
 void PlayerShip::receiveTextFromComponent(const QString &text)

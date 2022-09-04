@@ -30,6 +30,8 @@ public:
     qreal getLateralAcc() const;
     qreal getRotationalAcc() const;
 
+    qreal getMaxRotationalAcc() const;
+
     std::shared_ptr<Component> getComponent() { return mComponent; }
 
     bool enabled() const { return mEnabled; }
