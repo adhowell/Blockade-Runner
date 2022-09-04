@@ -93,8 +93,6 @@ public:
     void enableRotateLeft() { mRotateLeftThrust = true; }
     void enableRotateRight() { mRotateRightThrust = true; }
 
-    void rotate(int degrees);
-
 public Q_SLOTS:
     void receiveTextFromComponent(const QString& text);
     void handleAddPart(Component::ComponentType, QPoint, TwoDeg);

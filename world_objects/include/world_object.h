@@ -43,6 +43,14 @@ public:
         for (const auto& s : mSensors) s->update({mP.x(), mP.y()}, mAtan2);
     }
 
+    void rotate(qreal degrees)
+    {
+        if (degrees > 0)
+            mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxRightRotateAcc, mMaxLeftRotateAcc);
+        else
+            mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxLeftRotateAcc, mMaxRightRotateAcc);
+    }
+
 Q_SIGNALS:
     void handleAddSensors(QVector<std::shared_ptr<Sensor>>);
 

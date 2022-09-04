@@ -7,7 +7,7 @@
 
 PlayerShip::PlayerShip(Faction faction, uint32_t uid) : WorldObject(faction, uid)
 {
-    mTacticalGraphicsItem = new PlayerShipItem(&mAtan2);
+    mTacticalGraphicsItem = new PlayerShipItem(mAtan2);
 }
 
 void PlayerShip::update(qreal deltaT)
@@ -346,15 +346,6 @@ void PlayerShip::resetMovement()
     mRightThrust = false;
     //mRotateLeftThrust = false;
     //mRotateRightThrust = false;
-}
-
-void PlayerShip::rotate(int degrees)
-{
-    resetMovement();
-    if (degrees > 0)
-        mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxRightRotateAcc, mMaxLeftRotateAcc);
-    else
-        mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxLeftRotateAcc, mMaxRightRotateAcc);
 }
 
 void PlayerShip::receiveTextFromComponent(const QString &text)

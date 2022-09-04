@@ -10,7 +10,7 @@
 
 class PlayerShipItem : public QGraphicsItem {
 public:
-    PlayerShipItem(qreal* angle) : mAtan2(angle) {};
+    PlayerShipItem(qreal& angle) : mAtan2(angle) {};
     enum { Type = 1 };
     int type() const override { return Type; }
 
@@ -23,7 +23,7 @@ public:
     void reset();
 
 private:
-    qreal* mAtan2;
+    qreal& mAtan2;
     QVector<std::shared_ptr<Engine>> mEngines;
     QVector<std::shared_ptr<Component>> mComponents;
 };

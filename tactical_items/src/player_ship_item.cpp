@@ -13,7 +13,7 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(pen);
-    painter->rotate(*mAtan2*360.0/(M_PI*2.0));
+    painter->rotate(mAtan2*360.0/(M_PI*2.0));
 
     for (auto const &e : mEngines)
     {
@@ -39,7 +39,7 @@ void PlayerShipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
     }
 
-    painter->rotate(-*mAtan2*360.0/(M_PI*2.0));
+    painter->rotate(-mAtan2*360.0/(M_PI*2.0));
 }
 
 QRectF PlayerShipItem::boundingRect() const

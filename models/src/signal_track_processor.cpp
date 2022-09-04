@@ -32,6 +32,22 @@ std::optional<SignalTrackProcessor::Track> SignalTrackProcessor::computeTrack(Wo
     return {};
 }
 
+void SignalTrackProcessor::commandRotateToTrack(const QVector<WorldObject*>& worldObjects)
+{
+    for (auto const& obj : worldObjects)
+    {
+        // Sensors ignore menu_items belonging to the same faction
+        if (mParent->mId == obj->mId || mParent->mFaction == obj->mFaction)
+            continue;
+
+        auto track = computeTrack(obj);
+        if (track.has_value())
+        {
+            mParent->rotate(returnOffsetAngle(mParent->mAtan2, track->offset.getAtan2())*180.0/M_PI);
+        }
+    }
+}
+
 void SignalTrackProcessor::updateSensors()
 {
     mParent->updateSensors();
