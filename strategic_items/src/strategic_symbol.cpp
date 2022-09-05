@@ -11,6 +11,9 @@ void StrategicSymbol::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(pen);
 
+    if (mDrawBox) {
+        painter->drawRect(QRectF(-mSize, -mSize, mSize*2.0, mSize*2.0));
+    }
     painter->drawPolygon(mPoly);
 }
 
@@ -22,24 +25,31 @@ QRectF StrategicSymbol::boundingRect() const
 
 void StrategicSymbol::updateTrack(qreal x, qreal y, Faction perceivedFaction)
 {
+    // Animation
+    if (mLifetime == 0) {
+        mAnimationLifetime = mAnimationMaxLifetime;
+    }
+
     mLifetime = mMaxLifetime;
     setPos(x, y);
-    switch (perceivedFaction)
-    {
+    switch (perceivedFaction) {
         case Faction::Red: mColour = QColor(255, 0, 0);
         case Faction::Blue: mColour = QColor(0, 0, 255);
         case Faction::Green: mColour = QColor(0, 255, 0);
         case Faction::Unknown: mColour = QColor(255, 155, 0);
     }
-    mPoly = QPolygonF() << QPointF(x-mSize, y)
-                        << QPointF(x, y-mSize)
-                        << QPointF(x+mSize, y)
-                        << QPointF(x, y+mSize);
+    mPoly = QPolygonF() << QPointF(-mSize, 0)
+                        << QPointF(0, -mSize)
+                        << QPointF(mSize, 0)
+                        << QPointF(0, mSize);
 }
 
 void StrategicSymbol::updateOffset(QPointF offset)
 {
     setPos(pos() + offset);
-    mLifetime--;
-    mColour.setAlpha(qMax(255 * mLifetime/mMaxLifetime, 0));
+    if (mLifetime > 0) mLifetime--;
+    if (mAnimationLifetime > 0) mAnimationLifetime--;
+    if (mAnimationLifetime > 0 && mAnimationLifetime % 25 == 0) mDrawBox = !mDrawBox;
+
+    mColour.setAlpha(qMax((205*mLifetime/mMaxLifetime) + 50, 0));
 }

@@ -15,10 +15,10 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* str
     initPlayer();
 
     //DEBUG
-    //initMissile(-40000, -40000);
-    //initMissile(40000, -40000);
-    //initMissile(40000, 40000);
-    initMissile(200, 0);
+    initMissile(-40000, -40000);
+    initMissile(40000, -40000);
+    initMissile(40000, 40000);
+    initMissile(-40000, 40000);
 }
 
 void SimulationLoop::start()
@@ -50,7 +50,7 @@ void SimulationLoop::initPlayer()
 
 void SimulationLoop::initMissile(qreal x, qreal y)
 {
-    auto missile = new Missile(Faction::Red, {x, y}, {0, 0}, -M_PI*0.5, mNextUid++);
+    auto missile = new Missile(Faction::Red, {x, y}, {0, 40}, -M_PI*0.5, mNextUid++);
     mProcessors << new SignalTrackProcessor(missile, true);
     mObjects << missile;
     mTacticalScene->addItem(missile->getTacticalGraphicsItem());

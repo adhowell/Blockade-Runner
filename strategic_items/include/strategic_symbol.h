@@ -27,5 +27,8 @@ private:
     QColor mColour;
     qreal mSize = 15;
     int16_t mLifetime = 0;
-    int16_t mMaxLifetime = 100;
+    int16_t mMaxLifetime = 1000;
+    int16_t mAnimationLifetime = 0;
+    int16_t mAnimationMaxLifetime = 225;
+    bool mDrawBox = false;
 };
