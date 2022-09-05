@@ -18,6 +18,8 @@ Terminal::Terminal(QWidget* parent) : QFrame(parent)
     mLookupCommands["ALIAS"] = Command::Alias;
     mLookupCommands["ROTATE"] = Command::Rotate;
 
+    mLookupCommands["ZOOM"] = Command::Zoom;
+
     connect(mInput, &Input::sendRawInput, this, &Terminal::parseInput);
 
     setStyleSheet("border: 1px solid green");
@@ -57,6 +59,9 @@ void Terminal::parseCommand(const QString& command, const QString& input)
             break;
         case Command::Rotate:
             parseRotateCommand(input);
+            break;
+        case Command::Zoom:
+            parseZoomCommand(input);
             break;
         case Command::None:
             displayError(QString("INVALID COMMAND: %1").arg(command));
@@ -102,6 +107,23 @@ void Terminal::parseRotateCommand(const QString &input)
         return;
     }
     rotate(degrees);
+}
+
+void Terminal::parseZoomCommand(const QString &input)
+{
+    QStringList args = input.split(" ");
+    if (args.size() > 1)
+    {
+        Q_EMIT displayError(QString("COMMAND: ZOOM ACCEPTS ONE ARGUMENT"));
+        return;
+    }
+    if (args[0] == "MAP") {
+        Q_EMIT toggleMapZoom();
+    } else if (args[0] == "TACTICAL") {
+        Q_EMIT toggleTacticalZoom();
+    } else {
+        Q_EMIT displayError(QString("INVALID ZOOM COMMAND: OPTIONS ARE MAP/TACTICAL"));
+    }
 }
 
 void Terminal::displayLog(const QString &text)

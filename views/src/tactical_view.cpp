@@ -16,19 +16,14 @@ TacticalView::TacticalView(QGraphicsScene* scene) : QGraphicsView()
     ensureVisible(QRectF(0, 0, 0, 0));
 }
 
-void TacticalView::wheelEvent(QWheelEvent *event)
+void TacticalView::toggleZoom()
 {
-    if (event->angleDelta().y() > 0) {
-        if (mScaleFactor > 0) {
-            scale(1.1, 1.1);
-            mScaleFactor--;
-        }
+    if (mZoomed) {
+        scale(0.5, 0.5);
     } else {
-        if (mScaleFactor < 10) {
-            scale(0.91, 0.91);
-            mScaleFactor++;
-        }
+        scale(1.0/0.5, 1.0/0.5);
     }
+    mZoomed = !mZoomed;
 }
 
 TacticalScene::TacticalScene(QWidget* parent) : QGraphicsScene(parent)
@@ -84,4 +79,9 @@ void TacticalScene::initAsteroidField()
 TacticalView* TacticalScene::getView() const
 {
     return mView;
+}
+
+void TacticalScene::toggleZoom()
+{
+    mView->toggleZoom();
 }

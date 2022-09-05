@@ -14,15 +14,14 @@ StrategicView::StrategicView(QGraphicsScene* scene) : QGraphicsView()
     ensureVisible(QRectF(0, 0, 0, 0));
 }
 
-void StrategicView::wheelEvent(QWheelEvent *event)
+void StrategicView::toggleZoom()
 {
-    if (event->angleDelta().y() > 0)
-    {
-        scale(1.1, 1.1);
-    } else
-    {
-        scale(0.91, 0.91);
+    if (mZoomed) {
+        scale(0.5, 0.5);
+    } else {
+        scale(2.0, 2.0);
     }
+    mZoomed = !mZoomed;
 }
 
 StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
@@ -119,4 +118,9 @@ void StrategicScene::initBackground()
 StrategicView* StrategicScene::getView() const
 {
     return mView;
+}
+
+void StrategicScene::toggleZoom()
+{
+    mView->toggleZoom();
 }

@@ -18,10 +18,10 @@ class StrategicView : public QGraphicsView
 public:
     explicit StrategicView(QGraphicsScene* scene);
 
-    void wheelEvent(QWheelEvent* event) override;
+    void toggleZoom();
 
 private:
-    int mScaleFactor = 3;
+    bool mZoomed = true;
 };
 
 class StrategicScene : public QGraphicsScene
@@ -37,6 +37,9 @@ public:
 
     void applyPlayerUpdate(QPointF posOffset, qreal angle, Vector vel, Vector acc);
     StrategicView* getView() const;
+
+public Q_SLOTS:
+    void toggleZoom();
 
 private:
     StrategicView* mView;

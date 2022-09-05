@@ -44,6 +44,8 @@ void MainWindow::closeConfigScreen()
 
     connect(mTerminal, &Terminal::setThrustDirection, mSimulation, &SimulationLoop::setThrust);
     connect(mTerminal, &Terminal::rotate, mSimulation, &SimulationLoop::rotate);
+    connect(mTerminal, &Terminal::toggleTacticalZoom, mTacticalScene, &TacticalScene::toggleZoom);
+    connect(mTerminal, &Terminal::toggleMapZoom, mStrategicScene, &StrategicScene::toggleZoom);
     mTerminal->show();
     mTerminal->setInputFocus();
 

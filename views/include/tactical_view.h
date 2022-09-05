@@ -11,10 +11,10 @@ class TacticalView : public QGraphicsView
 public:
     explicit TacticalView(QGraphicsScene* scene);
 
-    void wheelEvent(QWheelEvent* event) override;
+    void toggleZoom();
 
 private:
-    int mScaleFactor = 3;
+    bool mZoomed = true;
 };
 
 class TacticalScene : public QGraphicsScene
@@ -28,6 +28,9 @@ public:
 
     void updateItems(QPointF offset);
     TacticalView* getView() const;
+
+public Q_SLOTS:
+    void toggleZoom();
 
 private:
     TacticalView* mView;

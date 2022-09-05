@@ -18,6 +18,8 @@ public:
 Q_SIGNALS:
     void setThrustDirection(TwoDeg direction, bool isActive);
     void rotate(int degrees);
+    void toggleMapZoom();
+    void toggleTacticalZoom();
 
 public Q_SLOTS:
     void parseInput(const QString& rawText);
@@ -32,13 +34,15 @@ private:
         None,
         Thrust,
         Rotate,
-        Alias
+        Alias,
+        Zoom
     };
 
     void parseCommand(const QString& command, const QString& input);
     void parseThrustCommand(const QString& direction, bool isActive);
     void parseAliasCommand(const QString& input);
     void parseRotateCommand(const QString& input);
+    void parseZoomCommand(const QString& input);
 
     History* mHistory;
     Input* mInput;
