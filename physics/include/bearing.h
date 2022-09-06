@@ -32,7 +32,7 @@ public:
     /**
      * Returns true if the current angle is within the given arc.
      */
-    bool withinArc(qreal arcCentre, qreal arcWidth);
+    bool withinArc(qreal cwStart, qreal cwEnd);
 
     /**
      * Returns the smallest relative angle (i.e. +/- ve) to the given angle.

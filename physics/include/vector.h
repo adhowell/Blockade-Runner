@@ -130,6 +130,7 @@ public:
     qreal y() const { return mY; }
     qreal getSize() const { return mSize; }
     qreal getAtan2() const { return mAtan2(); }
+    Bearing getBearing() const { return mAtan2; }
 
 private:
     qreal mX;

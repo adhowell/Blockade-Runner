@@ -16,10 +16,13 @@ public:
         UV,
     };
 
-    Sensor(Radiation radTx, Radiation radRx, qreal txPower, qreal rxPower, qreal boreAngleOffset, qreal totalFOV, qreal scanFOV, qreal scanSpeed)
-            : mRadTx(radTx), mRadRx(radRx), mTxPower(txPower), mRxPower(rxPower), mBoreAngleOffset(boreAngleOffset), mTotalFOV(totalFOV), mScanFOV(scanFOV), mScanSpeed(scanSpeed)
+    Sensor(Radiation radTx, Radiation radRx, qreal txPower, qreal rxPower, qreal boreAngleOffset, qreal leftOffset, qreal rightOffset, qreal scanFOV, qreal scanSpeed)
+            : mRadTx(radTx), mRadRx(radRx), mTxPower(txPower), mRxPower(rxPower), mBoreAngleOffset(boreAngleOffset), mScanSpeed(scanSpeed)
             {
-                mItem = new SensorFOV(totalFOV, scanFOV);
+                mLeftFOVLimit = leftOffset;
+                mRightFOVLimit = rightOffset;
+                mScanFOV = qMin(0.5*(leftOffset + rightOffset), scanFOV);
+                mItem = new SensorFOV(leftOffset, rightOffset, scanFOV);
             }
     ~Sensor() = default;
 
@@ -47,7 +50,8 @@ protected:
     qreal mTxPower; // Total transmit power
     qreal mRxPower; // Receiver noise floor
 
-    qreal mTotalFOV;
+    qreal mLeftFOVLimit;
+    qreal mRightFOVLimit;
     qreal mScanFOV;
     qreal mScanSpeed;
     qreal mScanPosition = 0; // The bearing (rads) the scan cone is pointing

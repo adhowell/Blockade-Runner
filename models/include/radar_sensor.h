@@ -7,9 +7,11 @@
 class RadarSensor : public Sensor
 {
 public:
-    RadarSensor(WorldObject* parent, qreal boreOffsetAngle)
+    RadarSensor(WorldObject* parent, qreal boreOffset, qreal cwStart, qreal cwEnd)
             : Sensor(Sensor::Radiation::Radio, Sensor::Radiation::Radio,
                      100, 0,
-                     boreOffsetAngle,
-                     M_PI*0.45, M_PI*0.1, 0.01) {}
+                     boreOffset,
+                     cwStart,
+                     cwEnd,
+                     M_PI*0.1, 0.01) {}
 };

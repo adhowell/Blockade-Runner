@@ -35,13 +35,14 @@ qreal Bearing::operator-=(const Bearing& other)
     return mAngle;
 }
 
-bool Bearing::withinArc(qreal arcCentre, qreal arcWidth)
+bool Bearing::withinArc(qreal cwStart, qreal cwEnd)
 {
-    qreal delta = mAngle - arcCentre - arcWidth*0.5;
-    if (delta > M_PI) delta = -m2Pi + delta;
-    if (delta < -M_PI) delta = m2Pi + delta;
-
-    return qAbs(delta) <= arcWidth*0.5;
+    cwStart = correct(cwStart);
+    cwEnd = correct(cwEnd);
+    if (cwStart > cwEnd) {
+        return mAngle >= cwEnd && mAngle <= cwStart;
+    }
+    return mAngle <= cwEnd && mAngle >= cwStart;
 }
 
 qreal Bearing::getDelta(qreal angle)

@@ -110,6 +110,8 @@ Q_SIGNALS:
 private:
     bool hasPathToReactor(int x, int y);
 
+    QPair<qreal, qreal> getSensorLimits(std::shared_ptr<Component> owner, qreal boreAngle);
+
     bool mForwardThrust = false;
     bool mBackwardThrust = false;
     bool mLeftThrust = false;

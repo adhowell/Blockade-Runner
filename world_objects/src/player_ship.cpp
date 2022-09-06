@@ -160,11 +160,6 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
     if (c->getType() != CT::RADAR)
         return;
 
-    // TODO: Check for allowed arc
-    // Get the bearing angle to every other component
-    qreal minBearing;
-    qreal maxBearing;
-
     TwoDeg direction = c->getDirection();
     c->setValid(false);
     if (isGridLineFree(c->x(), c->y(), direction, true))
@@ -177,9 +172,8 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
             case TwoDeg::Down: angle = M_PI; break;
             case TwoDeg::Left: angle = M_PI * 1.5; break;
         }
-        minBearing = angle - (1.5 * M_PI);
-        maxBearing = angle - (1.5 * M_PI);
-        mSensors << std::make_shared<RadarSensor>(this, angle);
+        QPair<qreal, qreal> sensorLimits = getSensorLimits(c, angle);
+        mSensors << std::make_shared<RadarSensor>(this, angle, sensorLimits.first, sensorLimits.second);
         c->setValid(true);
     }
 }
@@ -447,4 +441,21 @@ bool PlayerShip::hasPathToReactor(int x, int y)
                        {
                            return mComponentMap[{c>>4, c&0xF}]->getType() == CT::Reactor;
                        });
+}
+
+QPair<qreal, qreal> PlayerShip::getSensorLimits(std::shared_ptr<Component> owner, qreal boreAngle)
+{
+    qreal minAngle = -0.75*M_PI;
+    qreal maxAngle = 0.75*M_PI;
+    for (const auto& c : mComponentMap)
+    {
+        if (c == owner) {
+            continue;
+        }
+        auto offset = Vector(qreal(c->x()+0.5)-qreal(owner->x()+0.5), qreal(owner->y()+0.5)-qreal(c->y()+0.5));
+        auto delta = Bearing(boreAngle).getDelta(offset.getAtan2());
+        if (delta < 0 && delta > minAngle) minAngle = delta;
+        if (delta > 0 && delta < maxAngle) maxAngle = delta;
+    }
+    return {-minAngle, maxAngle};
 }

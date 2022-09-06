@@ -8,7 +8,7 @@ void Sensor::update(QPointF parentPosition, Bearing parentAngle)
         if (mScanCW)
         {
             mScanPosition += mScanSpeed;
-            qreal delta = mScanPosition + mScanFOV - mTotalFOV;
+            qreal delta = mScanPosition + mScanFOV - mRightFOVLimit;
             if (delta > 0)
             {
                 mScanCW = false;
@@ -18,7 +18,7 @@ void Sensor::update(QPointF parentPosition, Bearing parentAngle)
         else
         {
             mScanPosition -= mScanSpeed;
-            qreal delta = mScanPosition - mScanFOV + mTotalFOV;
+            qreal delta = mScanPosition - mScanFOV + mLeftFOVLimit;
             if (delta < 0)
             {
                 mScanCW = true;
