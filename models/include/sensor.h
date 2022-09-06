@@ -28,7 +28,7 @@ public:
     /**
      * Update the scan angle and the associated graphics item (if any).
      */
-    void update(QPointF parentPosition, qreal parentAngle);
+    void update(QPointF parentPosition, Bearing parentAngle);
 
     /**
      * Determines if the given angle is inside the sensor FOV.

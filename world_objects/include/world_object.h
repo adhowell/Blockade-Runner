@@ -2,6 +2,7 @@
 #include "include/sensor.h"
 #include "include/faction.h"
 #include "include/rotation_controller.h"
+#include "include/bearing.h"
 
 #include <QtWidgets>
 
@@ -31,7 +32,7 @@ public:
     Vector getAccVector() const { return mA; }
     Vector getPosVector() const { return mP; }
     QPointF getPoint() const { return {mP.x(), mP.y()}; }
-    qreal getAtan2() const { return mAtan2; }
+    Bearing getAtan2() const { return mAtan2; }
     QGraphicsItem* getTacticalGraphicsItem() { return mTacticalGraphicsItem; }
     uint32_t getId() const { return mId; }
     QVector<std::shared_ptr<Sensor>> getSensors() const { return mSensors; }
@@ -57,7 +58,7 @@ Q_SIGNALS:
 protected:
     Faction mFaction;
     uint32_t mId;
-    qreal mAtan2 = 0; // Bearing (rads)
+    Bearing mAtan2 {0}; // Bearing (rads)
     qreal mRotV = 0; // Rotational velocity
     qreal mRotA = 0; // Rotational acceleration
     Vector mV = Vector(0, 0); // Velocity vector

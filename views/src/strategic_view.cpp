@@ -63,10 +63,10 @@ void StrategicScene::updateTrack(SignalTrackProcessor::Track track)
     mTracks[track.uid]->updateTrack(x, y, track.faction);
 }
 
-void StrategicScene::applyPlayerUpdate(QPointF posOffset, qreal angle, Vector vel, Vector acc)
+void StrategicScene::applyPlayerUpdate(QPointF posOffset, Bearing angle, Vector vel, Vector acc)
 {
     posOffset *= gScaleFactor;
-    mPlayerSymbol->applyUpdate(angle, vel);
+    mPlayerSymbol->applyUpdate(angle());
 
     vel *= gScaleFactor;
     acc *= gScaleFactor;

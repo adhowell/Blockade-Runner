@@ -1,24 +1,10 @@
+#include "include/bearing.h"
+
 #include <QtWidgets>
 #include <QtMath>
 
 #pragma once
 
-
-/**
- * Represents a normalised vector
- */
-class NormVector {
-public:
-    NormVector(qreal dx, qreal dy);
-
-    /**
-     * Return the radial (radians) of the normalised vector.
-     */
-    qreal atan2() const { return mAtan2; }
-
-private:
-    qreal mAtan2;
-};
 
 /**
  * Representation for handling vector addition & reflection
@@ -42,14 +28,20 @@ public:
 
     /**
      * Construct vector with radial.
+     * @param bearing Bearing object
+     */
+    explicit Vector(Bearing bearing);
+
+    /**
+     * Construct vector with radial.
      * @param rad Bearing of vector in radians
      */
     explicit Vector(qreal rad);
 
     qreal getDistance(Vector vec) const { return qSqrt(qPow(mX-vec.x(), 2.) + (qPow(mY-vec.y(), 2.))); }
 
-    QPointF getPosDelta(qreal deltaT) const { return {mSize * deltaT * qSin(mAtan2),
-                                                      -mSize * deltaT * qCos(mAtan2)}; }
+    QPointF getPosDelta(qreal deltaT) const { return {mSize * deltaT * qSin(mAtan2()),
+                                                      -mSize * deltaT * qCos(mAtan2())}; }
 
     /**
      * Return a new vector created by subtracting the
@@ -134,16 +126,14 @@ public:
      */
     void flip();
 
-    void correctAngle();
-
     qreal x() const { return mX; }
     qreal y() const { return mY; }
     qreal getSize() const { return mSize; }
-    qreal getAtan2() const { return mAtan2; }
+    qreal getAtan2() const { return mAtan2(); }
 
 private:
     qreal mX;
     qreal mY;
-    qreal mAtan2;
+    Bearing mAtan2;
     qreal mSize;
 };

@@ -1,5 +1,6 @@
 target_sources(blockadeRunnerLib
         PUBLIC
+        include/bearing.h src/bearing.cpp
         include/component.h src/component.cpp
         include/cruise_engine.h
         include/directions.h

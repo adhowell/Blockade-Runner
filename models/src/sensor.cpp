@@ -1,7 +1,7 @@
 #include "include/sensor.h"
 
 
-void Sensor::update(QPointF parentPosition, qreal parentAngle)
+void Sensor::update(QPointF parentPosition, Bearing parentAngle)
 {
     if (mIsActive)
     {

@@ -10,7 +10,7 @@
 class MissileItem : public QGraphicsItem
 {
 public:
-    MissileItem(Vector& pos, qreal& atan2);
+    MissileItem(Vector& pos, Bearing& atan2);
     enum { Type = 7 };
     int type() const override { return Type; }
 
@@ -24,7 +24,7 @@ public:
 
 private:
     Vector& mPos;  // Centre point
-    qreal& mAtan2;
+    Bearing& mAtan2;
 
     qreal mLength = 50;
     qreal mWidth = 10;

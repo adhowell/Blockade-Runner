@@ -14,7 +14,7 @@ public:
         mMaxLeftRotateAcc = 0.0005;
         mAtan2 = atan2;
         mTacticalGraphicsItem = new MissileItem(mP, mAtan2);
-        mSensors << std::make_shared<RadarSensor>(this, 0);
+        //mSensors << std::make_shared<RadarSensor>(this, 0);
     }
     ~Missile() override = default;
 

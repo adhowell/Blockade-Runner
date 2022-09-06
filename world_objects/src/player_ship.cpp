@@ -69,8 +69,6 @@ void PlayerShip::update(qreal deltaT)
     mV += mA * deltaT;
 
     mAtan2 += mRotV * deltaT;
-    while (mAtan2 > 2.0*M_PI) mAtan2 -= 2.0*M_PI;
-    while (mAtan2 < 0.0) mAtan2 += 2.0*M_PI;
     mTacticalGraphicsItem->update();
 }
 
@@ -159,7 +157,6 @@ void PlayerShip::computeRotationalInertia()
 
 void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
 {
-    bool hasValidArc = false;
     if (c->getType() != CT::RADAR)
         return;
 
@@ -169,6 +166,7 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
     qreal maxBearing;
 
     TwoDeg direction = c->getDirection();
+    c->setValid(false);
     if (isGridLineFree(c->x(), c->y(), direction, true))
     {
         qreal angle = 0;
@@ -179,12 +177,10 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
             case TwoDeg::Down: angle = M_PI; break;
             case TwoDeg::Left: angle = M_PI * 1.5; break;
         }
+        minBearing = angle - (1.5 * M_PI);
+        maxBearing = angle - (1.5 * M_PI);
         mSensors << std::make_shared<RadarSensor>(this, angle);
-        hasValidArc = true;
-    }
-    if (!hasValidArc)
-    {
-        c->setValid(false);
+        c->setValid(true);
     }
 }
 

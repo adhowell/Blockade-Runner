@@ -35,7 +35,7 @@ public:
     void visualiseTracks(const QVector<SignalTrackProcessor::Track>& tracks);
     void updateTrack(SignalTrackProcessor::Track track);
 
-    void applyPlayerUpdate(QPointF posOffset, qreal angle, Vector vel, Vector acc);
+    void applyPlayerUpdate(QPointF posOffset, Bearing angle, Vector vel, Vector acc);
     StrategicView* getView() const;
 
 public Q_SLOTS:

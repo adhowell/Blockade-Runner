@@ -20,7 +20,7 @@ QVector<SignalTrackProcessor::Track> SignalTrackProcessor::getTracks(const QVect
 std::optional<SignalTrackProcessor::Track> SignalTrackProcessor::computeTrack(WorldObject* obj)
 {
     qreal sepAngle = qAtan2( obj->mP.y() - mParent->mP.y(), obj->mP.x() - mParent->mP.x()) + 0.5*M_PI;
-    qreal offBoreAngle = returnOffsetAngle(mParent->mAtan2, sepAngle);
+    qreal offBoreAngle = mParent->mAtan2.getDelta(sepAngle);
     for (const auto& sensor : mParent->mSensors)
     {
         // TODO: More fidelity
@@ -43,7 +43,7 @@ void SignalTrackProcessor::commandRotateToTrack(const QVector<WorldObject*>& wor
         auto track = computeTrack(obj);
         if (track.has_value())
         {
-            mParent->rotate(returnOffsetAngle(mParent->mAtan2, track->offset.getAtan2())*180.0/M_PI);
+            mParent->rotate(mParent->mAtan2.getDelta(track->offset.getAtan2())*180.0/M_PI);
         }
     }
 }
@@ -51,12 +51,4 @@ void SignalTrackProcessor::commandRotateToTrack(const QVector<WorldObject*>& wor
 void SignalTrackProcessor::updateSensors()
 {
     mParent->updateSensors();
-}
-
-qreal SignalTrackProcessor::returnOffsetAngle(qreal bore, qreal target)
-{
-    qreal delta = target - bore;
-    if (delta > M_PI) return -(2.0*M_PI) + delta;
-    if (delta < -M_PI) return (2.0*M_PI) + delta;
-    return delta;
 }

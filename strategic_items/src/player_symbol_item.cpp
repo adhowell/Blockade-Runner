@@ -1,16 +1,14 @@
 #include "include/player_symbol_item.h"
 
-PlayerSymbolItem::PlayerSymbolItem(QPointF pos) : mVelocity(0, 0)
+PlayerSymbolItem::PlayerSymbolItem(QPointF pos) : mVelocity(0, 0), mAtan2(0)
 {
-    mAtan2 = 0;
 }
 
-void PlayerSymbolItem::applyUpdate(qreal angle, Vector velocity)
+void PlayerSymbolItem::applyUpdate(qreal angle)
 {
     mAtan2 = angle - 0.5*M_PI;
-    mVelocity = velocity;
     mPoly.clear();
-    mPoly << QPointF(qCos(mAtan2)*mHalfLength, qSin(mAtan2)*mHalfLength)
+    mPoly << QPointF(qCos(mAtan2())*mHalfLength, qSin(mAtan2())*mHalfLength)
           << QPointF(qCos(mAtan2 + M_PI - 0.5)*mHalfLength, qSin(mAtan2 + M_PI - 0.5)*mHalfLength)
           << QPointF(qCos(mAtan2 + M_PI + 0.5)*mHalfLength, qSin(mAtan2 + M_PI + 0.5)*mHalfLength);
     prepareGeometryChange();
