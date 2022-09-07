@@ -3,7 +3,7 @@
 
 void Sensor::update(QPointF parentPosition, Bearing parentAngle)
 {
-    if (mIsActive)
+    if (mIsActive && mSweepEnabled)
     {
         if (mScanCW)
         {

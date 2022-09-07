@@ -173,7 +173,9 @@ void PlayerShip::createComponentSensors(std::shared_ptr<Component>& c)
             case TwoDeg::Left: angle = M_PI * 1.5; break;
         }
         QPair<qreal, qreal> sensorLimits = getSensorLimits(c, angle);
-        mSensors << std::make_shared<RadarSensor>(this, angle, sensorLimits.first, sensorLimits.second);
+        mSensors << std::make_shared<RadarSensor>(this,
+                                                  angle,
+                                                  sensorLimits.first, sensorLimits.second);
         c->setValid(true);
     }
 }
@@ -452,10 +454,16 @@ QPair<qreal, qreal> PlayerShip::getSensorLimits(std::shared_ptr<Component> owner
         if (c == owner) {
             continue;
         }
-        auto offset = Vector(qreal(c->x()+0.5)-qreal(owner->x()+0.5), qreal(owner->y()+0.5)-qreal(c->y()+0.5));
-        auto delta = Bearing(boreAngle).getDelta(offset.getAtan2());
-        if (delta < 0 && delta > minAngle) minAngle = delta;
-        if (delta > 0 && delta < maxAngle) maxAngle = delta;
+        // Compute the offset to every corner of every component
+
+        for (int i = -1; i <= 1; i += 2) {
+            for (int j = -1; j <= 1; j += 2) {
+                auto cornerOffset = Vector(qreal(c->x()+0.5+(i*0.5))-qreal(owner->x()+0.5), qreal(owner->y()+0.5+(j*0.5))-qreal(c->y()+0.5));
+                auto delta = Bearing(boreAngle).getDelta(cornerOffset.getAtan2());
+                if (delta < 0 && delta > minAngle) minAngle = delta;
+                if (delta > 0 && delta < maxAngle) maxAngle = delta;
+            }
+        }
     }
     return {-minAngle, maxAngle};
 }

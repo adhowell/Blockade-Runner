@@ -20,8 +20,8 @@ void SensorFOV::updateScan(QPointF pos, qreal boreAngle, bool isActive)
 
 void SensorFOV::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    int fovAngle16Start = int(((M_PI * 0.5) - mBoreAngle + mTotalFOV) * 5760 / (2 * M_PI));
-    int fovAngle16Width = -int((mTotalFOV*2) * 5760 / (2 * M_PI));
+    int fovAngle16Start = int(((M_PI * 0.5) - mBoreAngle + mLeftFOV) * 5760 / (2 * M_PI));
+    int fovAngle16Width = -int((mTotalFOV) * 5760 / (2 * M_PI));
 
     QPen pen;
     pen.setColor(QColor(0, 255, 0, 50));
