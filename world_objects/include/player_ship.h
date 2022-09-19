@@ -100,6 +100,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void displayText(QString);
+    void handleUpdateConfigStats(QString, QString, QString, QString, QString);
     void handleAddConfigComponent(std::shared_ptr<Component>);
     void handleAddConfigEngine(std::shared_ptr<Engine>);
     void handleAddCentreOfMass(qreal, qreal);
@@ -111,6 +112,8 @@ private:
     bool hasPathToReactor(int x, int y);
 
     QPair<qreal, qreal> getSensorLimits(std::shared_ptr<Component> owner, qreal boreAngle);
+
+    void parseStats();
 
     bool mForwardThrust = false;
     bool mBackwardThrust = false;

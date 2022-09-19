@@ -140,6 +140,18 @@ ConfigScene::ConfigScene(QWidget* parent) : QGraphicsScene(parent)
     addItem(new ComponentTile(-30, -80, Component::ComponentType::Reactor));
     addItem(new ComponentTile(-30, -55, Component::ComponentType::HeatSink));
     addItem(new ComponentTile( 35, -80, Component::ComponentType::RADAR));
+
+    // Draw text boxes for stats
+    mTextMass = new TextBox(30, -25, "TOTAL MASS: ", "NO PARTS");
+    mTextLinearAcc = new TextBox(30, -15,"MAX ACCELERATION: ",  "NO ENGINES");
+    mTextLeftAcc = new TextBox(30, -5, "CCW ROTATION PERIOD: ", "NO THRUSTERS");
+    mTextRightAcc = new TextBox(30, 5, "CW ROTATIONAL PERIOD: ", "NO THRUSTERS");
+    mTextSensors = new TextBox(30, 15, "SENSOR COVERAGE: ", "NO SENSORS");
+    addItem(mTextMass);
+    addItem(mTextLinearAcc);
+    addItem(mTextLeftAcc);
+    addItem(mTextRightAcc);
+    addItem(mTextSensors);
 }
 
 ConfigView* ConfigScene::getView() const
@@ -150,6 +162,15 @@ ConfigView* ConfigScene::getView() const
 void ConfigScene::handleClose()
 {
     Q_EMIT close();
+}
+
+void ConfigScene::updateStats(QString mass, QString linearAcc, QString leftAcc, QString rightAcc, QString hasSensors)
+{
+    mTextMass->updateText(mass);
+    mTextLinearAcc->updateText(linearAcc);
+    mTextLeftAcc->updateText(leftAcc);
+    mTextRightAcc->updateText(rightAcc);
+    mTextSensors->updateText(hasSensors);
 }
 
 void ConfigScene::drawConfigComponent(std::shared_ptr<Component> component)

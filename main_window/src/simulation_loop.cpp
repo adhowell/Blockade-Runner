@@ -38,6 +38,7 @@ void SimulationLoop::initPlayer()
     connect(mPlayer, &PlayerShip::handleAddCentreOfMass, mConfigScene, &ConfigScene::drawCentreOfMass);
     connect(mPlayer, &PlayerShip::handleAddCentreOfRotation, mConfigScene, &ConfigScene::drawCentreOfRotation);
     connect(mPlayer, &PlayerShip::handleRemoveAllConfigItems, mConfigScene, &ConfigScene::deleteAllComponents);
+    connect(mPlayer, &PlayerShip::handleUpdateConfigStats, mConfigScene, &ConfigScene::updateStats);
     connect(mPlayer, &WorldObject::handleAddSensors, this, &SimulationLoop::addSensors);
     connect(mPlayer, &PlayerShip::handleClearSensors, this, &SimulationLoop::clearSensors);
     connect(mConfigScene->getView(), &ConfigView::addShipPart, mPlayer, &PlayerShip::handleAddPart);

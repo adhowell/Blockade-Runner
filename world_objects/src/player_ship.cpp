@@ -418,6 +418,7 @@ void PlayerShip::reconfigure()
     createAllSubComponents();
     computeCentreOfRotation();
 
+    parseStats();
     updateVisuals();
 }
 
@@ -466,4 +467,15 @@ QPair<qreal, qreal> PlayerShip::getSensorLimits(std::shared_ptr<Component> owner
         }
     }
     return {-minAngle, maxAngle};
+}
+
+void PlayerShip::parseStats()
+{
+    QString mass = mM == 0 ? "" : QString("%1 KG").arg(mM);
+    qreal totalThrust = 0;
+    std::for_each(mEngines.begin(), mEngines.end(), [&totalThrust](auto e){ totalThrust += e->getMaxThrust(); });
+    QString acc = mM * totalThrust != 0 ? QString("%1 M/S^2").arg(100.0*totalThrust/mM) : "";
+    QString leftAcc = mMaxLeftRotateAcc == 0 ? "" : QString("%1 S").arg(0.02*qSqrt(M_PI*4.0/mMaxLeftRotateAcc));
+    QString rightAcc = mMaxRightRotateAcc == 0 ? "" : QString("%1 S").arg(0.02*qSqrt(M_PI*4.0/mMaxRightRotateAcc));
+    Q_EMIT handleUpdateConfigStats(mass, acc, leftAcc, rightAcc, mSensors.empty() ? "" : "GOOD");
 }

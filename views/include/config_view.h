@@ -1,6 +1,7 @@
 #include "include/component.h"
 #include "include/engine.h"
 #include "include/menu_component.h"
+#include "include/text_box.h"
 
 #include <QFrame>
 #include <QGraphicsView>
@@ -57,6 +58,7 @@ public:
 
 public Q_SLOTS:
     void handleClose();
+    void updateStats(QString mass, QString linearAcc, QString leftAcc, QString rightAcc, QString hasSensors);
     void drawConfigComponent(std::shared_ptr<Component> component);
     void drawConfigEngine(std::shared_ptr<Engine> engine);
     void drawCentreOfMass(qreal x, qreal y);
@@ -69,4 +71,9 @@ Q_SIGNALS:
 private:
     ConfigView* mView;
     QVector<QGraphicsItem*> mTempItems;
+    TextBox* mTextMass;
+    TextBox* mTextLinearAcc;
+    TextBox* mTextLeftAcc;
+    TextBox* mTextRightAcc;
+    TextBox* mTextSensors;
 };

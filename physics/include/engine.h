@@ -31,6 +31,7 @@ public:
     qreal getRotationalAcc() const;
 
     qreal getMaxRotationalAcc() const;
+    qreal getMaxThrust() const { return mDirection == TwoDeg::Up ? mThrust : 0; }
 
     std::shared_ptr<Component> getComponent() { return mComponent; }
 
