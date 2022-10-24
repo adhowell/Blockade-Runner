@@ -2,7 +2,6 @@
 #include "include/sensor.h"
 #include "include/faction.h"
 #include "include/rotation_controller.h"
-#include "include/bearing.h"
 
 #include <QtWidgets>
 
@@ -46,10 +45,7 @@ public:
 
     void rotate(qreal degrees)
     {
-        if (degrees > 0)
-            mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxRightRotateAcc, mMaxLeftRotateAcc);
-        else
-            mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0, mMaxLeftRotateAcc, mMaxRightRotateAcc);
+        mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0);
     }
 
 Q_SIGNALS:
@@ -69,5 +65,5 @@ protected:
 
     QVector<std::shared_ptr<Sensor>> mSensors;
     QGraphicsItem* mTacticalGraphicsItem = nullptr;
-    RotationController mRotationController = RotationController(mRotV);
+    RotationController mRotationController = RotationController(mAtan2, mRotV, mMaxRightRotateAcc, mMaxLeftRotateAcc);
 };

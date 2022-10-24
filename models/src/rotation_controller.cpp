@@ -1,44 +1,62 @@
 #include "include/rotation_controller.h"
 
-RotationController::RotationController(qreal& rotateVel) : mRotateVel(rotateVel)
+RotationController::RotationController(Bearing& bearing, qreal& rotateVel, qreal& maxCWRotateAcc, qreal& maxCCWRotateAcc)
+: mBearing(bearing), mRotateVel(rotateVel), mMaxCWRotateAcc(maxCWRotateAcc), mMaxCCWRotateAcc(maxCCWRotateAcc)
 {
-
-}
-
-void RotationController::commandNewBearing(qreal angleDelta, qreal maxAccPro, qreal maxAccRetro)
-{
-    mIsHalfComplete = false;
-    mHalfRotateVel = qSqrt(((mRotateVel * mRotateVel) + (2.0 * maxAccPro * qAbs(angleDelta))) / (1.0 + (maxAccPro/maxAccRetro)));
-    if (angleDelta < 0) {
-        mDirection = OneDeg::Left;
-        mHalfRotateVel *= -1.0;
-    } else {
-        mDirection = OneDeg::Right;
-    }
+    mTargetBearing = mBearing;
 }
 
 void RotationController::update()
 {
-    if (mDirection == OneDeg::Right && mRotateVel >= mHalfRotateVel)
-    {
-        mIsHalfComplete = true;
-        mDirection = OneDeg::Left;
+    qreal delta = mBearing.getDelta(mTargetBearing);
+    OneDeg burnDirection = delta > 0 ? OneDeg::Right : OneDeg::Left;
+    qreal acc = (mRotateVel * mRotateVel) / (2.0f * delta);
+    if (acc > 0) {
+        mDirection = mMaxCWRotateAcc <= acc ? OneDeg::Left : burnDirection;
+    } else {
+        mDirection =  mMaxCCWRotateAcc <= -acc ? OneDeg::Right : burnDirection;
     }
-    else if (mDirection == OneDeg::Left && mRotateVel <= mHalfRotateVel)
-    {
-        mIsHalfComplete = true;
-        mDirection = OneDeg::Right;
+    if (qAbs(mRotateVel) < 0.1 && qAbs(delta) < 0.01) {
+        mState = State::MaintainHeading;
     }
+}
+
+void RotationController::updatePWM()
+{
+    if (mPWMCycle > 0) {
+        mDirection = OneDeg::Wait;
+        mPWMCycle--;
+    } else {
+        qreal delta = mBearing.getDelta(mTargetBearing);
+        // On sim start
+        if (delta == 0) {
+            mDirection = OneDeg::Wait;
+            return;
+        }
+
+        OneDeg burnDirection = delta > 0 ? OneDeg::Right : OneDeg::Left;
+        qreal acc = (mRotateVel * mRotateVel) / (2.0f * delta);
+        if (acc > 0) {
+            mPWMCycle = (uint32_t) (mMaxCWRotateAcc / acc);
+        } else {
+            mPWMCycle = (uint32_t) (mMaxCCWRotateAcc / -acc);
+        }
+        mPWMCycle >>= 2;
+        mDirection = burnDirection;
+    }
+
 }
 
 RotationController::OneDeg RotationController::getDirection()
 {
-    if (!mIsHalfComplete)
-        update();
-    if (mIsHalfComplete && qAbs(mRotateVel) < 0.0001)
+    switch (mState)
     {
-        mDirection = OneDeg::Stop;
-        mIsHalfComplete = false;
+        case State::AlignToTarget:
+            update();
+            break;
+        case State::MaintainHeading:
+            updatePWM();
+            break;
     }
     return mDirection;
 }
