@@ -43,6 +43,11 @@ void RotationController::updatePWM()
         }
         mPWMCycle >>= 2;
         mDirection = burnDirection;
+
+        if (mPWMCycle == 0 && qAbs(mRotateVel < 0.0001) && qAbs(delta) < 0.01) {
+            mPWMCycle = 10;
+            mDirection = OneDeg::Wait;
+        }
     }
 
 }
