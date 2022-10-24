@@ -43,7 +43,8 @@ void SignalTrackProcessor::commandRotateToTrack(const QVector<WorldObject*>& wor
         auto track = computeTrack(obj);
         if (track.has_value())
         {
-            mParent->rotate(mParent->mAtan2.getDelta(track->offset.getAtan2())*180.0/M_PI);
+            qreal altAtan2 = qAtan2(track->offset.y(), track->offset.x()) + 0.5*M_PI;
+            mParent->rotate(Bearing(altAtan2));
         }
     }
 }

@@ -43,6 +43,11 @@ public:
         for (const auto& s : mSensors) s->update({mP.x(), mP.y()}, mAtan2);
     }
 
+    void rotate(Bearing targetBearing)
+    {
+        mRotationController.commandNewBearing(targetBearing);
+    }
+
     void rotate(qreal degrees)
     {
         mRotationController.commandNewBearing(degrees*2.0*M_PI/360.0);

@@ -26,6 +26,6 @@ private:
     Vector& mPos;  // Centre point
     Bearing& mAtan2;
 
-    qreal mLength = 50;
-    qreal mWidth = 10;
+    qreal mLength = 25;
+    qreal mWidth = 5;
 };
