@@ -28,6 +28,13 @@ void RotationController::updatePWM()
         mPWMCycle--;
     } else {
         qreal delta = mBearing.getDelta(mTargetBearing);
+
+        // Large corrections (e.g. due to asymmetric engines) are better suited to align-mode
+        if (qAbs(delta) > 0.05) {
+            mState = State::AlignToTarget;
+            return;
+        }
+
         // On sim start
         if (delta == 0) {
             mDirection = OneDeg::Wait;
@@ -45,7 +52,7 @@ void RotationController::updatePWM()
         mDirection = burnDirection;
 
         if (mPWMCycle == 0 && qAbs(mRotateVel < 0.0001) && qAbs(delta) < 0.01) {
-            mPWMCycle = 10;
+            mPWMCycle = 1;
             mDirection = OneDeg::Wait;
         }
     }
