@@ -10,7 +10,7 @@ PlayerShip::PlayerShip(Faction faction, uint32_t uid) : WorldObject(faction, uid
     mTacticalGraphicsItem = new PlayerShipItem(mAtan2);
 }
 
-void PlayerShip::update(qreal deltaT)
+void PlayerShip::update()
 {
     switch (mRotationController.getDirection())
     {

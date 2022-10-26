@@ -12,9 +12,7 @@
 class SignalTrackProcessor
 {
 public:
-    friend class WorldObject;
-
-    explicit SignalTrackProcessor(WorldObject* parent, bool isGuidance = false) : mParent(parent), mGuidance(isGuidance) {}
+    explicit SignalTrackProcessor(WorldObject* parent) : mParent(parent) {}
     ~SignalTrackProcessor() = default;
 
     /**
@@ -43,26 +41,8 @@ public:
      */
     std::optional<Track> computeTrack(WorldObject* obj);
 
-    /**
-     * Updates all the sensors assigned to the parent world object.
-     */
-    void updateSensors();
-
-    /**
-     * Commands the parent object to rotate towards the most valid
-     * target track. If there is no valid track nothing happens.
-     *
-     * @param worldObjects - All of the world objects currently in the simulation
-     */
-    void commandRotateToTrack(const QVector<WorldObject*>& worldObjects);
-
     WorldObject* getParent() const { return mParent; }
-    bool getIsGuidance() const { return mGuidance; }
 
-private:
-    qreal returnOffsetAngle(qreal bore, qreal target);
-
+protected:
     WorldObject* mParent;
-
-    bool mGuidance = false;
 };

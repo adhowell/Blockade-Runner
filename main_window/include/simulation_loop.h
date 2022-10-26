@@ -3,7 +3,7 @@
 #include "include/strategic_view.h"
 #include "include/config_view.h"
 #include "global_config.h"
-#include "include/signal_track_processor.h"
+#include "include/guidance_processor.h"
 
 #include <QFrame>
 #include <QGraphicsView>
@@ -46,7 +46,8 @@ private:
     PlayerShip* mPlayer;
 
     QVector<WorldObject*> mObjects;
-    QVector<SignalTrackProcessor*> mProcessors;
+    QVector<SignalTrackProcessor*> mTrackProcessors;
+    QVector<GuidanceProcessor*> mGuidanceProcessors;
 
     TacticalScene* mTacticalScene;
     StrategicScene* mStrategicScene;
@@ -58,8 +59,6 @@ private:
     bool mBackwardThrust = false;
     bool mLeftThrust = false;
     bool mRightThrust = false;
-
-    qreal mDeltaT = 1.0;
 
     int mNextUid = 0;
 };

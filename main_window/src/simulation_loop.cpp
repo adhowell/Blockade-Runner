@@ -31,7 +31,7 @@ void SimulationLoop::initPlayer()
 {
     mPlayer = new PlayerShip(Faction::Blue, mNextUid++);
     mObjects << mPlayer;
-    mProcessors << new SignalTrackProcessor(mPlayer);
+    mTrackProcessors << new SignalTrackProcessor(mPlayer);
 
     connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveInfoFromPlayerShip);
     connect(mPlayer, &PlayerShip::handleAddConfigComponent, mConfigScene, &ConfigScene::drawConfigComponent);
@@ -53,7 +53,7 @@ void SimulationLoop::initPlayer()
 void SimulationLoop::initMissile(qreal x, qreal y)
 {
     auto missile = new Missile(Faction::Red, {x, y}, {0, 0}, -M_PI*0.5, mNextUid++);
-    mProcessors << new SignalTrackProcessor(missile, true);
+    mGuidanceProcessors << new GuidanceProcessor(missile);
     mObjects << missile;
     mTacticalScene->addItem(missile->getTacticalGraphicsItem());
 }
@@ -64,28 +64,25 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     applyPlayerInput();
     Vector playerVelocity = mPlayer->getVelVector();
     playerVelocity.flip();
-    QPointF playerOffset = playerVelocity.getPosDelta(mDeltaT);
+    QPointF playerOffset = playerVelocity.getPosDelta(WorldObject::deltaT);
 
     for (const auto& object : mObjects)
     {
-        object->updatePosition(mDeltaT, playerOffset);
+        object->updatePosition(playerOffset);
+        object->updateSensors();
     }
 
     // Update sensors
-    //std::for_each(mObjects.cbegin(), mObjects.cend(), [](auto obj){obj->updateSensors();});
-    for (const auto& processor : mProcessors)
+    for (const auto& processor : mTrackProcessors)
     {
-        processor->updateSensors();
         if (processor->getParent() == mPlayer)
         {
             auto tracks = processor->getTracks(mObjects);
             mStrategicScene->visualiseTracks(tracks);
         }
-        if (processor->getIsGuidance())
-        {
-            // DEBUG
-            processor->commandRotateToTrack(mObjects);
-        }
+    }
+    for (const auto& processor : mGuidanceProcessors) {
+        processor->guideToMostValidTarget(mObjects);
     }
 
     mTacticalScene->updateItems(playerOffset);
@@ -105,7 +102,7 @@ void SimulationLoop::applyPlayerInput()
     if (mBackwardThrust)
         mPlayer->enableBackward();
 
-    mPlayer->update(mDeltaT);
+    mPlayer->update();
 }
 
 void SimulationLoop::setThrust(TwoDeg direction, bool isActive)

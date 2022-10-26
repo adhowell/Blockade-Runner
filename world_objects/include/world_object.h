@@ -17,6 +17,7 @@ class WorldObject : public QWidget
     Q_OBJECT
 public:
     friend class SignalTrackProcessor;
+    friend class GuidanceProcessor;
 
     /**
      * Initialises a new object in the world.
@@ -36,11 +37,15 @@ public:
     uint32_t getId() const { return mId; }
     QVector<std::shared_ptr<Sensor>> getSensors() const { return mSensors; }
 
-    virtual void updatePosition(qreal deltaT, QPointF offset) {}
+    constexpr static qreal deltaT {1.0f};
+
+    virtual void updatePosition(QPointF offset) {}
 
     void updateSensors()
     {
-        for (const auto& s : mSensors) s->update({mP.x(), mP.y()}, mAtan2);
+        for (const auto& s : mSensors) {
+            s->update({mP.x(), mP.y()}, mAtan2);
+        }
     }
 
     void rotate(Bearing targetBearing)

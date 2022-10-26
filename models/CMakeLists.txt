@@ -1,5 +1,6 @@
 target_sources(blockadeRunnerLib
         PUBLIC
+        include/guidance_processor.h src/guidance_processor.cpp
         include/heat_flow.h src/heat_flow.cpp
         include/radar_sensor.h
         include/rotation_controller.h src/rotation_controller.cpp

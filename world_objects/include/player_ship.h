@@ -79,11 +79,9 @@ public:
     void computeEngineDirectionForce(int x, int y, TwoDeg direction);
 
     /**
-     * Update the position and orientation of the ship using the given delta-t.
-     *
-     * @param deltaT - The time step value.
+     * Update the position and orientation of the ship using object delta-t.
      */
-    void update(qreal deltaT);
+    void update();
 
     void resetMovement();
     void enableForward() { mForwardThrust = true; }
