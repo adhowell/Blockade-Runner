@@ -15,6 +15,8 @@ void StrategicSymbol::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->drawRect(QRectF(-mSize, -mSize, mSize*2.0, mSize*2.0));
     }
     painter->drawPolygon(mPoly);
+
+    painter->drawLine(mVelLine);
 }
 
 QRectF StrategicSymbol::boundingRect() const
@@ -29,6 +31,9 @@ void StrategicSymbol::updateTrack(qreal x, qreal y, Faction perceivedFaction)
     if (mLifetime == 0) {
         mAnimationLifetime = mAnimationMaxLifetime;
     }
+
+    auto oldPos = pos();
+    mVelLine = QLineF(x, y, oldPos.x(), oldPos.y());
 
     mLifetime = mMaxLifetime;
     setPos(x, y);

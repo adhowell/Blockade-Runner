@@ -55,8 +55,8 @@ void PlayerShip::update()
 
         // Update velocity if engine is firing
         if (e->enabled()) {
-            mA += (Vector(mAtan2) * e->getLongitudinalAcc());
-            mA += (Vector(mAtan2 + M_PI_2) * e->getLateralAcc());
+            mA += Vector(mAtan2) * e->getLongitudinalAcc();
+            mA += Vector(mAtan2 + M_PI_2) * e->getLateralAcc();
             mRotA += e->getRotationalAcc();
         }
     }

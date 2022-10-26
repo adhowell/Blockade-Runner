@@ -31,8 +31,7 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
     mView = new StrategicView(this);
     mPlayerSymbol = new PlayerSymbolItem({0, 0});
     addItem(mPlayerSymbol);
-    for (int i = 1; i <= 6; i++)
-    {
+    for (int i = 1; i <= 6; i++) {
         auto velItem = new VelocityMarker(i * 10 * gTargetFramerate);
         auto accItem = new AccelerationMarker(i * 10 * gTargetFramerate);
         mVelMarkers << velItem;
@@ -44,8 +43,7 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
 
 void StrategicScene::visualiseTracks(const QVector<SignalTrackProcessor::Track>& tracks)
 {
-    for (auto track : tracks)
-    {
+    for (auto track : tracks) {
         updateTrack(track);
     }
 }
@@ -54,8 +52,7 @@ void StrategicScene::updateTrack(SignalTrackProcessor::Track track)
 {
     qreal x = track.offset.x() * gScaleFactor;
     qreal y = track.offset.y() * gScaleFactor;
-    if (!mTracks.contains(track.uid))
-    {
+    if (!mTracks.contains(track.uid)) {
         auto item = new StrategicSymbol();
         mTracks[track.uid] = item;
         addItem(item);
@@ -76,8 +73,7 @@ void StrategicScene::applyPlayerUpdate(QPointF posOffset, Bearing angle, Vector 
                   [vel, acc](auto v){ v->updateOffset(vel, acc); });
     mGridLines->updateOffset(posOffset);
 
-    for (auto item : mTracks)
-    {
+    for (auto item : mTracks) {
         item->updateOffset(posOffset);
     }
 }

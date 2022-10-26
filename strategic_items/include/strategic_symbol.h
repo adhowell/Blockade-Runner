@@ -23,6 +23,7 @@ public:
 
 private:
     QPolygonF mPoly;
+    QLineF mVelLine {0, 0, 0, 0};
     Faction mPerceivedFaction = Faction::Unknown;
     QColor mColour;
     qreal mSize = 15;

@@ -15,7 +15,7 @@ SimulationLoop::SimulationLoop(TacticalScene* tacticalScene, StrategicScene* str
     initPlayer();
 
     //DEBUG
-    initMissile(200, 0);
+    initMissile(200000, 0);
     //initMissile(-40000, -40000);
     //initMissile(40000, -40000);
     //initMissile(40000, 40000);
@@ -66,17 +66,14 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     playerVelocity.flip();
     QPointF playerOffset = playerVelocity.getPosDelta(WorldObject::deltaT);
 
-    for (const auto& object : mObjects)
-    {
+    for (const auto& object : mObjects) {
         object->updatePosition(playerOffset);
         object->updateSensors();
     }
 
     // Update sensors
-    for (const auto& processor : mTrackProcessors)
-    {
-        if (processor->getParent() == mPlayer)
-        {
+    for (const auto& processor : mTrackProcessors) {
+        if (processor->getParent() == mPlayer) {
             auto tracks = processor->getTracks(mObjects);
             mStrategicScene->visualiseTracks(tracks);
         }
@@ -93,14 +90,10 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
 void SimulationLoop::applyPlayerInput()
 {
     mPlayer->resetMovement();
-    //if (mLeftThrust)
-    //    mPlayer->enableRotateLeft();
-    //if (mRightThrust)
-    //    mPlayer->enableRotateRight();
-    if (mForwardThrust)
-        mPlayer->enableForward();
-    if (mBackwardThrust)
-        mPlayer->enableBackward();
+    //if (mLeftThrust) mPlayer->enableRotateLeft();
+    //if (mRightThrust) mPlayer->enableRotateRight();
+    if (mForwardThrust) mPlayer->enableForward();
+    if (mBackwardThrust) mPlayer->enableBackward();
 
     mPlayer->update();
 }
@@ -126,16 +119,14 @@ void SimulationLoop::setThrust(TwoDeg direction, bool isActive)
 
 void SimulationLoop::addSensors(QVector<std::shared_ptr<Sensor>> sensors)
 {
-    for (const auto& sensor : sensors)
-    {
+    for (const auto& sensor : sensors) {
         mStrategicScene->addItem(sensor->getItem());
     }
 }
 
 void SimulationLoop::clearSensors(QVector<std::shared_ptr<Sensor>> sensors)
 {
-    for (const auto& sensor : sensors)
-    {
+    for (const auto& sensor : sensors) {
         mStrategicScene->removeItem(sensor->getItem());
     }
 }

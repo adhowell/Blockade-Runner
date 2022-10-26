@@ -1,5 +1,7 @@
 #include "include/signal_track_processor.h"
 
+#define DEBUG_SENSORS_ALWAYS_TRACK true
+
 
 QVector<SignalTrackProcessor::Track> SignalTrackProcessor::getTracks(const QVector<WorldObject*>& worldObjects)
 {
@@ -23,6 +25,10 @@ std::optional<SignalTrackProcessor::Track> SignalTrackProcessor::computeTrack(Wo
     qreal offBoreAngle = mParent->mAtan2.getDelta(sepAngle);
     for (const auto& sensor : mParent->mSensors)
     {
+#ifdef DEBUG_SENSORS_ALWAYS_TRACK
+        return Track{obj->mP - mParent->mP, 0, Faction::Unknown, obj->mId};
+#endif
+
         // TODO: More fidelity
         if (sensor->withinFOV(offBoreAngle))
         {
