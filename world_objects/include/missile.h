@@ -16,11 +16,12 @@ public:
         mTacticalGraphicsItem = new MissileItem(mP, mAtan2);
         mSensors << std::make_shared<RadarSensor>(this,
                                                   0,
-                                                  1.5, 1.5);
+                                                  1.5, 1.5,
+                                                  3);
     }
     ~Missile() override = default;
 
-    void updatePosition(qreal deltaT, QPointF offset) override
+    void updatePosition(QPointF offset) override
     {
         switch (mRotationController.getDirection())
         {
