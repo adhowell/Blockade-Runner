@@ -7,16 +7,15 @@
 class GuidanceProcessor : public SignalTrackProcessor
 {
 public:
-    explicit GuidanceProcessor(WorldObject* parent) : SignalTrackProcessor(parent) {}
+    GuidanceProcessor(WorldObject* parent, QVector<WorldObject*>* worldObjects)
+    : SignalTrackProcessor(parent, worldObjects) {}
     ~GuidanceProcessor() = default;
 
     /**
      * Commands the parent object to rotate towards the most valid
      * target track. If there is no valid track no rotate command is given.
-     *
-     * @param worldObjects - All of the world objects currently in the simulation
      */
-    void guideToMostValidTarget(const QVector<WorldObject*>& worldObjects);
+    void guideToMostValidTarget();
 
 private:
     uint32_t mNullTrackCounter {0};

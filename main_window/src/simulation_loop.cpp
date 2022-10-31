@@ -31,7 +31,7 @@ void SimulationLoop::initPlayer()
 {
     mPlayer = new PlayerShip(Faction::Blue, mNextUid++);
     mObjects << mPlayer;
-    mTrackProcessors << new SignalTrackProcessor(mPlayer);
+    mTrackProcessors << new SignalTrackProcessor(mPlayer, &mObjects);
 
     connect(mPlayer, &PlayerShip::displayText, this, &SimulationLoop::receiveInfoFromPlayerShip);
     connect(mPlayer, &PlayerShip::handleAddConfigComponent, mConfigScene, &ConfigScene::drawConfigComponent);
@@ -53,7 +53,9 @@ void SimulationLoop::initPlayer()
 void SimulationLoop::initMissile(qreal x, qreal y)
 {
     auto missile = new Missile(Faction::Red, {x, y}, {0, 0}, -M_PI*0.5, mNextUid++);
-    mGuidanceProcessors << new GuidanceProcessor(missile);
+    auto processor = new GuidanceProcessor(missile, &mObjects);
+    mGuidanceProcessors << processor;
+    mTrackProcessors << processor;
     mObjects << missile;
     mTacticalScene->addItem(missile->getTacticalGraphicsItem());
 }
@@ -73,18 +75,23 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
 
     // Update sensors
     for (const auto& processor : mTrackProcessors) {
+        processor->computeTracks();
+        //processor->interpolate();
+
         if (processor->getParent() == mPlayer) {
-            auto tracks = processor->getTracks(mObjects);
+            auto tracks = processor->getTracks();
             mStrategicScene->visualiseTracks(tracks);
         }
     }
     for (const auto& processor : mGuidanceProcessors) {
-        processor->guideToMostValidTarget(mObjects);
+        processor->guideToMostValidTarget();
     }
 
     mTacticalScene->updateItems(playerOffset);
     mStrategicScene->applyPlayerUpdate(playerOffset, mPlayer->getAtan2(), mPlayer->getVelVector(),
                                        mPlayer->getAccVector());
+
+    gTimeStamp++;
 }
 
 void SimulationLoop::applyPlayerInput()

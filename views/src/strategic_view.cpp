@@ -41,14 +41,14 @@ StrategicScene::StrategicScene(QWidget* parent) : QGraphicsScene(parent)
     }
 }
 
-void StrategicScene::visualiseTracks(const QVector<SignalTrackProcessor::Track>& tracks)
+void StrategicScene::visualiseTracks(const QVector<SignalTrackProcessor::ProcessedTrack>& tracks)
 {
     for (auto track : tracks) {
         updateTrack(track);
     }
 }
 
-void StrategicScene::updateTrack(SignalTrackProcessor::Track track)
+void StrategicScene::updateTrack(SignalTrackProcessor::ProcessedTrack track)
 {
     qreal x = track.offset.x() * gScaleFactor;
     qreal y = track.offset.y() * gScaleFactor;

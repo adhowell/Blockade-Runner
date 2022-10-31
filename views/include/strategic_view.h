@@ -32,8 +32,8 @@ public:
 
     void initBackground();
 
-    void visualiseTracks(const QVector<SignalTrackProcessor::Track>& tracks);
-    void updateTrack(SignalTrackProcessor::Track track);
+    void visualiseTracks(const QVector<SignalTrackProcessor::ProcessedTrack>& tracks);
+    void updateTrack(SignalTrackProcessor::ProcessedTrack track);
 
     void applyPlayerUpdate(QPointF posOffset, Bearing angle, Vector vel, Vector acc);
     StrategicView* getView() const;
