@@ -42,4 +42,7 @@ void SignalTrackProcessor::computeTrack(WorldObject* obj)
             return;
         }
     }
+    if (mProcessedTracks.find(obj->mId) != mProcessedTracks.end()) {
+        mProcessedTracks[obj->mId].predictCurrentPosition();
+    }
 }

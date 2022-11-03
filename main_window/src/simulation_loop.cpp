@@ -76,7 +76,6 @@ void SimulationLoop::timerEvent(QTimerEvent *event)
     // Update sensors
     for (const auto& processor : mTrackProcessors) {
         processor->computeTracks();
-        //processor->interpolate();
 
         if (processor->getParent() == mPlayer) {
             auto tracks = processor->getTracks();

@@ -57,7 +57,7 @@ void StrategicScene::updateTrack(SignalTrackProcessor::ProcessedTrack track)
         mTracks[track.uid] = item;
         addItem(item);
     }
-    mTracks[track.uid]->updateTrack(x, y, track.vel * gScaleFactor, track.faction);
+    mTracks[track.uid]->updateTrack(x, y, track.vel * gScaleFactor, track.faction, track.isCurrent);
 }
 
 void StrategicScene::applyPlayerUpdate(QPointF posOffset, Bearing angle, Vector vel, Vector acc)

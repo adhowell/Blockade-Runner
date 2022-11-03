@@ -11,8 +11,11 @@ void StrategicSymbol::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(pen);
 
-    if (mDrawBox) {
+    if (mIsCurrent) {
         painter->drawRect(QRectF(-mSize, -mSize, mSize*2.0, mSize*2.0));
+    }
+    if (mDrawBox) {
+        painter->drawRect(QRectF((-mSize)-4, (-mSize)-4, (mSize+4)*2.0, (mSize+4)*2.0));
     }
     painter->drawPolygon(mPoly);
 
@@ -25,12 +28,13 @@ QRectF StrategicSymbol::boundingRect() const
     return {-mSize*2, -mSize*2, mSize*4.0, mSize*4.0};
 }
 
-void StrategicSymbol::updateTrack(qreal x, qreal y, Vector velocity, Faction perceivedFaction)
+void StrategicSymbol::updateTrack(qreal x, qreal y, Vector velocity, Faction perceivedFaction, bool isCurrent)
 {
     // Animation
     if (mLifetime == 0) {
         mAnimationLifetime = mAnimationMaxLifetime;
     }
+    mIsCurrent = isCurrent;
 
     mVelLine = QLineF(0, 0, velocity.x(), velocity.y());
 
@@ -42,10 +46,6 @@ void StrategicSymbol::updateTrack(qreal x, qreal y, Vector velocity, Faction per
         case Faction::Green: mColour = QColor(0, 255, 0);
         case Faction::Unknown: mColour = QColor(255, 155, 0);
     }
-    mPoly = QPolygonF() << QPointF(-mSize, 0)
-                        << QPointF(0, -mSize)
-                        << QPointF(mSize, 0)
-                        << QPointF(0, mSize);
 }
 
 void StrategicSymbol::updateOffset(QPointF offset)

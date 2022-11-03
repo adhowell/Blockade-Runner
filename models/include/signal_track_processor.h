@@ -43,9 +43,11 @@ public:
         Faction faction {Faction::Unknown};
         Track tracks[MAX_TRACKS];
         int index {0};
+        bool isCurrent {false};
 
         void insertTrack(Track track)
         {
+            isCurrent = true;
             offset = track.position - *parentPos;
             subtractOldDelta();
             tracks[index] = track;
@@ -61,7 +63,7 @@ public:
                 return;
             }
             auto delta = (tracks[index].position - oldTrack.position) * (1.0f / double(tracks[index].timestamp - oldTrack.timestamp));
-            vel += delta;
+            vel += delta * (1.0f / MAX_TRACKS);
         }
 
         void subtractOldDelta()
@@ -74,7 +76,7 @@ public:
                 return;
             }
             auto delta = (plusOneTrack.position - tracks[index].position) * (1.0f / double(plusOneTrack.timestamp - tracks[index].timestamp));
-            vel -= delta;
+            vel -= delta * (1.0f / MAX_TRACKS);
         }
 
         Track getOffsetTrack(int o)
@@ -98,6 +100,12 @@ public:
         uint32_t getLastTimestamp() const
         {
             return tracks[index].timestamp;
+        }
+
+        void predictCurrentPosition()
+        {
+            isCurrent = false;
+            offset += vel;
         }
     };
 
