@@ -18,7 +18,7 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    void updateTrack(qreal x, qreal y, Faction perceivedFaction);
+    void updateTrack(qreal x, qreal y, Vector velocity, Faction perceivedFaction);
     void updateOffset(QPointF offset);
 
 private:

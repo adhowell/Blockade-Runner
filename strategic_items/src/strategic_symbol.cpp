@@ -25,15 +25,14 @@ QRectF StrategicSymbol::boundingRect() const
     return {-mSize*2, -mSize*2, mSize*4.0, mSize*4.0};
 }
 
-void StrategicSymbol::updateTrack(qreal x, qreal y, Faction perceivedFaction)
+void StrategicSymbol::updateTrack(qreal x, qreal y, Vector velocity, Faction perceivedFaction)
 {
     // Animation
     if (mLifetime == 0) {
         mAnimationLifetime = mAnimationMaxLifetime;
     }
 
-    auto oldPos = pos();
-    mVelLine = QLineF(x, y, oldPos.x(), oldPos.y());
+    mVelLine = QLineF(0, 0, velocity.x(), velocity.y());
 
     mLifetime = mMaxLifetime;
     setPos(x, y);

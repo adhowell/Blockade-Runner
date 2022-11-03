@@ -6,6 +6,8 @@
 
 #pragma once
 
+#define MAX_TRACKS 10
+
 
 /**
  * For handling how objects are detected by the senors aboard each platform
@@ -39,44 +41,63 @@ public:
         Vector acc {0, 0};
         Vector vel {0, 0};
         Faction faction {Faction::Unknown};
-        Track tracks[10];
-        Track* trackStart;
-        Track* trackPtr {tracks};
-        Track* trackEnd;
-
-        //ProcessedTrack(uint32_t uid, Vector* parentPos) : uid(uid), parentPos(parentPos)
-        //{
-        //    offset = Vector(0, 0);
-        //}
+        Track tracks[MAX_TRACKS];
+        int index {0};
 
         void insertTrack(Track track)
         {
-            //incrementTrack();
             offset = track.position - *parentPos;
-            *trackPtr = track;
+            subtractOldDelta();
+            tracks[index] = track;
+            updateProfile();
+            incrementTrack(1);
         }
 
-        void incrementTrack()
+        void updateProfile()
         {
-            if (trackPtr == trackEnd) {
-                trackPtr = trackStart;
-            } else {
-                trackPtr++;
+            // Add the velocity for the latest track-delta
+            auto oldTrack = getOffsetTrack(-1);
+            if (oldTrack.timestamp == 0) {
+                return;
             }
+            auto delta = (tracks[index].position - oldTrack.position) * (1.0f / double(tracks[index].timestamp - oldTrack.timestamp));
+            vel += delta;
         }
 
-        void decrementTrack()
+        void subtractOldDelta()
         {
-            if (trackPtr == trackStart) {
-                trackPtr = trackEnd;
+            if (tracks[index].timestamp == 0) {
+                return;
+            }
+            auto plusOneTrack = getOffsetTrack(1);
+            if (plusOneTrack.timestamp == 0) {
+                return;
+            }
+            auto delta = (plusOneTrack.position - tracks[index].position) * (1.0f / double(plusOneTrack.timestamp - tracks[index].timestamp));
+            vel -= delta;
+        }
+
+        Track getOffsetTrack(int o)
+        {
+            incrementTrack(o);
+            auto offsetTrack = tracks[index];
+            incrementTrack(-o);
+            return offsetTrack;
+        }
+
+        void incrementTrack(int o)
+        {
+            index += o;
+            if (index < 0) {
+                index += MAX_TRACKS;
             } else {
-                trackPtr--;
+                index %= MAX_TRACKS;
             }
         }
 
         uint32_t getLastTimestamp() const
         {
-            return (*trackPtr).timestamp;
+            return tracks[index].timestamp;
         }
     };
 
