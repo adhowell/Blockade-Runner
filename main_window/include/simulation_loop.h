@@ -60,5 +60,6 @@ private:
     bool mLeftThrust = false;
     bool mRightThrust = false;
 
-    int mNextUid = 0;
+    // UID 0 is reserved as a null object indicator
+    int mNextUid = 1;
 };
