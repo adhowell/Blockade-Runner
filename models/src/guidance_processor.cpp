@@ -13,5 +13,14 @@ void GuidanceProcessor::guideToMostValidTarget()
                                        return track.getLastTimestamp();
                                    });
     qreal altAtan2 = qAtan2(track.offset.y(), track.offset.x()) + 0.5*M_PI;
-    mParent->rotate(Bearing(altAtan2));
+    auto targetBearing = Bearing(altAtan2);
+
+    Bearing delta = targetBearing - mLastValidBearing;
+    if (mLastTarget != track.uid) {
+        delta = 0;
+        mLastTarget = track.uid;
+    }
+
+    mParent->rotate(targetBearing + delta);
+    mLastValidBearing = targetBearing + delta;
 }

@@ -18,5 +18,6 @@ public:
     void guideToMostValidTarget();
 
 private:
-    uint32_t mNullTrackCounter {0};
+    uint32_t mLastTarget {0};
+    Bearing mLastValidBearing {0};
 };
