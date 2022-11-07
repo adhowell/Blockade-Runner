@@ -35,6 +35,16 @@ qreal Bearing::operator-=(const Bearing& other)
     return mAngle;
 }
 
+Bearing Bearing::operator+(const Bearing& other) const
+{
+    return Bearing(mAngle + other.mAngle);
+}
+
+Bearing Bearing::operator-(const Bearing& other) const
+{
+    return Bearing(mAngle - other.mAngle);
+}
+
 bool Bearing::withinArc(qreal cwStart, qreal cwEnd)
 {
     cwStart = correct(cwStart);

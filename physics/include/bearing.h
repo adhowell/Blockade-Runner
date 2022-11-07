@@ -23,6 +23,9 @@ public:
     qreal operator-=(qreal delta);
     qreal operator-=(const Bearing& other);
 
+    Bearing operator+(const Bearing& other) const;
+    Bearing operator-(const Bearing& other) const;
+
     bool operator>(const Bearing& rhs) { return mAngle > rhs.mAngle; }
     bool operator>(qreal rhs) { return mAngle > correct(rhs); }
 
