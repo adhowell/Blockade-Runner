@@ -26,12 +26,13 @@ void Missile::updatePosition(QPointF offset)
         case RotationController::OneDeg::Right:
             mRotA = mMaxRightRotateAcc;
             break;
-        default:;
+        default:
+            mRotA = 0;
     }
 
     mRotV += mRotA * deltaT;
     mAtan2 += mRotV * deltaT;
-    mA += Vector(mAtan2) * mThrust;
+    mA = Vector(mAtan2) * mThrust;
     mV += mA * deltaT;
     mP += mV * deltaT;
     mP += Vector(offset.x(), offset.y());

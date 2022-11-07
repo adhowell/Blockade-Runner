@@ -12,5 +12,5 @@ public:
     void updatePosition(QPointF offset) override;
 
 private:
-    qreal mThrust {0.001f};
+    qreal mThrust {0.1f};
 };
