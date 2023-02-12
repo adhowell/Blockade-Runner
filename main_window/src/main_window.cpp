@@ -1,6 +1,7 @@
 #include "include/main_window.h"
 
 #include <QHBoxLayout>
+#include <QSplitter>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -23,7 +24,7 @@ MainWindow::MainWindow(QWidget* parent)
     setLayout(layout);
 
     setWindowTitle("Blockade Runner");
-    setFixedSize(gWidth, gHeight);
+    setMinimumSize(gWidth, gHeight);
 }
 
 void MainWindow::closeConfigScreen()
@@ -33,13 +34,24 @@ void MainWindow::closeConfigScreen()
     currLayout->removeWidget(mConfigScene->getView());
     delete currLayout;
 
-    auto rightLayout = new QVBoxLayout;
-    rightLayout->addWidget(mTacticalScene->getView());
-    rightLayout->addWidget(mTerminal);
+    auto rightSplitter = new QSplitter;
+    rightSplitter->setChildrenCollapsible(false);
+    rightSplitter->setOrientation(Qt::Orientation::Vertical);
+    rightSplitter->addWidget(mTacticalScene->getView());
+    rightSplitter->addWidget(mTerminal);
+    //mTerminal->setMinimumSize(250, 100);
+    mTacticalScene->getView()->setMinimumSize(250, 250);
 
-    auto fullLayout = new QHBoxLayout;
-    fullLayout->addWidget(mStrategicScene->getView(), 2);
-    fullLayout->addLayout(rightLayout, 1);
+    auto topSplitter = new QSplitter;
+    topSplitter->setChildrenCollapsible(false);
+    topSplitter->addWidget(mStrategicScene->getView());
+    topSplitter->addWidget(rightSplitter);
+    mStrategicScene->getView()->setMinimumSize(250, 250);
+    topSplitter->setStretchFactor(0, 5);
+    topSplitter->setStretchFactor(1, 2);
+
+    auto fullLayout = new QVBoxLayout;
+    fullLayout->addWidget(topSplitter);
     setLayout(fullLayout);
 
     connect(mTerminal, &Terminal::setThrustDirection, mSimulation, &SimulationLoop::setThrust);
