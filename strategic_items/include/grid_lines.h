@@ -15,4 +15,8 @@ public:
 private:
     QPointF mOrigin;
     int mSpacing;
+    const qreal mMinX {-2000};
+    const qreal mMinY {-1500};
+    const qreal mWidth {abs(mMinX)*2};
+    const qreal mHeight {abs(mMinY)*2};
 };

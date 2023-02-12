@@ -10,8 +10,8 @@ void GridLines::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 {
     int xOffset = (int)mOrigin.x();
     int yOffset = (int)mOrigin.y();
-    int sceneInitX = -1000 + (int)(mOrigin.x()) % mSpacing;
-    int sceneInitY = -700 + (int)(mOrigin.y()) % mSpacing;
+    int sceneInitX = (int)mMinX + (int)(mOrigin.x()) % mSpacing;
+    int sceneInitY = (int)mMinY + (int)(mOrigin.y()) % mSpacing;
     int sceneX = sceneInitX;
     int sceneY = sceneInitY;
     qreal remX = mOrigin.x() - xOffset;
@@ -23,19 +23,19 @@ void GridLines::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->setPen(pen);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    for (int x = xOffset; x < xOffset + 2000; x += mSpacing)
+    for (int x = xOffset; x < xOffset + mWidth; x += mSpacing)
     {
-        painter->drawLine(QLineF(sceneX+remX, -1000, sceneX+remX, 1000));
+        painter->drawLine(QLineF(sceneX+remX, mMinY, sceneX+remX, mMinY+mHeight));
         sceneX += mSpacing;
     }
-    for (int y = yOffset; y < yOffset + 1400; y += mSpacing)
+    for (int y = yOffset; y < yOffset + mHeight; y += mSpacing)
     {
-        painter->drawLine(QLineF(-1000, sceneY+remY, 1000, sceneY+remY));
+        painter->drawLine(QLineF(mMinX, sceneY+remY, mMinX+mWidth, sceneY+remY));
         sceneY += mSpacing;
     }
 }
 
 QRectF GridLines::boundingRect() const
 {
-    return {-1000, -700, 2000, 1400};
+    return {mMinX, mMinY, mWidth, mHeight};
 }
